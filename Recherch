@@ -26,9 +26,9 @@
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
-        .container { max-width: 720px; margin: 0 auto; display: none; } /* Ascuns până la login */
+        .container { max-width: 720px; margin: 0 auto; display: none; }
 
-        /* Ecran Blocat - Auth Utilizatori */
+        /* Lock Screen */
         .lock-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -126,7 +126,7 @@
         .panel textarea { resize: vertical; font-family: monospace; font-size: 11px; }
         .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
 
-        /* Modal Editare */
+        /* Modal Overlay */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -247,14 +247,17 @@
 </head>
 <body>
 
-<!-- Ecran de Autentificare/Înregistrare Utilizator (Colegi) -->
+<!-- Ecran de Autentificare Utilizator / Admin -->
 <div id="userLockScreen" class="lock-screen">
     <div class="lock-card">
         <h2>La Centrale</h2>
-        <p id="lockSubtitle">Créer un compte utilisateur (4 caractères)</p>
+        <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 caractères)</p>
         <input type="text" id="regUser" placeholder="Nom d'utilisateur">
-        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 chiffres/lettres)">
+        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 caractères)">
         <button class="btn btn-save" onclick="handleUserAuth()">Accéder à l'application</button>
+        <div style="margin-top:14px; border-top:1px dashed var(--border); padding-top:10px;">
+            <button class="btn btn-admin" style="width:100%; font-size:11px;" onclick="quickAdminAuthPrompt()">🔒 Accès Administrateur Master</button>
+        </div>
     </div>
 </div>
 
@@ -321,7 +324,7 @@
         <button class="btn btn-danger" style="width:100%; margin-bottom:6px;" onclick="toggleDeleteMode()">🗑️ Mode Suppression Multiple</button>
         <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#9333ea;" onclick="showAdminForm('importJson')">📥 Importer Codes / Nuanciers JSON</button>
         <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour du Code Source</button>
-        <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Master</button>
+        <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion</button>
         
         <div id="addSingleForm" style="display:none; margin-top:10px;">
             <input type="text" id="newCode" placeholder="Code Couleur (ex: RAL 9001)">
@@ -359,7 +362,7 @@
 
 </div>
 
-<!-- Pop-up Modal de Editare Baze (Disponibil Utilizatorilor) -->
+<!-- Pop-up Modal de Editare Baze -->
 <div id="editModalOverlay" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -369,7 +372,6 @@
         
         <input type="hidden" id="fullEditIndex" value="-1">
         
-        <!-- Numele si Culoarea Vizuala pot fi modificate DOAR de Master Admin -->
         <div id="masterOnlyFields" style="display:none;">
             <label style="font-size:11px; color:#9ca3af;">Nom / Code :</label>
             <input type="text" id="editCodeInput" style="width:100%; padding:8px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
@@ -409,11 +411,40 @@
 </div>
 
 <script>
-    // Logică Autentificare Colegi
+    const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
+
+    let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
 
+    // Verificare Sesiune Existentă la Refresh
+    function checkActiveSession() {
+        const adminExpiry = localStorage.getItem('admin_session_expiry');
+        const userExpiry = localStorage.getItem('user_session_expiry');
+        const now = Date.now();
+
+        // 1. Verificare Sesiune Master Admin
+        if (adminExpiry && now < parseInt(adminExpiry, 10)) {
+            isAuthenticated = true;
+            document.getElementById('userLockScreen').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+            document.getElementById('welcomeUser').textContent = "Connecté en tant que : Master Administrateur";
+            document.getElementById('guideAdminControls').style.display = 'block';
+            return;
+        }
+
+        // 2. Verificare Sesiune Utilizator Normal
+        if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
+            document.getElementById('userLockScreen').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+            document.getElementById('welcomeUser').textContent = `Utilisateur connecté : ${localUser.name}`;
+            return;
+        }
+
+        // Dacă sesiunea a expirat
+        initUserScreen();
+    }
+
     function initUserScreen() {
-        const lockScreen = document.getElementById('userLockScreen');
         const subtitle = document.getElementById('lockSubtitle');
         const userInput = document.getElementById('regUser');
 
@@ -445,9 +476,57 @@
             }
         }
 
+        // Setare sesiune 10 ore
+        localStorage.setItem('user_session_expiry', (Date.now() + TEN_HOURS_MS).toString());
+
         document.getElementById('userLockScreen').style.display = 'none';
         document.getElementById('mainContainer').style.display = 'block';
         document.getElementById('welcomeUser').textContent = `Utilisateur connecté : ${localUser.name}`;
+    }
+
+    function quickAdminAuthPrompt() {
+        const u = prompt("Nom d'utilisateur Master :");
+        const p = prompt("Mot de passe Master :");
+        if (u === "Antonio" && p === "28051994") {
+            grantAdminAccess();
+        } else if (u !== null && p !== null) {
+            alert("Identifiants Master incorrects !");
+        }
+    }
+
+    function validateAuth() {
+        const u = document.getElementById('authUser').value.trim();
+        const p = document.getElementById('authPass').value.trim();
+        if (u === "Antonio" && p === "28051994") {
+            grantAdminAccess();
+        } else {
+            showAlert("Identifiants Administrateur incorrects.");
+        }
+    }
+
+    function grantAdminAccess() {
+        isAuthenticated = true;
+        localStorage.setItem('admin_session_expiry', (Date.now() + TEN_HOURS_MS).toString());
+
+        document.getElementById('userLockScreen').style.display = 'none';
+        document.getElementById('mainContainer').style.display = 'block';
+        document.getElementById('authPanel').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('guideAdminControls').style.display = 'block';
+        document.getElementById('welcomeUser').textContent = "Connecté en tant que : Master Administrateur";
+        showAlert("Connexion Master Administrateur réussie (Session active 10h).", true);
+    }
+
+    function logoutAdmin() {
+        isAuthenticated = false;
+        localStorage.removeItem('admin_session_expiry');
+        localStorage.removeItem('user_session_expiry');
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('guideAdminControls').style.display = 'none';
+        document.getElementById('mainContainer').style.display = 'none';
+        document.getElementById('userLockScreen').style.display = 'flex';
+        initUserScreen();
+        showAlert("Déconnexion réussie.", true);
     }
 
     const defaultGuideData = [
@@ -487,7 +566,6 @@
     ];
 
     let customDatabase = JSON.parse(localStorage.getItem('central_unified_paint_data')) || defaultDatabase;
-    let isAuthenticated = false;
     let isDeleteMode = false;
     let openPalettes = {};
 
@@ -519,33 +597,11 @@
         }
     }
 
-    function validateAuth() {
-        const u = document.getElementById('authUser').value.trim();
-        const p = document.getElementById('authPass').value.trim();
-        if (u === "Antonio" && p === "28051994") {
-            isAuthenticated = true;
-            document.getElementById('authPanel').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('guideAdminControls').style.display = 'block';
-            showAlert("Connexion Master Administrateur réussie.", true);
-        } else {
-            showAlert("Identifiants Administrateur incorrects.");
-        }
-    }
-
-    function logoutAdmin() {
-        isAuthenticated = false;
-        document.getElementById('adminPanel').style.display = 'none';
-        document.getElementById('guideAdminControls').style.display = 'none';
-        showAlert("Déconnexion réussie.", true);
-    }
-
     function openFullEdit(index) {
         const item = customDatabase[index];
         document.getElementById('fullEditIndex').value = index;
         document.getElementById('modalEditTitle').textContent = `Modifier bases: ${item.code}`;
         
-        // Afișează opțiunile avansate doar dacă e Master Admin
         document.getElementById('masterOnlyFields').style.display = isAuthenticated ? 'block' : 'none';
         document.getElementById('editCodeInput').value = item.code;
         document.getElementById('fullColorPicker').value = item.hex || '#cbd5e1';
@@ -584,7 +640,7 @@
             saveToStorage();
             filterColors();
             closeEditModal();
-            showAlert(`Bases mises à jour localement pour ${customDatabase[index].code}.`, true);
+            showAlert(`Bases mises à jour avec succès pour ${customDatabase[index].code}.`, true);
         }
     }
 
@@ -706,7 +762,8 @@
         }, 400);
     }
 
-    initUserScreen();
+    // Inițializare Verificare Sesiune & Tabel
+    checkActiveSession();
     renderGuideTable();
     filterColors();
 </script>
