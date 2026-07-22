@@ -323,7 +323,7 @@
         <button class="btn btn-admin" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('addSingle')">+ Ajouter une Couleur (Toutes les marques)</button>
         <button class="btn btn-danger" style="width:100%; margin-bottom:6px;" onclick="toggleDeleteMode()">🗑️ Mode Suppression Multiple</button>
         <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#9333ea;" onclick="showAdminForm('importJson')">📥 Importer Codes / Nuanciers JSON</button>
-        <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour du Code Source</button>
+        <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour du Code Source (GitHub Direct)</button>
         <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion</button>
         
         <div id="addSingleForm" style="display:none; margin-top:10px;">
@@ -345,10 +345,17 @@
             <button class="btn btn-save" onclick="importJsonPalette()">Lancer l'importation JSON</button>
         </div>
 
+        <!-- Formular Update Direct pe GitHub via API -->
         <div id="updateAppForm" style="display:none; margin-top:10px;">
-            <p style="font-size:11px; color:#9ca3af; margin-top:0;">Collez le nouveau code ici pour mettre à jour l'application de façon permanente.</p>
-            <textarea id="sourceCodeInput" rows="6" placeholder="Collez le code HTML/JS ici..."></textarea>
-            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="applyAppUpdate()">Enregistrer la Mise à jour Pérènne</button>
+            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Mise à jour en direct sur GitHub (Pour tous les appareils) :</p>
+            
+            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub (ghp_...) :</label>
+            <input type="password" id="ghTokenInput" placeholder="Collez votre Token Personal Access Token ici">
+            
+            <label style="font-size:11px; color:#9ca3af;">Nouveau Code Source HTML complet :</label>
+            <textarea id="sourceCodeInput" rows="6" placeholder="Collez le nouveau code HTML/JS ici..."></textarea>
+            
+            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="publishToGithub()">🚀 Publicar Update Direct pe GitHub</button>
         </div>
 
         <div id="deleteMultiPanel" style="display:none; margin-top:10px; background:#451a1a; padding:10px; border-radius:6px; border:1px solid #7f1d1d;">
@@ -382,7 +389,7 @@
             </div>
         </div>
 
-        <label style="font-size:11px; color:#60a5fa; margin-bottom:6px; display:block; font-weight:bold;">Correction des Bases (Sauvegardé localement) :</label>
+        <label style="font-size:11px; color:#60a5fa; margin-bottom:6px; display:block; font-weight:bold;">Correction des Bases :</label>
         <div class="edit-bases-grid">
             <div>
                 <label>Trimetal</label>
@@ -412,17 +419,20 @@
 
 <script>
     const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
+    const GITHUB_REPO = "mateiantonio28-sketch/La-Central";
+    const GITHUB_FILE_PATH = "index.html";
 
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
 
-    // Verificare Sesiune Existentă la Refresh
+    // Inărcare Token GitHub salvat local
+    const savedGhToken = localStorage.getItem('central_github_token') || "";
+
     function checkActiveSession() {
         const adminExpiry = localStorage.getItem('admin_session_expiry');
         const userExpiry = localStorage.getItem('user_session_expiry');
         const now = Date.now();
 
-        // 1. Verificare Sesiune Master Admin
         if (adminExpiry && now < parseInt(adminExpiry, 10)) {
             isAuthenticated = true;
             document.getElementById('userLockScreen').style.display = 'none';
@@ -432,7 +442,6 @@
             return;
         }
 
-        // 2. Verificare Sesiune Utilizator Normal
         if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
             document.getElementById('userLockScreen').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
@@ -440,7 +449,6 @@
             return;
         }
 
-        // Dacă sesiunea a expirat
         initUserScreen();
     }
 
@@ -476,7 +484,6 @@
             }
         }
 
-        // Setare sesiune 10 ore
         localStorage.setItem('user_session_expiry', (Date.now() + TEN_HOURS_MS).toString());
 
         document.getElementById('userLockScreen').style.display = 'none';
@@ -514,6 +521,11 @@
         document.getElementById('adminPanel').style.display = 'block';
         document.getElementById('guideAdminControls').style.display = 'block';
         document.getElementById('welcomeUser').textContent = "Connecté en tant que : Master Administrateur";
+        
+        if (savedGhToken) {
+            document.getElementById('ghTokenInput').value = savedGhToken;
+        }
+
         showAlert("Connexion Master Administrateur réussie (Session active 10h).", true);
     }
 
@@ -527,6 +539,83 @@
         document.getElementById('userLockScreen').style.display = 'flex';
         initUserScreen();
         showAlert("Déconnexion réussie.", true);
+    }
+
+    // Comutare Formulare Panou Admin
+    function showAdminForm(type) {
+        document.getElementById('addSingleForm').style.display = (type === 'addSingle') ? 'block' : 'none';
+        document.getElementById('importJsonForm').style.display = (type === 'importJson') ? 'block' : 'none';
+        document.getElementById('updateAppForm').style.display = (type === 'updateApp') ? 'block' : 'none';
+        if (type === 'updateApp' && savedGhToken) {
+            document.getElementById('ghTokenInput').value = savedGhToken;
+        }
+    }
+
+    function checkNewPaletteInput() {
+        const sel = document.getElementById('newPaletteSelect').value;
+        document.getElementById('newCustomPalette').style.display = (sel === 'NEW') ? 'block' : 'none';
+    }
+
+    // Trimitere Update direct în GitHub Repository via API
+    async function publishToGithub() {
+        const token = document.getElementById('ghTokenInput').value.trim();
+        const newCode = document.getElementById('sourceCodeInput').value.trim();
+
+        if (!token) {
+            showAlert("Veuillez saisir votre Token Access GitHub !");
+            return;
+        }
+
+        if (!newCode) {
+            showAlert("Veuillez coller le nouveau code source !");
+            return;
+        }
+
+        localStorage.setItem('central_github_token', token);
+        showAlert("Connexion à GitHub en cours...");
+
+        try {
+            // 1. Preluăm sha-ul fișierului existent
+            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
+            const getRes = await fetch(getUrl, {
+                headers: { "Authorization": `token ${token}` }
+            });
+
+            if (!getRes.ok) {
+                throw new Error("Impossible de récupérer les informations de GitHub. Vérifiez le Token.");
+            }
+
+            const getData = await getRes.json();
+            const fileSha = getData.sha;
+
+            // 2. Encodăm codul sursă în UTF-8 Base64
+            const encodedContent = btoa(unescape(encodeURIComponent(newCode)));
+
+            // 3. Tritem comanda PUT de actualizare
+            const putRes = await fetch(getUrl, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `token ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: "Update La-Centrale source via Web App Admin Panel",
+                    content: encodedContent,
+                    sha: fileSha
+                })
+            });
+
+            if (putRes.ok) {
+                showAlert("🚀 Mise à jour publiée avec succès sur GitHub ! Déploiement en 1-2 min.", true);
+                setTimeout(() => { location.reload(); }, 2000);
+            } else {
+                const errData = await putRes.json();
+                showAlert(`Erreur GitHub: ${errData.message || "Échec de publication"}`);
+            }
+
+        } catch (err) {
+            showAlert(`Erreur: ${err.message}`);
+        }
     }
 
     const defaultGuideData = [
@@ -583,7 +672,7 @@
 
     function togglePanel(panelId) {
         const panel = document.getElementById(panelId);
-        const isVisible = panel.style.display === 'block';
+        const isVisible = (panel.style.display === 'block');
         document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
         if (!isVisible) panel.style.display = 'block';
     }
@@ -717,6 +806,97 @@
             groupDiv.appendChild(content);
             container.appendChild(groupDiv);
         });
+    }
+
+    function saveSingleColor() {
+        const code = document.getElementById('newCode').value.trim().toUpperCase();
+        let palette = document.getElementById('newPaletteSelect').value;
+        if (palette === 'NEW') palette = document.getElementById('newCustomPalette').value.trim();
+
+        if (!code || !palette) { showAlert('Veuillez remplir le code et le nuancier.'); return; }
+
+        const exists = customDatabase.some(c => c.code === code && c.palette === palette);
+        if (exists) {
+            showAlert(`ATTENTION ! Le code ${code} existe déjà dans le nuancier ${palette}.`);
+            return;
+        }
+
+        const isDark = ["7016", "9005", "7021", "3020", "5010"].some(d => code.includes(d));
+        const defaultBases = isDark ? brandBasesMap.dark : brandBasesMap.light;
+
+        customDatabase.unshift({
+            code,
+            palette,
+            hex: '#cbd5e1',
+            bases: defaultBases
+        });
+
+        saveToStorage();
+        filterColors();
+        showAlert(`Couleur ${code} enregistrée avec succès.`, true);
+        document.getElementById('newCode').value = '';
+    }
+
+    function importJsonPalette() {
+        const raw = document.getElementById('importCode').value.trim();
+        if (!raw) return;
+
+        try {
+            const list = JSON.parse(raw);
+            let added = 0;
+
+            list.forEach(item => {
+                if (item.code) {
+                    const cCode = item.code.trim().toUpperCase();
+                    const cPal = item.palette || "RAL";
+                    const exists = customDatabase.some(c => c.code === cCode && c.palette === cPal);
+
+                    if (!exists) {
+                        const isDark = ["7016", "9005", "7021", "3020", "5010"].some(d => cCode.includes(d));
+                        customDatabase.push({
+                            code: cCode,
+                            palette: cPal,
+                            hex: item.hex || '#cbd5e1',
+                            bases: item.bases || (isDark ? brandBasesMap.dark : brandBasesMap.light)
+                        });
+                        added++;
+                    }
+                }
+            });
+
+            saveToStorage();
+            filterColors();
+            showAlert(`${added} couleurs/nuanciers importés avec succès.`, true);
+            document.getElementById('importCode').value = '';
+        } catch (e) {
+            showAlert("Format JSON invalide. Vérifiez la syntaxe.");
+        }
+    }
+
+    function toggleDeleteMode() {
+        isDeleteMode = !isDeleteMode;
+        document.getElementById('deleteMultiPanel').style.display = isDeleteMode ? 'block' : 'none';
+        filterColors();
+    }
+
+    function confirmDeleteSelected() {
+        const checkedBoxes = document.querySelectorAll('.delete-cb:checked');
+        if (checkedBoxes.length === 0) {
+            showAlert("Aucune couleur sélectionnée !");
+            return;
+        }
+
+        const pass = prompt(`Saisissez le mot de passe de sécurité (2805) pour supprimer ${checkedBoxes.length} couleur(s) :`);
+        if (pass === "2805") {
+            const indices = Array.from(checkedBoxes).map(cb => parseInt(cb.value)).sort((a,b) => b - a);
+            indices.forEach(idx => customDatabase.splice(idx, 1));
+            saveToStorage();
+            toggleDeleteMode();
+            filterColors();
+            showAlert(`${indices.length} couleur(s) supprimée(s) avec succès.`, true);
+        } else {
+            showAlert("Mot de passe incorrect. Suppression annulée.");
+        }
     }
 
     function sendAiMessage() {
