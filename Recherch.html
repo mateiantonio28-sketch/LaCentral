@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Centrale - Recherche Couleur & Base</title>
     
+    <!-- PWA Web App Manifest & Iconițe -->
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
     <meta name="apple-mobile-web-app-title" content="La Centrale">
     <meta name="application-name" content="La Centrale">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#111827">
 
     <style>
         :root {
@@ -355,7 +358,7 @@
             <label style="font-size:11px; color:#9ca3af;">Nouveau Code Source HTML complet :</label>
             <textarea id="sourceCodeInput" rows="6" placeholder="Collez le nouveau code HTML/JS ici..."></textarea>
             
-            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="publishToGithub()">🚀 Publicar Update Direct pe GitHub</button>
+            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="publishToGithub()">🚀 Publier Update Direct sur GitHub</button>
         </div>
 
         <div id="deleteMultiPanel" style="display:none; margin-top:10px; background:#451a1a; padding:10px; border-radius:6px; border:1px solid #7f1d1d;">
@@ -424,8 +427,6 @@
 
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
-
-    // Inărcare Token GitHub salvat local
     const savedGhToken = localStorage.getItem('central_github_token') || "";
 
     function checkActiveSession() {
@@ -541,7 +542,6 @@
         showAlert("Déconnexion réussie.", true);
     }
 
-    // Comutare Formulare Panou Admin
     function showAdminForm(type) {
         document.getElementById('addSingleForm').style.display = (type === 'addSingle') ? 'block' : 'none';
         document.getElementById('importJsonForm').style.display = (type === 'importJson') ? 'block' : 'none';
@@ -556,42 +556,28 @@
         document.getElementById('newCustomPalette').style.display = (sel === 'NEW') ? 'block' : 'none';
     }
 
-    // Trimitere Update direct în GitHub Repository via API
     async function publishToGithub() {
         const token = document.getElementById('ghTokenInput').value.trim();
         const newCode = document.getElementById('sourceCodeInput').value.trim();
 
-        if (!token) {
-            showAlert("Veuillez saisir votre Token Access GitHub !");
-            return;
-        }
-
-        if (!newCode) {
-            showAlert("Veuillez coller le nouveau code source !");
-            return;
-        }
+        if (!token) { showAlert("Veuillez saisir votre Token Access GitHub !"); return; }
+        if (!newCode) { showAlert("Veuillez coller le nouveau code source !"); return; }
 
         localStorage.setItem('central_github_token', token);
         showAlert("Connexion à GitHub en cours...");
 
         try {
-            // 1. Preluăm sha-ul fișierului existent
             const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
             const getRes = await fetch(getUrl, {
                 headers: { "Authorization": `token ${token}` }
             });
 
-            if (!getRes.ok) {
-                throw new Error("Impossible de récupérer les informations de GitHub. Vérifiez le Token.");
-            }
+            if (!getRes.ok) throw new Error("Impossible de récupérer le fichier. Vérifiez le Token.");
 
             const getData = await getRes.json();
             const fileSha = getData.sha;
-
-            // 2. Encodăm codul sursă în UTF-8 Base64
             const encodedContent = btoa(unescape(encodeURIComponent(newCode)));
 
-            // 3. Tritem comanda PUT de actualizare
             const putRes = await fetch(getUrl, {
                 method: "PUT",
                 headers: {
@@ -942,7 +928,6 @@
         }, 400);
     }
 
-    // Inițializare Verificare Sesiune & Tabel
     checkActiveSession();
     renderGuideTable();
     filterColors();
