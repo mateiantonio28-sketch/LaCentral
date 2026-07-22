@@ -314,9 +314,9 @@
     <div class="changelog-banner" id="changelogBanner">
         <h4>📢 Nouveautés de la Mise à Jour :</h4>
         <div id="changelogText">
-            • Ajout du bouton d'installation rapide de l'application (PWA).<br>
-            • Horloge en temps réel & Compte à rebours de session (10h).<br>
-            • Intégration de l'Assistant IA avec modification automatique des bases.
+            • Module de création automatique de raccourci sur l'écran d'accueil.<br>
+            • Mini-fenêtre intégrée de génération rapide de Token GitHub.<br>
+            • Amélioration de la stabilité et session active de 10 heures.
         </div>
     </div>
 
@@ -397,11 +397,13 @@
             <button class="btn btn-save" onclick="importJsonPalette()">Lancer l'importation JSON</button>
         </div>
 
-        <!-- Formular Update Direct pe GitHub cu Descriere Noutăți -->
+        <!-- Formular Update Direct pe GitHub cu Generator Rapid de Token -->
         <div id="updateAppForm" style="display:none; margin-top:10px;">
             <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">🚀 Mise à jour Directe GitHub (Connecté Permanemment) :</p>
             
-            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub Access :</label>
+            <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 Générer / Obtenir un Token GitHub (Rapide)</button>
+
+            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub Access (Enregistré) :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
 
             <label style="font-size:11px; color:#9ca3af;">Description des Nouveautés (en Français) :</label>
@@ -422,6 +424,29 @@
     <div class="section-label">Nuanciers Disponibles</div>
     <div id="resultsList"></div>
 
+</div>
+
+<!-- Pop-up Modal Generare Rapidă Token fără închiderea aplicației -->
+<div id="tokenModalOverlay" class="modal-overlay">
+    <div class="modal-content" style="text-align:center;">
+        <div class="modal-header">
+            <h3>🔑 Générateur Rapid Token GitHub</h3>
+            <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:#9ca3af; text-align:left; margin-bottom:10px;">
+            Cliquez sur le bouton ci-dessous pour ouvrir la page officielle de création de Token GitHub dans un nouvel onglet. <b>Votre application reste ouverte ici !</b>
+        </p>
+        <a href="https://github.com/settings/tokens/new?description=La-Centrale&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">
+            🔗 Ouvrir GitHub pour Créer le Token
+        </a>
+        <div style="background:#111827; padding:10px; border-radius:8px; text-align:left; font-size:11px; color:#9ca3af; margin-bottom:10px;">
+            1. Sur la page GitHub, défilez vers le bas et cliquez sur <b>Generate token</b>.<br>
+            2. Copiez le code généré (ex: <i>ghp_...</i>).<br>
+            3. Revenez dans cette fenêtre et collez-le ci-dessous :
+        </div>
+        <input type="text" id="modalTokenInput" placeholder="Collez le Token ghp_... ici" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff; font-size:12px;">
+        <button class="btn btn-save" onclick="saveTokenFromModal()">💾 Valider et Conserver le Token</button>
+    </div>
 </div>
 
 <!-- Pop-up Modal de Editare Baze -->
@@ -480,7 +505,7 @@
             <button class="btn-close-modal" onclick="document.getElementById('iosInstallModal').style.display='none'">✕</button>
         </div>
         <p style="font-size:13px; color:#d1d5db; line-height:1.5;">
-            Pour installer <b>La Centrale</b> sur votre écran d'accueil iOS :
+            Pour créer un raccourci direct sur votre écran d'accueil iOS :
         </p>
         <div style="background:#111827; padding:12px; border-radius:8px; text-align:left; font-size:12px; color:#9ca3af; margin-bottom:12px;">
             1. Appuyez sur le bouton <b>Partager</b> ( ⎘ ) en bas de Safari.<br><br>
@@ -501,7 +526,7 @@
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
     let deferredPrompt = null;
 
-    // Detecție și Instalare PWA (Android / iOS)
+    // Detecție și Instalare PWA (Lansare Nativă Scurtătură)
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -516,7 +541,7 @@
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
-                    showAlert("Installation de l'application en cours...", true);
+                    showAlert("Raccourci en cours de création sur votre écran d'accueil !", true);
                     document.getElementById('installAppBtn').style.display = 'none';
                 }
                 deferredPrompt = null;
@@ -524,7 +549,27 @@
         } else if (isIos) {
             document.getElementById('iosInstallModal').style.display = 'flex';
         } else {
-            showAlert("Ouvrez le menu de votre navigateur (3 points) puis cliquez sur 'Installer l'application'.");
+            showAlert("Raccourci : Ouvrez le menu de votre navigateur (3 points) -> 'Ajouter à l'écran d'accueil'.");
+        }
+    }
+
+    function openTokenModal() {
+        document.getElementById('tokenModalOverlay').style.display = 'flex';
+    }
+
+    function closeTokenModal() {
+        document.getElementById('tokenModalOverlay').style.display = 'none';
+    }
+
+    function saveTokenFromModal() {
+        const t = document.getElementById('modalTokenInput').value.trim();
+        if (t) {
+            localStorage.setItem('central_github_token', t);
+            document.getElementById('ghTokenInput').value = t;
+            closeTokenModal();
+            showAlert("Token enregistré avec succès !", true);
+        } else {
+            alert("Veuillez coller votre token !");
         }
     }
 
