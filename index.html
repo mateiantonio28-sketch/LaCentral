@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Centrale - Recherche Couleur & Base</title>
+    
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    <meta name="apple-mobile-web-app-title" content="La Centrale">
+    <meta name="application-name" content="La Centrale">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <style>
+        :root {
+            --primary: #f8fafc;
+            --accent: #3b82f6;
+            --ai-color: #8b5cf6;
+            --bg: #111827;
+            --panel-bg: #1f2937;
+            --card-bg: #1f2937;
+            --border: #374151;
+            --text: #f3f4f6;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
+        .container { max-width: 720px; margin: 0 auto; display: none; } /* Ascuns până la login */
+
+        /* Ecran Blocat - Auth Utilizatori */
+        .lock-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .lock-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .lock-card h2 { margin: 0 0 6px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
+        .lock-card p { margin: 0 0 16px 0; font-size: 12px; color: #9ca3af; }
+        .lock-card input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #111827;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+        .header h1 { margin: 0; font-size: 22px; color: var(--primary); letter-spacing: -0.5px; text-transform: uppercase; }
+        .header p { margin: 4px 0 0 0; font-size: 12px; color: #9ca3af; font-weight: 500; }
+
+        .search-box {
+            width: 100%;
+            padding: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: #1f2937;
+            color: #fff;
+        }
+        .search-box:focus { border-color: var(--accent); }
+
+        .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #9ca3af; margin: 14px 0 6px 2px; }
+
+        .actions-bar { display: flex; gap: 8px; margin: 12px 0; }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-admin { background-color: #374151; color: #fff; }
+        .btn-ai { background-color: var(--ai-color); color: #fff; }
+        .btn-guide { background-color: #0284c7; color: #fff; }
+        .btn-danger { background-color: var(--danger); color: #fff; }
+
+        .panel {
+            display: none;
+            background: var(--panel-bg);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .panel h3 { margin-top: 0; font-size: 14px; text-transform: uppercase; color: var(--primary); }
+        .panel input, .panel select, .panel textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            background: #111827;
+            color: #fff;
+        }
+        .panel textarea { resize: vertical; font-family: monospace; font-size: 11px; }
+        .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
+
+        /* Modal Editare */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-content {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            padding: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+        .modal-header h3 { margin: 0; font-size: 15px; color: var(--primary); text-transform: uppercase; }
+        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        .edit-bases-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .edit-bases-grid div { display: flex; flex-direction: column; }
+        .edit-bases-grid label { font-size: 11px; color: #60a5fa; font-weight: bold; margin-bottom: 2px; }
+
+        .guide-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+        .guide-table th, .guide-table td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; }
+        .guide-table th { background-color: #111827; color: var(--primary); }
+
+        .chat-box {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            background: #111827;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .chat-msg { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
+        .chat-user { background: var(--accent); color: white; align-self: flex-end; }
+        .chat-ai { background: #374151; color: var(--primary); align-self: flex-start; }
+
+        .palette-group { margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: var(--panel-bg); border: 1px solid var(--border); }
+        .palette-header { padding: 10px 14px; background-color: #374151; color: var(--primary); font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .palette-header:hover { background-color: #4b5563; }
+        .palette-count { background-color: #1f2937; color: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+        .palette-content { display: none; padding: 8px; background-color: #1f2937; }
+
+        .card {
+            background: #111827;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--accent);
+        }
+        .card-header { display: flex; align-items: center; justify-content: space-between; }
+        .card-title-zone { display: flex; align-items: center; gap: 10px; }
+        
+        .color-swatch-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+            cursor: pointer;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
+        }
+
+        .color-code { font-size: 16px; font-weight: 700; color: var(--primary); }
+
+        .btn-edit {
+            background: #374151;
+            border: 1px solid #4b5563;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #f3f4f6;
+        }
+
+        .color-picker-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .color-picker-row input[type="color"] { width: 60px; height: 45px; padding: 0; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: none; }
+
+        .brands-grid { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; border-top: 1px dashed var(--border); }
+        .brand-badge { background: #1f2937; border: 1px solid #374151; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #9ca3af; }
+        .brand-badge span { font-weight: 800; color: #60a5fa; }
+
+        .delete-cb { width: 18px; height: 18px; cursor: pointer; display: none; }
+        .alert-box { display: none; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 12px; font-weight: 600; }
+        .alert-warning { background-color: #78350f; color: #fef3c7; border: 1px solid #b45309; }
+        .alert-success { background-color: #14532d; color: #dcfce7; border: 1px solid #15803d; }
+    </style>
+</head>
+<body>
+
+<!-- Ecran de Autentificare/Înregistrare Utilizator (Colegi) -->
+<div id="userLockScreen" class="lock-screen">
+    <div class="lock-card">
+        <h2>La Centrale</h2>
+        <p id="lockSubtitle">Créer un compte utilisateur (4 caractères)</p>
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur">
+        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 chiffres/lettres)">
+        <button class="btn btn-save" onclick="handleUserAuth()">Accéder à l'application</button>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
+    
+    <div class="header">
+        <h1>La Centrale</h1>
+        <p>Système de Recherche de Couleurs & Bases Techniques</p>
+        <div style="font-size:11px; color:#60a5fa; margin-top:4px;" id="welcomeUser"></div>
+    </div>
+
+    <input type="text" id="searchInput" class="search-box" placeholder="Saisir un code couleur (ex: RAL 9001, 7016...)" oninput="filterColors()">
+
+    <div class="actions-bar">
+        <button class="btn btn-guide" onclick="togglePanel('guidePanel')">📖 Guide des Bases</button>
+        <button class="btn btn-ai" onclick="togglePanel('aiPanel')">🤖 Assistant IA</button>
+        <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
+    </div>
+
+    <div id="alertBanner" class="alert-box"></div>
+
+    <div id="guidePanel" class="panel">
+        <h3>Équivalences des Bases par Marque</h3>
+        <table class="guide-table" id="guideTable">
+            <thead>
+                <tr>
+                    <th>Ton</th>
+                    <th>Trimetal</th>
+                    <th>Herbol</th>
+                    <th>Sikkens</th>
+                    <th>Unikalo</th>
+                    <th>Levis</th>
+                </tr>
+            </thead>
+            <tbody id="guideTableBody"></tbody>
+        </table>
+        <div id="guideAdminControls" style="margin-top:10px; display:none;">
+            <button id="btnEditGuide" class="btn btn-save" style="background-color:#0284c7; margin-bottom:6px;" onclick="enableGuideEditing()">✏️ Éditer le Guide</button>
+            <button id="btnSaveGuide" class="btn btn-save" style="display:none;" onclick="saveGuideData()">💾 Enregistrer le Guide</button>
+        </div>
+    </div>
+
+    <div id="aiPanel" class="panel">
+        <h3 style="color:var(--ai-color);">🤖 Assistant Virtual La Centrale</h3>
+        <div id="chatBox" class="chat-box">
+            <div class="chat-msg chat-ai">Bonjour ! Je peux modifier automatiquement vos bases. Écrivez par exemple : "RAL 9005 est base AC".</div>
+        </div>
+        <div style="display:flex; gap:6px;">
+            <input type="text" id="aiInput" placeholder="Tapez votre consigne..." onkeydown="if(event.key==='Enter') sendAiMessage()">
+            <button class="btn btn-ai" style="flex:0 0 70px;" onclick="sendAiMessage()">OK</button>
+        </div>
+    </div>
+
+    <div id="authPanel" class="panel">
+        <h3>Connexion Administrateur Master</h3>
+        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master">
+        <input type="password" id="authPass" placeholder="Mot de passe">
+        <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
+    </div>
+
+    <div id="adminPanel" class="panel">
+        <h3>Panneau d'Administration Master</h3>
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('addSingle')">+ Ajouter une Couleur (Toutes les marques)</button>
+        <button class="btn btn-danger" style="width:100%; margin-bottom:6px;" onclick="toggleDeleteMode()">🗑️ Mode Suppression Multiple</button>
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#9333ea;" onclick="showAdminForm('importJson')">📥 Importer Codes / Nuanciers JSON</button>
+        <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour du Code Source</button>
+        <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Master</button>
+        
+        <div id="addSingleForm" style="display:none; margin-top:10px;">
+            <input type="text" id="newCode" placeholder="Code Couleur (ex: RAL 9001)">
+            <select id="newPaletteSelect" onchange="checkNewPaletteInput()">
+                <option value="RAL">Nuancier RAL</option>
+                <option value="5051">5051 Color Concept</option>
+                <option value="4041">4041 Color Concept</option>
+                <option value="NCS">NCS</option>
+                <option value="ACC Color Map">ACC Color Map</option>
+                <option value="NEW">+ Créer un nouveau nuancier...</option>
+            </select>
+            <input type="text" id="newCustomPalette" placeholder="Nom du nuancier" style="display:none;">
+            <button class="btn btn-save" onclick="saveSingleColor()">Enregistrer la couleur</button>
+        </div>
+
+        <div id="importJsonForm" style="display:none; margin-top:10px;">
+            <textarea id="importCode" rows="5" placeholder='[{"code": "RAL 9001", "palette": "RAL", "hex": "#fdfbf7"}]'></textarea>
+            <button class="btn btn-save" onclick="importJsonPalette()">Lancer l'importation JSON</button>
+        </div>
+
+        <div id="updateAppForm" style="display:none; margin-top:10px;">
+            <p style="font-size:11px; color:#9ca3af; margin-top:0;">Collez le nouveau code ici pour mettre à jour l'application de façon permanente.</p>
+            <textarea id="sourceCodeInput" rows="6" placeholder="Collez le code HTML/JS ici..."></textarea>
+            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="applyAppUpdate()">Enregistrer la Mise à jour Pérènne</button>
+        </div>
+
+        <div id="deleteMultiPanel" style="display:none; margin-top:10px; background:#451a1a; padding:10px; border-radius:6px; border:1px solid #7f1d1d;">
+            <p style="font-size:12px; color:#fca5a5; margin:0 0 8px 0; font-weight:bold;">Cochez les couleurs à supprimer ci-dessous puis cliquez sur Valider :</p>
+            <button class="btn btn-danger" style="width:100%;" onclick="confirmDeleteSelected()">Confirmer la Suppression (Code 2805 Requis)</button>
+        </div>
+    </div>
+
+    <div class="section-label">Nuanciers Disponibles</div>
+    <div id="resultsList"></div>
+
+</div>
+
+<!-- Pop-up Modal de Editare Baze (Disponibil Utilizatorilor) -->
+<div id="editModalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalEditTitle">Ajuster les Bases</h3>
+            <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
+        </div>
+        
+        <input type="hidden" id="fullEditIndex" value="-1">
+        
+        <!-- Numele si Culoarea Vizuala pot fi modificate DOAR de Master Admin -->
+        <div id="masterOnlyFields" style="display:none;">
+            <label style="font-size:11px; color:#9ca3af;">Nom / Code :</label>
+            <input type="text" id="editCodeInput" style="width:100%; padding:8px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+
+            <label style="font-size:11px; color:#9ca3af;">Nuance Visuelle :</label>
+            <div class="color-picker-row">
+                <input type="color" id="fullColorPicker" value="#ffffff">
+            </div>
+        </div>
+
+        <label style="font-size:11px; color:#60a5fa; margin-bottom:6px; display:block; font-weight:bold;">Correction des Bases (Sauvegardé localement) :</label>
+        <div class="edit-bases-grid">
+            <div>
+                <label>Trimetal</label>
+                <input type="text" id="editBaseTrimetal" placeholder="AW, AC" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+            <div>
+                <label>Herbol</label>
+                <input type="text" id="editBaseHerbol" placeholder="DU1, DU3" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+            <div>
+                <label>Sikkens</label>
+                <input type="text" id="editBaseSikkens" placeholder="W05, N00" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+            <div>
+                <label>Unikalo</label>
+                <input type="text" id="editBaseUnikalo" placeholder="Blanc, D" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+            <div style="grid-column: span 2;">
+                <label>Levis</label>
+                <input type="text" id="editBaseLevis" placeholder="White, Clear" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+        </div>
+
+        <button class="btn btn-save" onclick="saveFullEdit()">Enregistrer les Bases</button>
+    </div>
+</div>
+
+<script>
+    // Logică Autentificare Colegi
+    let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
+
+    function initUserScreen() {
+        const lockScreen = document.getElementById('userLockScreen');
+        const subtitle = document.getElementById('lockSubtitle');
+        const userInput = document.getElementById('regUser');
+
+        if (localUser) {
+            subtitle.textContent = `Content de vous revoir ! Entrez le PIN pour ${localUser.name}`;
+            userInput.value = localUser.name;
+            userInput.disabled = true;
+        } else {
+            subtitle.textContent = "Créer un profil local (PIN à 4 caractères)";
+        }
+    }
+
+    function handleUserAuth() {
+        const name = document.getElementById('regUser').value.trim();
+        const pin = document.getElementById('regPin').value.trim();
+
+        if (!name || pin.length !== 4) {
+            alert("Veuillez saisir un nom et un code PIN exactement à 4 caractères !");
+            return;
+        }
+
+        if (!localUser) {
+            localUser = { name: name, pin: pin };
+            localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
+        } else {
+            if (pin !== localUser.pin) {
+                alert("Code PIN incorrect !");
+                return;
+            }
+        }
+
+        document.getElementById('userLockScreen').style.display = 'none';
+        document.getElementById('mainContainer').style.display = 'block';
+        document.getElementById('welcomeUser').textContent = `Utilisateur connecté : ${localUser.name}`;
+    }
+
+    const defaultGuideData = [
+        { ton: "Clair", trimetal: "AW / SW", herbol: "DU1 / LU1", sikkens: "W05 / AW", unikalo: "Blanc / B+", levis: "White" },
+        { ton: "Foncé", trimetal: "AC / SC", herbol: "DU3 / LU4", sikkens: "N00 / AC", unikalo: "C / D", levis: "Clear" }
+    ];
+
+    let guideData = JSON.parse(localStorage.getItem('central_guide_bases_data')) || defaultGuideData;
+
+    function renderGuideTable() {
+        const tbody = document.getElementById('guideTableBody');
+        tbody.innerHTML = '';
+        guideData.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${row.ton}</strong></td>
+                <td>${row.trimetal}</td>
+                <td>${row.herbol}</td>
+                <td>${row.sikkens}</td>
+                <td>${row.unikalo}</td>
+                <td>${row.levis}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    const brandBasesMap = {
+        dark: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D", Levis: "Clear" },
+        light: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc", Levis: "White" }
+    };
+
+    const defaultDatabase = [
+        { code: "RAL 9001", palette: "RAL", hex: "#fdfbf7", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc", Levis: "White" } },
+        { code: "RAL 9010", palette: "RAL", hex: "#f0ede6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc", Levis: "White" } },
+        { code: "RAL 7016", palette: "RAL", hex: "#373e48", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D", Levis: "Clear" } },
+        { code: "RAL 9005", palette: "RAL", hex: "#0a0a0a", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D", Levis: "Clear" } }
+    ];
+
+    let customDatabase = JSON.parse(localStorage.getItem('central_unified_paint_data')) || defaultDatabase;
+    let isAuthenticated = false;
+    let isDeleteMode = false;
+    let openPalettes = {};
+
+    function saveToStorage() {
+        localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase));
+    }
+
+    function showAlert(msg, isSuccess = false) {
+        const b = document.getElementById('alertBanner');
+        b.className = `alert-box ${isSuccess ? 'alert-success' : 'alert-warning'}`;
+        b.textContent = msg;
+        b.style.display = 'block';
+        setTimeout(() => { b.style.display = 'none'; }, 4000);
+    }
+
+    function togglePanel(panelId) {
+        const panel = document.getElementById(panelId);
+        const isVisible = panel.style.display === 'block';
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        if (!isVisible) panel.style.display = 'block';
+    }
+
+    function openAdminAuth() {
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        if (isAuthenticated) {
+            document.getElementById('adminPanel').style.display = 'block';
+        } else {
+            document.getElementById('authPanel').style.display = 'block';
+        }
+    }
+
+    function validateAuth() {
+        const u = document.getElementById('authUser').value.trim();
+        const p = document.getElementById('authPass').value.trim();
+        if (u === "Antonio" && p === "28051994") {
+            isAuthenticated = true;
+            document.getElementById('authPanel').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('guideAdminControls').style.display = 'block';
+            showAlert("Connexion Master Administrateur réussie.", true);
+        } else {
+            showAlert("Identifiants Administrateur incorrects.");
+        }
+    }
+
+    function logoutAdmin() {
+        isAuthenticated = false;
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('guideAdminControls').style.display = 'none';
+        showAlert("Déconnexion réussie.", true);
+    }
+
+    function openFullEdit(index) {
+        const item = customDatabase[index];
+        document.getElementById('fullEditIndex').value = index;
+        document.getElementById('modalEditTitle').textContent = `Modifier bases: ${item.code}`;
+        
+        // Afișează opțiunile avansate doar dacă e Master Admin
+        document.getElementById('masterOnlyFields').style.display = isAuthenticated ? 'block' : 'none';
+        document.getElementById('editCodeInput').value = item.code;
+        document.getElementById('fullColorPicker').value = item.hex || '#cbd5e1';
+
+        const b = item.bases || {};
+        document.getElementById('editBaseTrimetal').value = b.Trimetal || "";
+        document.getElementById('editBaseHerbol').value = b.Herbol || "";
+        document.getElementById('editBaseSikkens').value = b.Sikkens || "";
+        document.getElementById('editBaseUnikalo').value = b.Unikalo || "";
+        document.getElementById('editBaseLevis').value = b.Levis || "";
+
+        document.getElementById('editModalOverlay').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModalOverlay').style.display = 'none';
+    }
+
+    function saveFullEdit() {
+        const index = parseInt(document.getElementById('fullEditIndex').value);
+        if (index >= 0) {
+            if (isAuthenticated) {
+                const newCode = document.getElementById('editCodeInput').value.trim().toUpperCase();
+                if (newCode) customDatabase[index].code = newCode;
+                customDatabase[index].hex = document.getElementById('fullColorPicker').value;
+            }
+
+            customDatabase[index].bases = {
+                Trimetal: document.getElementById('editBaseTrimetal').value.trim().toUpperCase(),
+                Herbol: document.getElementById('editBaseHerbol').value.trim().toUpperCase(),
+                Sikkens: document.getElementById('editBaseSikkens').value.trim().toUpperCase(),
+                Unikalo: document.getElementById('editBaseUnikalo').value.trim(),
+                Levis: document.getElementById('editBaseLevis').value.trim()
+            };
+
+            saveToStorage();
+            filterColors();
+            closeEditModal();
+            showAlert(`Bases mises à jour localement pour ${customDatabase[index].code}.`, true);
+        }
+    }
+
+    function togglePalette(paletteName) {
+        openPalettes[paletteName] = !openPalettes[paletteName];
+        filterColors();
+    }
+
+    function filterColors() {
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const container = document.getElementById('resultsList');
+        container.innerHTML = '';
+
+        const filtered = customDatabase.filter(item => item.code.toLowerCase().includes(query));
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
+            return;
+        }
+
+        const grouped = {};
+        filtered.forEach(item => {
+            const p = item.palette || "RAL";
+            if (!grouped[p]) grouped[p] = [];
+            grouped[p].push(item);
+        });
+
+        Object.keys(grouped).sort().forEach(pName => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'palette-group';
+
+            const isOpen = query.length > 0 || openPalettes[pName];
+
+            const header = document.createElement('div');
+            header.className = 'palette-header';
+            header.innerHTML = `
+                <span>Nuancier : ${pName}</span>
+                <span class="palette-count">${grouped[pName].length} codes</span>
+            `;
+            header.onclick = () => togglePalette(pName);
+
+            const content = document.createElement('div');
+            content.className = 'palette-content';
+            content.style.display = isOpen ? 'block' : 'none';
+
+            grouped[pName].forEach(item => {
+                const gIndex = customDatabase.indexOf(item);
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                const swatchColor = item.hex || '#cbd5e1';
+                
+                let brandsHtml = '';
+                if (item.bases) {
+                    Object.keys(item.bases).forEach(bName => {
+                        brandsHtml += `<div class="brand-badge">${bName}: <span>${item.bases[bName]}</span></div>`;
+                    });
+                }
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-title-zone">
+                            <div class="color-swatch-btn" style="background-color: ${swatchColor};" onclick="openFullEdit(${gIndex})"></div>
+                            <div class="color-code">${item.code}</div>
+                        </div>
+                        <button class="btn-edit" onclick="openFullEdit(${gIndex})">✏️ Bases</button>
+                    </div>
+                    <div class="brands-grid">${brandsHtml}</div>
+                `;
+                content.appendChild(card);
+            });
+
+            groupDiv.appendChild(header);
+            groupDiv.appendChild(content);
+            container.appendChild(groupDiv);
+        });
+    }
+
+    function sendAiMessage() {
+        const input = document.getElementById('aiInput');
+        const query = input.value.trim();
+        if (!query) return;
+
+        const chatBox = document.getElementById('chatBox');
+        const userMsg = document.createElement('div');
+        userMsg.className = 'chat-msg chat-user';
+        userMsg.textContent = query;
+        chatBox.appendChild(userMsg);
+
+        input.value = '';
+
+        setTimeout(() => {
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'chat-msg chat-ai';
+            const q = query.toUpperCase();
+            
+            let targetItem = customDatabase.find(item => q.includes(item.code.toUpperCase()));
+
+            if (targetItem) {
+                if (q.includes("AC") || q.includes("DU3") || q.includes("N00")) {
+                    targetItem.bases = { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D", Levis: "Clear" };
+                    saveToStorage();
+                    filterColors();
+                    aiMsg.textContent = `✅ Bases mises à jour vers le ton Foncé pour ${targetItem.code}.`;
+                } else if (q.includes("AW") || q.includes("DU1") || q.includes("W05")) {
+                    targetItem.bases = { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc", Levis: "White" };
+                    saveToStorage();
+                    filterColors();
+                    aiMsg.textContent = `✅ Bases mises à jour vers le ton Clair pour ${targetItem.code}.`;
+                } else {
+                    aiMsg.textContent = `Code ${targetItem.code} trouvé. Indiquez la base souhaitée (AC ou AW).`;
+                }
+            } else {
+                aiMsg.textContent = "Posez une question ou indiquez un changement (ex: 'RAL 9005 base AC').";
+            }
+
+            chatBox.appendChild(aiMsg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 400);
+    }
+
+    initUserScreen();
+    renderGuideTable();
+    filterColors();
+</script>
+
+</body>
+</html>
