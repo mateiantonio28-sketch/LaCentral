@@ -348,12 +348,12 @@
             <button class="btn btn-save" onclick="importJsonPalette()">Lancer l'importation JSON</button>
         </div>
 
-        <!-- Formular Update Direct pe GitHub via API -->
+        <!-- Formular Update Direct pe GitHub cu Token Salvat Permanent -->
         <div id="updateAppForm" style="display:none; margin-top:10px;">
-            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Mise à jour en direct sur GitHub (Pour tous les appareils) :</p>
+            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">🚀 Mise à jour Directe GitHub (Connecté Permanemment) :</p>
             
-            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub (ghp_...) :</label>
-            <input type="password" id="ghTokenInput" placeholder="Collez votre Token Personal Access Token ici">
+            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub Access (Sauvegardé) :</label>
+            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...) une fois pour toutes">
             
             <label style="font-size:11px; color:#9ca3af;">Nouveau Code Source HTML complet :</label>
             <textarea id="sourceCodeInput" rows="6" placeholder="Collez le nouveau code HTML/JS ici..."></textarea>
@@ -425,9 +425,15 @@
     const GITHUB_REPO = "mateiantonio28-sketch/La-Central";
     const GITHUB_FILE_PATH = "index.html";
 
+    // Poți lipi tokenul tău permanent între ghilimele mai jos dacă dorești să fie integrat în fișier:
+    const DEFAULT_GITHUB_TOKEN = ""; 
+
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
-    const savedGhToken = localStorage.getItem('central_github_token') || "";
+
+    function getSavedToken() {
+        return localStorage.getItem('central_github_token') || DEFAULT_GITHUB_TOKEN || "";
+    }
 
     function checkActiveSession() {
         const adminExpiry = localStorage.getItem('admin_session_expiry');
@@ -523,8 +529,9 @@
         document.getElementById('guideAdminControls').style.display = 'block';
         document.getElementById('welcomeUser').textContent = "Connecté en tant que : Master Administrateur";
         
-        if (savedGhToken) {
-            document.getElementById('ghTokenInput').value = savedGhToken;
+        const token = getSavedToken();
+        if (token) {
+            document.getElementById('ghTokenInput').value = token;
         }
 
         showAlert("Connexion Master Administrateur réussie (Session active 10h).", true);
@@ -546,8 +553,10 @@
         document.getElementById('addSingleForm').style.display = (type === 'addSingle') ? 'block' : 'none';
         document.getElementById('importJsonForm').style.display = (type === 'importJson') ? 'block' : 'none';
         document.getElementById('updateAppForm').style.display = (type === 'updateApp') ? 'block' : 'none';
-        if (type === 'updateApp' && savedGhToken) {
-            document.getElementById('ghTokenInput').value = savedGhToken;
+        
+        if (type === 'updateApp') {
+            const token = getSavedToken();
+            if (token) document.getElementById('ghTokenInput').value = token;
         }
     }
 
@@ -557,14 +566,14 @@
     }
 
     async function publishToGithub() {
-        const token = document.getElementById('ghTokenInput').value.trim();
+        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
         const newCode = document.getElementById('sourceCodeInput').value.trim();
 
         if (!token) { showAlert("Veuillez saisir votre Token Access GitHub !"); return; }
         if (!newCode) { showAlert("Veuillez coller le nouveau code source !"); return; }
 
         localStorage.setItem('central_github_token', token);
-        showAlert("Connexion à GitHub en cours...");
+        showAlert("Connexion et publication directe sur GitHub en cours...");
 
         try {
             const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
@@ -572,7 +581,7 @@
                 headers: { "Authorization": `token ${token}` }
             });
 
-            if (!getRes.ok) throw new Error("Impossible de récupérer le fichier. Vérifiez le Token.");
+            if (!getRes.ok) throw new Error("Accès refusé. Vérifiez le Token GitHub.");
 
             const getData = await getRes.json();
             const fileSha = getData.sha;
@@ -592,7 +601,7 @@
             });
 
             if (putRes.ok) {
-                showAlert("🚀 Mise à jour publiée avec succès sur GitHub ! Déploiement en 1-2 min.", true);
+                showAlert("🚀 Mise à jour effectuée et publiée sur GitHub ! Déploiement auto en 1-2 min.", true);
                 setTimeout(() => { location.reload(); }, 2000);
             } else {
                 const errData = await putRes.json();
