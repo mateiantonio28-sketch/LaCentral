@@ -1028,6 +1028,11 @@
     checkActiveSession();
     renderGuideTable();
     filterColors();
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(() => {
+    console.log('Service Worker Registrat cu succes!');
+  });
+}
 </script>
 
 </body>
