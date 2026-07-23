@@ -259,7 +259,7 @@
                 ⋮ <span id="collabBadge" class="collab-badge">0</span>
             </button>
         </div>
-        <div class="version-badge">v0.015</div>
+        <div class="version-badge">v0.016</div>
     </div>
 
     <div class="header" style="margin-top: 0;">
@@ -427,10 +427,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.015">
+            <input type="text" id="newVersionInput" value="v0.016">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Alarme persistante avec sons multiples et vibrations pour les alertes stock !">
+            <input type="text" id="newChangelogInput" value="Alarme sonore et vibrations bilatérales : alertes stock et notification de validation pour les teinteurs !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -449,7 +449,7 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.015</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.016</span>
     </div>
 </div>
 
@@ -580,7 +580,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.015"; 
+    const CURRENT_APP_VERSION = "v0.016"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -992,25 +992,23 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
-    // --- ALARMĂ PERSISTENTĂ: SUNET MULTIPLU + VIBRAȚII (V0.015) ---
+    // --- ALARMĂ PERSISTENTĂ BILATERALĂ (V0.016) ---
     let pendingCollabUpdates = [];
     let dismissedUpdateIds = JSON.parse(localStorage.getItem('central_dismissed_updates')) || [];
     let stockRequestsList = [];
+    let completedStockNotified = JSON.parse(localStorage.getItem('central_completed_notified')) || [];
 
     function playPersistentAlarm() {
-        // 1. Vibrație fizică pe telefon (Model de alarmă: 400ms vibrație, 200ms pauză, repetat de 4 ori)
         if ("vibrate" in navigator) {
             try { navigator.vibrate([400, 200, 400, 200, 600, 200, 600]); } catch(e) {}
         }
-
-        // 2. Alarmă sonoră lungă (repetată de 5 ori cadențat)
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             for (let i = 0; i < 5; i++) {
                 let startTime = audioCtx.currentTime + (i * 0.25);
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                osc.type = 'sawtooth'; // Sunet mai strident, tip alarmă
+                osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(660 + (i * 100), startTime);
                 gain.gain.setValueAtTime(0.4, startTime);
                 osc.connect(gain);
@@ -1027,6 +1025,7 @@
             return;
         }
 
+        // Ascultator pentru modificări de baze
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
             const data = snapshot.val();
@@ -1037,7 +1036,6 @@
                 
                 pendingCollabUpdates = updatesList.filter(u => u.author !== myName && !dismissedUpdateIds.includes(u.id));
                 
-                // Dacă au apărut notificări noi pe baze și suntem pe secțiunea baze -> Alarmă!
                 if (pendingCollabUpdates.length > prevCount && prevCount >= 0) {
                     playPersistentAlarm();
                 }
@@ -1046,6 +1044,7 @@
             }
         });
 
+        // Ascultator pentru cereri de stoc și validări
         const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
         window.FB_onValue(stockRef, (snapshot) => {
             const data = snapshot.val();
@@ -1054,10 +1053,21 @@
                 let previousCount = stockRequestsList.length;
                 stockRequestsList = rawStock.filter(s => s.status === 'pending');
                 
-                // Dacă suntem magazinier și a sosit o comandă nouă de găleți -> ALARMĂ LUNGĂ + VIBRAȚII!
+                // Dacă suntem magazinier și apare o cerere nouă -> Alarmă!
                 if (localUser && localUser.role === 'Magazinier' && stockRequestsList.length > previousCount && previousCount >= 0) {
                     playPersistentAlarm();
                 }
+
+                // Verificăm dacă o cerere făcută de TEINTEUR a devenit 'completed' (validată de magazinier)
+                rawStock.forEach(req => {
+                    if (req.status === 'completed' && req.author === (localUser ? localUser.name : '') && !completedStockNotified.includes(req.id)) {
+                        completedStockNotified.push(req.id);
+                        localStorage.setItem('central_completed_notified', JSON.stringify(completedStockNotified));
+                        playPersistentAlarm(); // Sunet și vibrație pentru teinteur!
+                        showAlert(`✅ Marfa a fost pregătită/reumplută pentru: ${req.product} (${req.location}) !`, true);
+                    }
+                });
+
                 renderStockRequests();
             } else {
                 stockRequestsList = [];
@@ -1129,7 +1139,7 @@
         if (!window.FB_db) return;
         const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
         window.FB_set(reqRef, 'completed').then(() => {
-            showAlert("✅ Stock validé !", true);
+            showAlert("✅ Stock validé ! Le teinteur a été notifié.", true);
             stockRequestsList = stockRequestsList.filter(r => r.id !== reqId);
             renderStockRequests();
         });
