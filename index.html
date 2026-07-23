@@ -355,11 +355,27 @@
             <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
         </div>
         <input type="hidden" id="fullEditIndex">
-        <label class="section-label">Trimetal</label><input type="text" id="editBaseTrimetal">
-        <label class="section-label">Herbol</label><input type="text" id="editBaseHerbol">
-        <label class="section-label">Sikkens</label><input type="text" id="editBaseSikkens">
-        <label class="section-label">Unikalo</label><input type="text" id="editBaseUnikalo">
-        <button class="btn btn-save" onclick="saveFullEdit()" style="margin-top:10px;">Enregistrer les modifications</button>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; margin-top: 10px;">
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Trimetal</label>
+                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Herbol</label>
+                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Sikkens</label>
+                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Unikalo</label>
+                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
+            </div>
+        </div>
+
+        <button class="btn btn-save" onclick="saveFullEdit()">Enregistrer les modifications</button>
     </div>
 </div>
 
