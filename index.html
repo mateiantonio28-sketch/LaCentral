@@ -9,7 +9,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>La Centrale - Gestion & Stock</title>
+    <title>La Centrale - Gestion & Stock Dépôt</title>
     
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
     <meta name="theme-color" content="#111827">
@@ -52,6 +52,7 @@
             --text: #f3f4f6;
             --danger: #ef4444;
             --success: #16a34a;
+            --warning: #f59e0b;
         }
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -138,6 +139,7 @@
             width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border);
             border-radius: 6px; font-size: 13px; background: #111827; color: #fff;
         }
+        .panel input[readonly] { opacity: 1; cursor: pointer; }
         .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
 
         .collapsible-btn {
@@ -197,6 +199,11 @@
         .alert-warning { background-color: #78350f; color: #fef3c7; border: 1px solid #b45309; }
         .alert-success { background-color: #14532d; color: #dcfce7; border: 1px solid #15803d; }
 
+        /* TABURI PENTRU MODUL STOCK (RAPID VS LISTĂ) */
+        .stock-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+        .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
+        .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
         /* TASTATURA VIRTUALĂ */
         .virtual-keyboard {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%;
@@ -234,6 +241,15 @@
             <option value="Préparateur de commande">Préparateur de commande</option>
         </select>
 
+        <!-- SELECTOR TASTATURĂ DIRECT DE LA LOGARE -->
+        <div style="margin-top:10px; margin-bottom:10px; text-align:left; background:#111827; padding:8px; border-radius:6px; border:1px solid var(--border);">
+            <label style="font-size:11px; color:#9ca3af; display:block; margin-bottom:4px;">Clavier à utiliser :</label>
+            <select id="regKeyboardPref" style="margin-bottom:0;">
+                <option value="app">⌨️ Clavier App (Virtuel)</option>
+                <option value="phone">📱 Clavier Téléphone (Natif)</option>
+            </select>
+        </div>
+
         <button class="btn btn-save" onclick="handleUserAuth()">Accéder à l'application</button>
         <div style="margin-top:14px; border-top:1px dashed var(--border); padding-top:10px;">
             <button class="btn btn-admin" style="width:100%; font-size:11px;" onclick="quickAdminAuthPrompt()">🔒 Accès Administrateur Master</button>
@@ -261,7 +277,7 @@
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
             <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
-            <div class="version-badge">v0.017</div>
+            <div class="version-badge">v0.018</div>
         </div>
     </div>
 
@@ -313,35 +329,59 @@
         </div>
     </div>
 
-    <!-- SECȚIUNEA STOCK: LISTĂ MULTIPLĂ (COȘ) -->
+    <!-- SECȚIUNEA STOCK: MOD DUAL (CERERE RAPIDĂ VS LISTĂ MULTIPLĂ) -->
     <div id="sectionStockContent" style="display: none;">
-        <div class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
-            <h3 style="color:#4ade80;">📦 Créer une Liste de Stock (Multi-produits)</h3>
-            <p style="font-size:12px; color:#9ca3af; margin-top:0;">Ajoutez les produits un par un à la liste, puis envoyez la commande groupée au magazinier.</p>
-            
-            <input type="text" id="stockProduct" placeholder="Nom du produit (ex: Trimetal Ultramat)">
-            <input type="text" id="stockBase" placeholder="Base (ex: AW / AC / Blanc)">
+        
+        <!-- Taburi de comutare -->
+        <div class="stock-tabs">
+            <button class="stock-tab-btn active" id="tabBtnSingle" onclick="switchStockMode('single')">⚡ Demande Rapide (1 Produit)</button>
+            <button class="stock-tab-btn" id="tabBtnList" onclick="switchStockMode('list')">📋 Créer une Liste Multi-produits</button>
+        </div>
+
+        <!-- MOD 1: UN SINGUR PRODUS -->
+        <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
+            <h3 style="color:#4ade80;">⚡ Demande Rapide de Seau / Produit</h3>
+            <input type="text" id="singleProduct" placeholder="Nom du produit (ex: Trimetal Ultramat)">
+            <input type="text" id="singleBase" placeholder="Base (ex: AW / AC / Blanc)">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="stockBucketSize" placeholder="Capacité (ex: 10L / 4L)">
-                <input type="number" id="stockQuantity" placeholder="Nombre (ex: 3)" min="1" value="1">
+                <input type="text" id="singleBucketSize" placeholder="Capacité (ex: 10L / 4L)">
+                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1">
             </div>
-            <input type="text" id="stockLocation" placeholder="Adresse / Emplacement (ex: Rayon 3 / Chantier Liège)">
+            <input type="text" id="singleLocation" placeholder="Emplacement Rayon (ex: Rayon 3, Allée 2)">
+            <button class="btn btn-save" style="background-color:var(--success);" onclick="sendSingleStockRequest()">📨 Envoyer la Demande Urgente</button>
+        </div>
+
+        <!-- MOD 2: CREARE LISTĂ MULTIPLĂ -->
+        <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
+            <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock (Rayons)</h3>
+            <input type="text" id="listProduct" placeholder="Nom du produit">
+            <input type="text" id="listBase" placeholder="Base (ex: AW / AC)">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <input type="text" id="listBucketSize" placeholder="Capacité (ex: 10L)">
+                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1">
+            </div>
+            <input type="text" id="listLocation" placeholder="Emplacement Rayon">
+            <button class="btn btn-save" style="background-color:#374151; margin-top:4px;" onclick="addStockItemToList()">➕ Ajouter à la liste</button>
             
-            <button class="btn btn-save" style="background-color:#374151; margin-bottom: 8px;" onclick="addStockItemToList()">➕ Ajouter à la liste</button>
-        </div>
-
-        <!-- LISTA CURENTĂ ÎN CURS DE COMPUNERE -->
-        <div class="panel" style="display: block; background: #111827; border-color: var(--border); margin-bottom: 16px;">
-            <h4 style="margin:0 0 10px 0; color:#60a5fa; font-size:13px;">📋 Liste des produits à commander :</h4>
-            <div id="currentStockCart" style="display:flex; flex-direction:column; gap:6px; margin-bottom:12px;">
-                <div style="text-align:center; color:#6b7280; font-size:12px; padding:10px;">Aucun produit dans la liste.</div>
+            <div style="margin-top: 12px; background: #111827; padding: 10px; border-radius: 6px; border:1px solid var(--border);">
+                <h4 style="margin:0 0 8px 0; color:#60a5fa; font-size:12px;">Articles dans la liste en cours :</h4>
+                <div id="stockCartItemsList" style="max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
+                    <div style="text-align:center; color:#6b7280; font-size:11px; padding:6px;">Aucun article ajouté.</div>
+                </div>
+                <button class="btn btn-save" id="sendStockCartBtn" style="background-color:var(--success); display:none; padding:8px; font-size:12px;" onclick="sendFinalStockList()">🚀 Envoyer la Liste Complète au Magazinier</button>
             </div>
-            <button class="btn btn-save" id="sendStockCartBtn" style="background-color:var(--success); display:none;" onclick="sendFinalStockList()">🚀 Envoyer la liste complète au magazinier</button>
         </div>
 
+        <!-- LISTELE / CERERILE ACTIVE -->
         <div class="section-label">Demandes de stock en cours :</div>
         <div id="stockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
             <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active.</div>
+        </div>
+
+        <!-- LISTA PRODUSELOR OUT OF STOCK (EPUIZATE ÎN DEPOZIT) -->
+        <div class="section-label" style="color:var(--danger); margin-top:24px;">❌ Produits Out of Stock (En attente de réapprovisionnement dépôt) :</div>
+        <div id="outOfStockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:15px; color:#9ca3af; font-size:12px;">Aucun produit en rupture de stock.</div>
         </div>
     </div>
 
@@ -445,10 +485,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.017">
+            <input type="text" id="newVersionInput" value="v0.018">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Commandes de stock multiples (coş), mode silencieux pour les chefs d'équipe et historique intelligent 6h-19h !">
+            <input type="text" id="newChangelogInput" value="Mode dual stock (1 produit vs liste), Out of Stock persistant, clavier configurable au login et historique 06:00-19:00 !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -467,11 +507,10 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.017</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.018</span>
     </div>
 </div>
 
-<!-- MODAL ISTORIC ZILNIC (06:00 - 19:00) -->
 <div id="historyModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -480,19 +519,18 @@
         </div>
         <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activités et modifications enregistrées aujourd'hui :</p>
         <div id="historyLogsList" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée pour le moment.</div>
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée.</div>
         </div>
     </div>
 </div>
 
-<!-- MODAL NOTIFICĂRI COLABORATIVE -->
 <div id="collabModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
             <h3>👥 Notifications d'Équipe</h3>
             <button class="btn-close-modal" onclick="closeCollabModal()">✕</button>
         </div>
-        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activité de l'équipe sur le terrain :</p>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activité de l'équipe :</p>
         
         <div id="acceptAllContainer" style="display:none; margin-bottom: 10px;">
             <button class="btn btn-save" style="background-color: var(--accent); padding: 8px; font-size: 12px;" onclick="acceptAllCollabUpdates()">⚡ Tout accepter d'un coup</button>
@@ -504,7 +542,6 @@
     </div>
 </div>
 
-<!-- MODAL UPDATE -->
 <div id="changelogModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
         <h3 style="color:#10b981; margin-top:0; font-size:18px;">🎉 L'Application a été mise à jour !</h3>
@@ -516,7 +553,6 @@
     </div>
 </div>
 
-<!-- MODAL TOKEN -->
 <div id="tokenModalOverlay" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <div class="modal-header">
@@ -529,7 +565,6 @@
     </div>
 </div>
 
-<!-- MODAL EDITARE BAZE -->
 <div id="editModalOverlay" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -616,7 +651,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.017"; 
+    const CURRENT_APP_VERSION = "v0.018"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -633,25 +668,26 @@
     let isVkEnabled = localStorage.getItem('central_vk_enabled') !== 'false'; 
 
     function applyVkState() {
-        const searchInput = document.getElementById('searchInput');
-        const dedicatedInput = document.getElementById('dedicatedSearchInput');
         const toggleBtn = document.getElementById('vkToggleBtn');
-        
-        if (isVkEnabled) {
-            if(searchInput) searchInput.setAttribute('readonly', 'true'); 
-            if(dedicatedInput) dedicatedInput.setAttribute('readonly', 'true'); 
-            if(toggleBtn) {
+        const inputsToProcess = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
+
+        inputsToProcess.forEach(el => {
+            if (isVkEnabled) {
+                el.setAttribute('readonly', 'true');
+            } else {
+                el.removeAttribute('readonly');
+            }
+        });
+
+        if (toggleBtn) {
+            if (isVkEnabled) {
                 toggleBtn.innerHTML = '⌨️ Clavier App: ON';
                 toggleBtn.style.backgroundColor = 'var(--ai-color)';
-            }
-        } else {
-            if(searchInput) searchInput.removeAttribute('readonly');
-            if(dedicatedInput) dedicatedInput.removeAttribute('readonly');
-            if(toggleBtn) {
+            } else {
                 toggleBtn.innerHTML = '📱 Clavier Tél: OFF';
                 toggleBtn.style.backgroundColor = '#374151';
+                vClose();
             }
-            vClose(); 
         }
     }
 
@@ -661,15 +697,13 @@
         applyVkState();
     }
 
-    ['searchInput', 'dedicatedSearchInput', 'stockProduct', 'stockBase', 'stockBucketSize', 'stockQuantity', 'stockLocation'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) {
-            el.addEventListener('click', function() {
-                if (isVkEnabled) { activeVirtualInput = this; document.getElementById('virtualKeyboard').style.display = 'block'; }
-            });
-            el.addEventListener('focus', function() {
-                if (isVkEnabled) { activeVirtualInput = this; document.getElementById('virtualKeyboard').style.display = 'block'; }
-            });
+    // Atașare tastatură virtuală pe toate inputurile text/number din pagină
+    document.addEventListener('click', function(e) {
+        if (isVkEnabled && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+            if(e.target.type !== 'password' && e.target.type !== 'select-one') {
+                activeVirtualInput = e.target;
+                document.getElementById('virtualKeyboard').style.display = 'block';
+            }
         }
     });
 
@@ -692,8 +726,6 @@
             activeVirtualInput = null;
         }
     }
-    
-    applyVkState();
 
     let guideBasesData = JSON.parse(localStorage.getItem('central_guide_bases_table')) || {
         clair: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" },
@@ -816,7 +848,6 @@
             const dateEl = document.getElementById('currentDateDisplay');
             if (dateEl) dateEl.textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
-            // Verificare curățare istoric zilnic (la ora 19:00 sau după)
             checkDailyHistoryReset(now);
 
             if (document.getElementById('mainContainer').style.display === 'block') {
@@ -898,6 +929,7 @@
             userInput.value = localUser.name;
             userInput.disabled = true;
             document.getElementById('regRole').value = localUser.role || "Teinteur";
+            document.getElementById('regKeyboardPref').value = isVkEnabled ? "app" : "phone";
         } else {
             subtitle.textContent = "Créer un profil local (PIN à 4 caractères)";
         }
@@ -907,8 +939,14 @@
         const name = document.getElementById('regUser').value.trim();
         const pin = document.getElementById('regPin').value.trim();
         const role = document.getElementById('regRole').value;
+        const kbPref = document.getElementById('regKeyboardPref').value;
 
         if (!name || pin.length !== 4) { alert("Nom et PIN 4 caractères obligatoires !"); return; }
+        
+        isVkEnabled = (kbPref === 'app');
+        localStorage.setItem('central_vk_enabled', isVkEnabled);
+        applyVkState();
+
         if (!localUser) {
             localUser = { name: name, pin: pin, role: role };
             localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
@@ -949,7 +987,7 @@
 
         if (currentAppSection === 'Stock') {
             title.textContent = "Gestion du Stock";
-            subtitle.textContent = "Commandes groupées de seaux et produits";
+            subtitle.textContent = "Commandes de seaux et produits pour rayons";
             basesSec.style.display = 'none';
             stockSec.style.display = 'block';
         } else {
@@ -1031,14 +1069,18 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
-    // --- LOGICĂ NOUĂ: COȘ DE PRODUSE, ISTORIC 06:00-19:00 ȘI ROLURI (V0.017) ---
+    // --- LOGICĂ STOC DUAL, OUT OF STOCK ȘI ISTORIC 06:00-19:00 (V0.018) ---
     let pendingCollabUpdates = [];
     let dismissedUpdateIds = JSON.parse(localStorage.getItem('central_dismissed_updates')) || [];
     let stockRequestsList = [];
+    let outOfStockList = [];
     let completedStockNotified = JSON.parse(localStorage.getItem('central_completed_notified')) || [];
-    let currentStockCartItems = []; // Coșul de produse în curs de adăugare
+    let currentStockCartItems = []; // Coșul de produse pentru listă
 
     function playPersistentAlarm() {
+        // Dacă e Șef de echipă -> FĂRĂ SUNET
+        if (localUser && localUser.role === "Chef d'équipe") return;
+
         if ("vibrate" in navigator) {
             try { navigator.vibrate([400, 200, 400, 200, 600, 200, 600]); } catch(e) {}
         }
@@ -1068,11 +1110,9 @@
 
     function checkDailyHistoryReset(nowDate) {
         const hour = nowDate.getHours();
-        const minute = nowDate.getMinutes();
         const lastResetDate = localStorage.getItem('central_last_history_reset_date');
         const todayStr = nowDate.toDateString();
 
-        // La ora 06:00 sau după, dacă nu s-a resetat azi, golim istoricul vechi
         if (hour >= 6 && lastResetDate !== todayStr) {
             localStorage.setItem('central_daily_history', JSON.stringify([]));
             localStorage.setItem('central_last_history_reset_date', todayStr);
@@ -1102,6 +1142,25 @@
 
     function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
 
+    function switchStockMode(mode) {
+        const btnSingle = document.getElementById('tabBtnSingle');
+        const btnList = document.getElementById('tabBtnList');
+        const panelSingle = document.getElementById('stockSinglePanel');
+        const panelList = document.getElementById('stockListPanel');
+
+        if (mode === 'single') {
+            btnSingle.className = "stock-tab-btn active";
+            btnList.className = "stock-tab-btn";
+            panelSingle.style.display = "block";
+            panelList.style.display = "none";
+        } else {
+            btnSingle.className = "stock-tab-btn";
+            btnList.className = "stock-tab-btn active";
+            panelSingle.style.display = "none";
+            panelList.style.display = "block";
+        }
+    }
+
     function initFirebaseListeners() {
         if (!window.FB_db) {
             setTimeout(initFirebaseListeners, 1000);
@@ -1120,31 +1179,28 @@
                 pendingCollabUpdates = updatesList.filter(u => u.author !== myName && !dismissedUpdateIds.includes(u.id));
                 
                 if (pendingCollabUpdates.length > prevCount && prevCount >= 0) {
-                    // Dacă suntem Chef d'équipe -> FĂRĂ SUNET
-                    if (!localUser || localUser.role !== "Chef d'équipe") {
-                        playPersistentAlarm();
-                    }
+                    playPersistentAlarm();
                 }
                 updateCollabBadge();
                 renderCollabNotifications();
             }
         });
 
-        // Ascultator Stocuri (Cereri și validări)
+        // Ascultator Stocuri (Pending + Out of Stock + Completed)
         const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
         window.FB_onValue(stockRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 let rawStock = Object.values(data);
                 let previousCount = stockRequestsList.length;
-                stockRequestsList = rawStock.filter(s => s.status === 'pending');
                 
-                // Magazinierul primește alarmă sonoră (dacă nu e chef d'équipe)
+                stockRequestsList = rawStock.filter(s => s.status === 'pending');
+                outOfStockList = rawStock.filter(s => s.status === 'out_of_stock');
+                
                 if (localUser && localUser.role === 'Magazinier' && stockRequestsList.length > previousCount && previousCount >= 0) {
                     playPersistentAlarm();
                 }
 
-                // Verificăm dacă o comandă făcută de cineva a fost finalizată/validată
                 rawStock.forEach(req => {
                     if (req.status === 'completed' && req.author === (localUser ? localUser.name : '') && !completedStockNotified.includes(req.id)) {
                         completedStockNotified.push(req.id);
@@ -1156,9 +1212,12 @@
                 });
 
                 renderStockRequests();
+                renderOutOfStockRequests();
             } else {
                 stockRequestsList = [];
+                outOfStockList = [];
                 renderStockRequests();
+                renderOutOfStockRequests();
             }
         });
     }
@@ -1175,37 +1234,64 @@
         logDailyHistory(`✏️ ${authorName} a modifié les bases de ${code}`);
     }
 
-    // --- GESTIUNE COȘ PRODUSE PENTRU STOC ---
-    function addStockItemToList() {
-        const prod = document.getElementById('stockProduct').value.trim();
-        const base = document.getElementById('stockBase').value.trim();
-        const bucket = document.getElementById('stockBucketSize').value.trim();
-        const qty = document.getElementById('stockQuantity').value.trim();
-        const loc = document.getElementById('stockLocation').value.trim();
+    // --- COMANDĂ UN SINGUR PRODUS ---
+    function sendSingleStockRequest() {
+        const prod = document.getElementById('singleProduct').value.trim();
+        const base = document.getElementById('singleBase').value.trim();
+        const bucket = document.getElementById('singleBucketSize').value.trim();
+        const qty = document.getElementById('singleQuantity').value.trim();
+        const loc = document.getElementById('singleLocation').value.trim();
 
-        if (!prod || !qty || !loc) { alert("Remplissez au moins le produit, la quantité et l'adresse !"); return; }
+        if (!prod || !qty || !loc) { alert("Remplissez le produit, la quantité et l'emplacement !"); return; }
+        if (!window.FB_db) { alert("Erreur Firebase."); return; }
 
-        currentStockCartItems.push({
-            product: prod,
-            base: base || "N/A",
-            bucketSize: bucket || "Standard",
-            quantity: qty,
-            location: loc
+        const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
+        const newReqRef = window.FB_push(stockRef);
+        
+        const listData = {
+            id: newReqRef.key,
+            author: localUser ? localUser.name : "Inconnu",
+            items: [{ product: prod, base: base || "N/A", bucketSize: bucket || "Standard", quantity: qty, location: loc }],
+            status: 'pending',
+            timestamp: Date.now()
+        };
+
+        window.FB_set(newReqRef, listData).then(() => {
+            showAlert("📨 Demande urgente envoyée au magazinier !", true);
+            logDailyHistory(`📦 ${localUser.name} a demandé 1 seau de ${prod}`);
+            document.getElementById('singleProduct').value = '';
+            document.getElementById('singleBase').value = '';
+            document.getElementById('singleBucketSize').value = '';
+            document.getElementById('singleLocation').value = '';
         });
+    }
 
-        document.getElementById('stockProduct').value = '';
-        document.getElementById('stockBase').value = '';
-        document.getElementById('stockBucketSize').value = '';
+    // --- CREARE LISTĂ MULTIPLĂ ---
+    function addStockItemToList() {
+        const prod = document.getElementById('listProduct').value.trim();
+        const base = document.getElementById('listBase').value.trim();
+        const bucket = document.getElementById('listBucketSize').value.trim();
+        const qty = document.getElementById('listQuantity').value.trim();
+        const loc = document.getElementById('listLocation').value.trim();
+
+        if (!prod || !qty || !loc) { alert("Remplissez au moins le produit, la quantité et l'emplacement !"); return; }
+
+        currentStockCartItems.push({ product: prod, base: base || "N/A", bucketSize: bucket || "Standard", quantity: qty, location: loc });
+
+        document.getElementById('listProduct').value = '';
+        document.getElementById('listBase').value = '';
+        document.getElementById('listBucketSize').value = '';
+        document.getElementById('listLocation').value = '';
         renderStockCart();
     }
 
     function renderStockCart() {
-        const container = document.getElementById('currentStockCart');
+        const container = document.getElementById('stockCartItemsList');
         const sendBtn = document.getElementById('sendStockCartBtn');
         container.innerHTML = '';
 
         if (currentStockCartItems.length === 0) {
-            container.innerHTML = '<div style="text-align:center; color:#6b7280; font-size:12px; padding:10px;">Aucun produit dans la liste.</div>';
+            container.innerHTML = '<div style="text-align:center; color:#6b7280; font-size:11px; padding:6px;">Aucun article ajouté.</div>';
             sendBtn.style.display = 'none';
             return;
         }
@@ -1248,7 +1334,7 @@
 
         window.FB_set(newReqRef, listData).then(() => {
             showAlert("🚀 Liste complète envoyée au magazinier !", true);
-            logDailyHistory(`📦 ${localUser.name} a commandé ${currentStockCartItems.length} article(s) de stock`);
+            logDailyHistory(`📦 ${localUser.name} a commandé une liste de ${currentStockCartItems.length} article(s)`);
             currentStockCartItems = [];
             renderStockCart();
         });
@@ -1275,7 +1361,6 @@
                     itemsHtml += `<div style="font-size:12px; color:#d1d5db; border-left:2px solid var(--accent); padding-left:6px; margin:4px 0;">• <b>${it.product}</b> (Base: ${it.base}, ${it.bucketSize}) - <b>Qté: ${it.quantity}</b><br><span style="font-size:11px; color:#9ca3af;">📍 ${it.location}</span></div>`;
                 });
             } else {
-                // Compatibilitate cu cererile vechi simple
                 itemsHtml = `<div style="font-size:12px; color:#d1d5db;">• <b>${req.product}</b> - Qté: ${req.quantity}<br>📍 ${req.location}</div>`;
             }
 
@@ -1284,20 +1369,80 @@
                     <span style="font-size:13px; color:#60a5fa; font-weight:bold;">📦 Commande de ${req.author}</span>
                 </div>
                 <div style="margin:4px 0;">${itemsHtml}</div>
-                ${isMagazinier ? `<button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; margin-top:6px;" onclick="validateStockRequest('${req.id}')">✅ Valider (Tous les produits en stock)</button>` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation par le magazinier...</div>`}
+                ${isMagazinier ? `
+                    <div style="display:flex; gap:6px; margin-top:6px;">
+                        <button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Valider</button>
+                        <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1;" onclick="markOutOfStock('${req.id}')">❌ Out of Stock</button>
+                    </div>
+                ` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation...</div>`}
             `;
             container.appendChild(div);
         });
+    }
+
+    // --- LOGICĂ OUT OF STOCK ---
+    function markOutOfStock(reqId) {
+        if (!window.FB_db) return;
+        const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
+        window.FB_set(reqRef, 'out_of_stock').then(() => {
+            showAlert("❌ Demande marquée 'Out of Stock' !", true);
+            logDailyHistory(`❌ Produit en rupture de stock marqué par le magazinier`);
+        });
+    }
+
+    function renderOutOfStockRequests() {
+        const container = document.getElementById('outOfStockRequestsList');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (outOfStockList.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:15px; color:#6b7280; font-size:12px;">Aucun produit en rupture de stock.</div>';
+            return;
+        }
+
+        outOfStockList.forEach(req => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#2a1215; border:1px solid #7f1d1d; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
+            let isMagazinier = localUser && localUser.role === 'Magazinier';
+
+            let itemsHtml = '';
+            if (req.items && Array.isArray(req.items)) {
+                req.items.forEach(it => {
+                    itemsHtml += `<div style="font-size:12px; color:#fca5a5; border-left:2px solid var(--danger); padding-left:6px; margin:4px 0;">• <b>${it.product}</b> (${it.base}) - Qté: ${it.quantity}<br><span style="font-size:11px; color:#9ca3af;">📍 ${it.location}</span></div>`;
+                });
+            }
+
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; color:#fca5a5; font-weight:bold;">⚠️ Rupture stock (Demandeur: ${req.author})</span>
+                </div>
+                <div style="margin:4px 0;">${itemsHtml}</div>
+                <div style="display:flex; gap:6px; margin-top:6px;">
+                    ${isMagazinier ? `<button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Arrivé & Validé</button>` : ``}
+                    <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1; background-color:#7f1d1d;" onclick="closeDemandStock('${req.id}')">🗑️ Clôturer la demande</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function closeDemandStock(reqId) {
+        if (!window.FB_db) return;
+        if (confirm("Voulez-vous vraiment clôturer et supprimer cette demande non disponible ?")) {
+            const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}`);
+            window.FB_remove(reqRef).then(() => {
+                showAlert("🗑️ Demande clôturée.", true);
+                logDailyHistory(`🗑️ Une demande de stock non disponible a été clôturée`);
+            });
+        }
     }
 
     function validateStockRequest(reqId) {
         if (!window.FB_db) return;
         const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
         window.FB_set(reqRef, 'completed').then(() => {
-            showAlert("✅ Commande validée ! Le demandeur a été notifié.", true);
-            logDailyHistory(`✅ Magazinier a validé la commande de stock`);
-            stockRequestsList = stockRequestsList.filter(r => r.id !== reqId);
-            renderStockRequests();
+            showAlert("✅ Stock validé et réapprovisionné !", true);
+            logDailyHistory(`✅ Stock réapprovisionné et validé`);
         });
     }
 
