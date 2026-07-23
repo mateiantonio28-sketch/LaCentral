@@ -87,7 +87,6 @@
         }
         .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
 
-        /* Stiluri pentru sectiuni restranse (Accordion) */
         .collapsible-btn {
             width: 100%; text-align: left; background-color: #374151; color: #fff;
             padding: 12px; border: 1px solid var(--border); border-radius: 6px; 
@@ -178,7 +177,11 @@
     </div>
 
     <!-- Căutare optimizată -->
-    <input type="text" id="searchInput" class="search-box" placeholder="Rechercher une nuance (ex: RAL 9001, Farrow...)" oninput="debouncedFilterColors()">
+    <input type="text" id="searchInput" class="search-box" placeholder="Rechercher (ex: RAL 9001, fl, fb...)" oninput="debouncedFilterColors()">
+
+    <!-- 🆕 REZULTATE MUTATE AICI (Deasupra butoanelor, chiar sub căutare) -->
+    <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche</div>
+    <div id="resultsList" style="margin-bottom: 16px; display:none;"></div>
 
     <div class="actions-bar">
         <button class="btn btn-guide" onclick="togglePanel('guidePanel')">📖 Guide des Bases</button>
@@ -270,7 +273,6 @@
             <label style="font-size:11px; color:#9ca3af;">Choisir un fichier existant ou créer un nouveau :</label>
             <select id="gitExistingFilesSelect" onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;">
                 <option value="NEW">-- 📝 Créer un Nouveau Fichier --</option>
-                <!-- Populate dinamic -->
             </select>
 
             <input type="text" id="syncFileName" placeholder="Nom du fichier (ex: farrow_ball.json)">
@@ -296,7 +298,7 @@
             <input type="text" id="newVersionInput" value="v0.010">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Nouvelle interface fluide et édition Git !">
+            <input type="text" id="newChangelogInput" value="Dossiers intelligents et abréviations !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -310,12 +312,16 @@
         <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
     </div>
 
-    <!-- ZONA DOSARELOR DE NUANCIERE -->
-    <div class="section-label">Dossiers de Nuanciers Disponibles</div>
-    <div id="foldersOverviewList" class="folders-overview-grid"></div>
-
-    <div class="section-label">Résultats de Recherche / Teintes</div>
-    <div id="resultsList"></div>
+    <!-- 🆕 ZONA DOSARELOR DE NUANCIERE RESTRÂNSE ÎNTR-UN FOLDER PRINCIPAL -->
+    <div class="palette-group" style="margin-top: 16px; border: 1px solid var(--accent);">
+        <div class="palette-header" onclick="toggleMainNuancier()" style="background-color: #1e3a8a;">
+            <span>📚 Tous les Nuanciers (Dossiers)</span>
+            <span id="mainNuancierCount" class="palette-count" style="background-color: var(--accent); color: white;">0</span>
+        </div>
+        <div id="mainNuancierContent" class="palette-content" style="display:none; padding:12px; background: #111827;">
+            <div id="foldersOverviewList" class="folders-overview-grid"></div>
+        </div>
+    </div>
 
     <div class="app-version-footer">
         La Centrale Peinture — Version <span id="footerVersionText">v0.010</span>
@@ -392,23 +398,26 @@
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
 
-    // ACUM SUNT 3 TONURI: Clair, Moyen, Fonce
     let guideBasesData = JSON.parse(localStorage.getItem('central_guide_bases_table')) || {
         clair: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" },
         moyen: { Trimetal: "M0", Herbol: "DU2", Sikkens: "M00", Unikalo: "Moyen" },
         fonce: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" }
     };
 
-    // Funcție pentru meniurile Accordion (Restrângere)
     function toggleCollapse(id) {
         const content = document.getElementById(id);
         if(content.style.display === "block") {
             content.style.display = "none";
         } else {
-            // Închide toate celelalte
             document.querySelectorAll('.collapsible-content').forEach(c => c.style.display = 'none');
             content.style.display = "block";
         }
+    }
+
+    // Funcție nouă pentru deschiderea/închiderea folderului principal de Nuanciere
+    function toggleMainNuancier() {
+        const content = document.getElementById('mainNuancierContent');
+        content.style.display = (content.style.display === 'block') ? 'none' : 'block';
     }
 
     function renderGuideTable() {
@@ -465,7 +474,6 @@
         showAlert("Guide des Bases mis à jour avec succès !", true);
     }
 
-    // --- POPULARE FORMULAR ADMIN GHID ---
     function populateGuideAdminForm() {
         document.getElementById('guideClairTrimetal').value = guideBasesData.clair.Trimetal;
         document.getElementById('guideClairHerbol').value = guideBasesData.clair.Herbol;
@@ -610,7 +618,6 @@
         const token = getSavedToken();
         if (token) document.getElementById('ghTokenInput').value = token;
         
-        // Populare date admin
         updateTargetPaletteDropdown();
         populateGuideAdminForm();
         populateGitFilesDropdown();
@@ -751,7 +758,6 @@
         renderFoldersOverview();
     }
 
-    // --- LOGICĂ NOUĂ PENTRU EDITAREA FIȘIERELOR DIN GIT ---
     function populateGitFilesDropdown() {
         const select = document.getElementById('gitExistingFilesSelect');
         select.innerHTML = '<option value="NEW">-- 📝 Créer un Nouveau Fichier --</option>';
@@ -832,12 +838,11 @@
                 if (!filesToSync.includes(fileName)) {
                     filesToSync.push(fileName);
                     localStorage.setItem('central_synced_files', JSON.stringify(filesToSync));
-                    populateGitFilesDropdown(); // Update dropdown
+                    populateGitFilesDropdown(); 
                 }
 
                 showAlert(`✅ Dossier [${paletteName}] / Fichier '${fileName}' sauvegardé sur GitHub !`, true);
                 
-                // Opțional: Curățăm formularul dacă e nou
                 if (document.getElementById('gitExistingFilesSelect').value === "NEW") {
                     document.getElementById('syncFileName').value = '';
                     document.getElementById('syncFolderPalette').value = '';
@@ -852,7 +857,6 @@
         } catch (err) { showAlert(`❌ Erreur réseau : ${err.message}`); }
     }
 
-    // --- LOGICĂ NOUĂ PENTRU BACKUP COMPLET ---
     async function createSystemBackup() {
         let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
         if (!token) { showAlert("❌ Erreur: Token GitHub manquant pour le backup !"); return; }
@@ -899,6 +903,9 @@
             grouped[p]++;
         });
 
+        const totalFolders = Object.keys(grouped).length;
+        document.getElementById('mainNuancierCount').textContent = `${totalFolders} dossiers`;
+
         Object.keys(grouped).sort().forEach(pName => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'folder-overview-item';
@@ -906,11 +913,12 @@
                 <span style="font-weight:600; color:var(--primary);">📁 Nuancier : ${pName}</span>
                 <span class="palette-count">${grouped[pName]} teintes</span>
             `;
-            // Funcționalitate de colapsare instantanee pe căutare
+            
             itemDiv.onclick = () => {
                 document.getElementById('searchInput').value = pName;
                 filterColors();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.getElementById('mainNuancierContent').style.display = 'none'; // Ascunde folderele
+                document.getElementById('searchInput').scrollIntoView({ behavior: 'smooth', block: 'start' }); // Du-te sus
             };
             listContainer.appendChild(itemDiv);
         });
@@ -924,12 +932,41 @@
         }, 150);
     }
 
+    // --- NOUA LOGICĂ DE FILTRARE (ABREVIERI ȘI AFIȘARE SUS) ---
     function filterColors() {
         const query = document.getElementById('searchInput').value.trim().toLowerCase();
         const container = document.getElementById('resultsList');
+        const label = document.getElementById('resultsLabel');
         container.innerHTML = '';
 
-        const filtered = customDatabase.filter(item => item.code.toLowerCase().includes(query) || item.palette.toLowerCase().includes(query));
+        const queryTokens = query.split(/\s+/).filter(t => t);
+
+        // Dacă căsuța e goală, ascundem rezultatele de sus pentru a lăsa ecranul curat!
+        if (queryTokens.length === 0) {
+            label.style.display = 'none';
+            container.style.display = 'none';
+            return;
+        }
+
+        label.style.display = 'block';
+        container.style.display = 'block';
+
+        const filtered = customDatabase.filter(item => {
+            const code = item.code.toLowerCase();
+            const pal = (item.palette || "RAL").toLowerCase();
+            
+            return queryTokens.every(token => {
+                let isAbbr = false;
+                // Recunoaștere prescurtări FLAMANT
+                if (['fl', 'fi', 'fla'].includes(token) && pal.includes('flamant')) isAbbr = true;
+                // Recunoaștere prescurtări FARROW BALL
+                if (['fb', 'cfb'].includes(token) && pal.includes('farrow')) isAbbr = true;
+                // Recunoaștere prescurtări RAL
+                if (token === 'ral' && pal.includes('ral')) isAbbr = true;
+                
+                return isAbbr || code.includes(token) || pal.includes(token);
+            });
+        });
 
         if (filtered.length === 0) {
             container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
@@ -951,7 +988,7 @@
 
             const groupDiv = document.createElement('div');
             groupDiv.className = 'palette-group';
-            const isOpen = query.length > 0 || openPalettes[pName];
+            const isOpen = true; // Tot timpul deschis la căutare
             
             const header = document.createElement('div');
             header.className = 'palette-header';
@@ -994,7 +1031,7 @@
         if (filtered.length > maxDisplay) {
             const limitNote = document.createElement('div');
             limitNote.style.cssText = "text-align:center; padding:10px; font-size:11px; color:#f59e0b;";
-            limitNote.textContent = `Affichage limité à ${maxDisplay} résultats sur ${filtered.length} pour une fluidité maximale. Précisez votre recherche.`;
+            limitNote.textContent = `Affichage limité à ${maxDisplay} résultats sur ${filtered.length}. Précisez votre recherche.`;
             container.appendChild(limitNote);
         }
     }
