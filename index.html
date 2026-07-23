@@ -214,7 +214,7 @@
         .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
         .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* TASTATURA VIRTUALĂ A APLICAȚIEI */
+        /* TASTATURA VIRTUALĂ CU SUPORT SHIFT */
         .virtual-keyboard {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%;
             background: #1e293b; padding: 8px 4px 16px 4px; z-index: 100000;
@@ -230,8 +230,10 @@
         }
         .vk-key:active { background: var(--accent); transform: scale(0.95); }
         .vk-key.vk-wide { max-width: 65px; background: #475569; }
-        .vk-key.vk-space { max-width: 180px; flex: 3; font-size: 13px; }
-        .vk-key.vk-close { background: var(--danger); border-color: #991b1b; max-width: 50px; }
+        .vk-key.vk-space { max-width: 160px; flex: 3; font-size: 13px; }
+        .vk-key.vk-close { background: var(--danger); border-color: #991b1b; max-width: 45px; }
+        .vk-key.vk-shift { background: #475569; max-width: 55px; font-size: 13px; }
+        .vk-key.vk-shift.active { background: var(--accent); }
     </style>
 </head>
 <body>
@@ -241,10 +243,10 @@
         <h2>La Centrale</h2>
         <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 chiffres)</p>
         
-        <!-- Caseta pentru Nume (fără readonly la primul user, inputmode=none activat) -->
+        <!-- Caseta pentru Nume (fără tastatură nativă, controlată de tastatura virtuală) -->
         <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none">
         
-        <!-- Caseta PIN cu pad numeric fix -->
+        <!-- PIN cu pad numeric fix -->
         <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 chiffres)" readonly style="letter-spacing: 4px; font-weight: bold;" inputmode="none">
         
         <div class="login-pin-pad">
@@ -292,9 +294,8 @@
             </button>
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
-            <button id="mainVkToggle" class="btn" style="background:#374151; font-size:11px; padding:6px 10px;" onclick="toggleVirtualKeyboard()">⌨️ App: ON</button>
             <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
-            <div class="version-badge">v0.024</div>
+            <div class="version-badge">v0.026</div>
         </div>
     </div>
 
@@ -495,10 +496,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.024" inputmode="none">
+            <input type="text" id="newVersionInput" value="v0.026" inputmode="none">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Blocage total de la tastatură nativă, buton Vider Cache în stânga jos și tastatură virtuală pe nume la login !" inputmode="none">
+            <input type="text" id="newChangelogInput" value="Tastatură virtuală obligatorie permanentă, eliminare buton ON/OFF și suport complet Shift majuscule !" inputmode="none">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none">
@@ -512,14 +513,13 @@
         <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
     </div>
 
-    <!-- BUTON VIDER CACHE STÂNGA JOS ȘI ADMIN DREAPTA JOS -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
         <button class="refresh-btn-discrete" onclick="clearSystemCache()">🔄 Vider Cache</button>
         <button class="btn-admin-discrete" onclick="openAdminAuth()">🔒 Admin</button>
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.024</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.026</span>
     </div>
 </div>
 
@@ -608,6 +608,7 @@
     </div>
 </div>
 
+<!-- TASTATURĂ VIRTUALĂ CU SUPORT SHIFT (MAJUSCULE / MINUSCULE) -->
 <div id="virtualKeyboard" class="virtual-keyboard">
     <div class="vk-row">
         <div class="vk-key" onclick="vKey('1')">1</div>
@@ -621,49 +622,21 @@
         <div class="vk-key" onclick="vKey('9')">9</div>
         <div class="vk-key" onclick="vKey('0')">0</div>
     </div>
-    <div class="vk-row">
-        <div class="vk-key" onclick="vKey('A')">A</div>
-        <div class="vk-key" onclick="vKey('Z')">Z</div>
-        <div class="vk-key" onclick="vKey('E')">E</div>
-        <div class="vk-key" onclick="vKey('R')">R</div>
-        <div class="vk-key" onclick="vKey('T')">T</div>
-        <div class="vk-key" onclick="vKey('Y')">Y</div>
-        <div class="vk-key" onclick="vKey('U')">U</div>
-        <div class="vk-key" onclick="vKey('I')">I</div>
-        <div class="vk-key" onclick="vKey('O')">O</div>
-        <div class="vk-key" onclick="vKey('P')">P</div>
+    <div class="vk-row" id="vkRowLetters">
+        <!-- Generat dinamic prin JS pentru a ține cont de starea Shift -->
     </div>
     <div class="vk-row">
-        <div class="vk-key" onclick="vKey('Q')">Q</div>
-        <div class="vk-key" onclick="vKey('S')">S</div>
-        <div class="vk-key" onclick="vKey('D')">D</div>
-        <div class="vk-key" onclick="vKey('F')">F</div>
-        <div class="vk-key" onclick="vKey('G')">G</div>
-        <div class="vk-key" onclick="vKey('H')">H</div>
-        <div class="vk-key" onclick="vKey('J')">J</div>
-        <div class="vk-key" onclick="vKey('K')">K</div>
-        <div class="vk-key" onclick="vKey('L')">L</div>
-        <div class="vk-key" onclick="vKey('M')">M</div>
-    </div>
-    <div class="vk-row">
-        <div class="vk-key" onclick="vKey('W')">W</div>
-        <div class="vk-key" onclick="vKey('X')">X</div>
-        <div class="vk-key" onclick="vKey('C')">C</div>
-        <div class="vk-key" onclick="vKey('V')">V</div>
-        <div class="vk-key" onclick="vKey('B')">B</div>
-        <div class="vk-key" onclick="vKey('N')">N</div>
+        <div class="vk-key vk-shift" id="vkShiftBtn" onclick="toggleShift()">⬆️ SHIFT</div>
         <div class="vk-key" onclick="vKey('-')">-</div>
         <div class="vk-key" onclick="vKey('.')">.</div>
-    </div>
-    <div class="vk-row">
-        <div class="vk-key vk-close" onclick="vClose()">✕</div>
         <div class="vk-key vk-space" onclick="vKey(' ')">ESPACE</div>
         <div class="vk-key vk-wide" onclick="vDel()">⌫</div>
+        <div class="vk-key vk-close" onclick="vClose()">✕</div>
     </div>
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.024"; 
+    const CURRENT_APP_VERSION = "v0.026"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -677,27 +650,7 @@
     let currentAppSection = localStorage.getItem('central_app_section') || null;
 
     let activeVirtualInput = null;
-    let isVkEnabled = localStorage.getItem('central_vk_enabled') !== 'false'; 
-
-    function applyVkState() {
-        const toggleBtn = document.getElementById('mainVkToggle');
-        if (toggleBtn) {
-            if (isVkEnabled) {
-                toggleBtn.innerHTML = '⌨️ App: ON';
-                toggleBtn.style.backgroundColor = 'var(--ai-color)';
-            } else {
-                toggleBtn.innerHTML = '📱 Tél: OFF';
-                toggleBtn.style.backgroundColor = '#374151';
-                vClose();
-            }
-        }
-    }
-
-    function toggleVirtualKeyboard() {
-        isVkEnabled = !isVkEnabled;
-        localStorage.setItem('central_vk_enabled', isVkEnabled);
-        applyVkState();
-    }
+    let isShiftActive = false; // Starea pentru majuscule / minuscule
 
     function loginPinKey(val) {
         const pinInput = document.getElementById('regPin');
@@ -713,10 +666,40 @@
         }
     }
 
-    // Gestionarea tastaturii virtuale pe litere pentru orice input (inclusiv regUser) când tastatura e pornită
+    // Randarea tastelor cu litere în funcție de Shift
+    function renderVkLetters() {
+        const row = document.getElementById('vkRowLetters');
+        if (!row) return;
+        row.innerHTML = '';
+        const letters = ["A","Z","E","R","T","Y","U","I","O","P","Q","S","D","F","G","H","J","K","L","M","W","X","C","V","B","N"];
+        
+        letters.forEach(l => {
+            const char = isShiftActive ? l : l.toLowerCase();
+            const div = document.createElement('div');
+            div.className = 'vk-key';
+            div.textContent = char;
+            div.onclick = () => vKey(char);
+            row.appendChild(div);
+        });
+    }
+
+    function toggleShift() {
+        isShiftActive = !isShiftActive;
+        const shiftBtn = document.getElementById('vkShiftBtn');
+        if (isShiftActive) {
+            shiftBtn.classList.add('active');
+        } else {
+            shiftBtn.classList.remove('active');
+        }
+        renderVkLetters();
+    }
+
+    renderVkLetters();
+
+    // Deschide tastatura virtuală pe orice input/textarea permis (inclusiv regUser) blocând complet tastatura nativă
     document.addEventListener('click', function(e) {
-        if (isVkEnabled && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-            if(e.target.type !== 'password' && e.target.type !== 'select-one' && e.target.id !== 'regPin') {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            if(e.target.id !== 'regPin' && e.target.id !== 'authPass' && e.target.type !== 'password' && e.target.type !== 'select-one') {
                 activeVirtualInput = e.target;
                 document.getElementById('virtualKeyboard').style.display = 'block';
             }
@@ -950,7 +933,6 @@
             userInput.value = "";
             userInput.disabled = false;
         }
-        applyVkState();
     }
 
     function handleUserAuth() {
