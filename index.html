@@ -66,19 +66,28 @@
         }
         .lock-card {
             background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
-            padding: 24px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            padding: 20px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             position: relative;
         }
-        .lock-card h2 { margin: 0 0 6px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
-        .lock-card p { margin: 0 0 16px 0; font-size: 12px; color: #9ca3af; }
+        .lock-card h2 { margin: 0 0 4px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
+        .lock-card p { margin: 0 0 12px 0; font-size: 11px; color: #9ca3af; }
         .lock-card input, .lock-card select {
-            width: 100%; padding: 12px; margin-bottom: 10px;
+            width: 100%; padding: 10px; margin-bottom: 8px;
             border: 1px solid var(--border); border-radius: 8px;
             background: #111827; color: #fff; font-size: 14px; text-align: center;
         }
         .lock-card input[readonly], .lock-card select[readonly] { opacity: 1; cursor: pointer; }
 
-        /* Buton ON/OFF tastatură pe ecranul de login colț dreapta-sus */
+        /* Tastatura numerică fixă pe ecranul de login */
+        .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .pin-key {
+            background: #334155; color: #fff; border: 1px solid #475569;
+            border-radius: 6px; padding: 10px 0; font-size: 16px; font-weight: bold;
+            cursor: pointer; text-align: center; user-select: none;
+            transition: background 0.1s;
+        }
+        .pin-key:active { background: var(--accent); }
+
         .login-vk-toggle {
             position: absolute; top: 12px; right: 12px;
             background: #374151; color: #fff; border: 1px solid var(--border);
@@ -214,7 +223,7 @@
         .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
         .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* TASTATURA VIRTUALĂ */
+        /* TASTATURA VIRTUALĂ GENERALĂ A APLICAȚIEI */
         .virtual-keyboard {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%;
             background: #1e293b; padding: 8px 4px 16px 4px; z-index: 100000;
@@ -238,14 +247,31 @@
 
 <div id="userLockScreen" class="lock-screen">
     <div class="lock-card">
-        <!-- BUTON ON/OFF TASTATURĂ VIRTUALĂ PE LOGIN -->
         <button id="loginVkToggle" class="login-vk-toggle" onclick="toggleVirtualKeyboard()">⌨️ App: ON</button>
 
         <h2>La Centrale</h2>
         <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 caractères)</p>
         <input type="text" id="regUser" placeholder="Nom d'utilisateur" readonly>
-        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 caractères)" readonly>
         
+        <!-- Caseta PIN conectată direct la pad-ul numeric fix -->
+        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 chiffres)" readonly style="letter-spacing: 4px; font-weight: bold;">
+        
+        <!-- TASTATURĂ NUMERICĂ FIXĂ PE PAGINA DE LOGIN -->
+        <div class="login-pin-pad">
+            <div class="pin-key" onclick="loginPinKey('1')">1</div>
+            <div class="pin-key" onclick="loginPinKey('2')">2</div>
+            <div class="pin-key" onclick="loginPinKey('3')">3</div>
+            <div class="pin-key" onclick="loginPinKey('4')">4</div>
+            <div class="pin-key" onclick="loginPinKey('5')">5</div>
+            <div class="pin-key" onclick="loginPinKey('6')">6</div>
+            <div class="pin-key" onclick="loginPinKey('7')">7</div>
+            <div class="pin-key" onclick="loginPinKey('8')">8</div>
+            <div class="pin-key" onclick="loginPinKey('9')">9</div>
+            <div class="pin-key" onclick="loginPinKey('C')" style="background:#7f1d1d;">C</div>
+            <div class="pin-key" onclick="loginPinKey('0')">0</div>
+            <div class="pin-key" onclick="loginPinKey('DEL')" style="background:#475569;">⌫</div>
+        </div>
+
         <select id="regRole" readonly>
             <option value="Teinteur">Teinteur</option>
             <option value="Vendeur">Vendeur</option>
@@ -278,7 +304,7 @@
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
             <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
-            <div class="version-badge">v0.019</div>
+            <div class="version-badge">v0.020</div>
         </div>
     </div>
 
@@ -336,7 +362,6 @@
             <button class="stock-tab-btn" id="tabBtnList" onclick="switchStockMode('list')">📋 Créer une Liste Multi-produits</button>
         </div>
 
-        <!-- MOD 1: UN SINGUR PRODUS -->
         <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
             <h3 style="color:#4ade80;">⚡ Demande Rapide de Seau / Produit</h3>
             <input type="text" id="singleProduct" placeholder="Nom du produit (ex: Trimetal Ultramat)" readonly>
@@ -349,7 +374,6 @@
             <button class="btn btn-save" style="background-color:var(--success);" onclick="sendSingleStockRequest()">📨 Envoyer la Demande Urgente</button>
         </div>
 
-        <!-- MOD 2: CREARE LISTĂ MULTIPLĂ -->
         <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
             <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock (Rayons)</h3>
             <input type="text" id="listProduct" placeholder="Nom du produit" readonly>
@@ -377,7 +401,7 @@
 
         <div class="section-label" style="color:var(--danger); margin-top:24px;">❌ Produits Out of Stock (En attente de réapprovisionnement dépôt) :</div>
         <div id="outOfStockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
-            <div style="text-align:center; padding:15px; color:#9ca3af; font-size:12px;">Aucun produit en rupture de stock.</div>
+            <div style="text-align:center; padding:15px; color:#6b7280; font-size:12px;">Aucun produit en rupture de stock.</div>
         </div>
     </div>
 
@@ -481,10 +505,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.019" readonly>
+            <input type="text" id="newVersionInput" value="v0.020" readonly>
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Blocage natif de la tastatură, buton ON/OFF simplificat și admin discret în dreapta-jos !" readonly>
+            <input type="text" id="newChangelogInput" value="Tastatură numerică fixă pe ecranul de login și blocarea completă a tastaturii native !" readonly>
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" readonly>
@@ -504,7 +528,7 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.019</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.020</span>
     </div>
 </div>
 
@@ -648,7 +672,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.019"; 
+    const CURRENT_APP_VERSION = "v0.020"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -684,10 +708,25 @@
         applyVkState();
     }
 
+    // Gestionare tastatură numerică direct pe ecranul de login
+    function loginPinKey(val) {
+        const pinInput = document.getElementById('regPin');
+        if (!pinInput) return;
+        if (val === 'DEL') {
+            pinInput.value = pinInput.value.slice(0, -1);
+        } else if (val === 'C') {
+            pinInput.value = '';
+        } else {
+            if (pinInput.value.length < 4) {
+                pinInput.value += val;
+            }
+        }
+    }
+
     // Deschide tastatura virtuală pe orice input/textarea din aplicație, blocând complet tastatura nativă
     document.addEventListener('click', function(e) {
         if (isVkEnabled && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-            if(e.target.type !== 'password' && e.target.type !== 'select-one') {
+            if(e.target.id !== 'regPin' && e.target.type !== 'password' && e.target.type !== 'select-one') {
                 activeVirtualInput = e.target;
                 document.getElementById('virtualKeyboard').style.display = 'block';
             }
@@ -917,7 +956,9 @@
             userInput.disabled = true;
             document.getElementById('regRole').value = localUser.role || "Teinteur";
         } else {
-            subtitle.textContent = "Créer un profil local (PIN à 4 caractères)";
+            subtitle.textContent = "Créer un profil local (PIN à 4 chiffres)";
+            userInput.value = "";
+            userInput.disabled = false;
         }
         applyVkState();
     }
@@ -927,7 +968,7 @@
         const pin = document.getElementById('regPin').value.trim();
         const role = document.getElementById('regRole').value;
 
-        if (!name || pin.length !== 4) { alert("Nom et PIN 4 caractères obligatoires !"); return; }
+        if (!name || pin.length !== 4) { alert("Nom et PIN de 4 chiffres obligatoires !"); return; }
         
         if (!localUser) {
             localUser = { name: name, pin: pin, role: role };
