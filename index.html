@@ -148,6 +148,40 @@
         }
         .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
 
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-content {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            padding: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+        .modal-header h3 { margin: 0; font-size: 15px; color: var(--primary); text-transform: uppercase; }
+        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 18px; font-weight: bold; cursor: pointer; }
+
         .palette-group { margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: var(--panel-bg); border: 1px solid var(--border); }
         .palette-header { padding: 10px 14px; background-color: #374151; color: var(--primary); font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .palette-count { background-color: #1f2937; color: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
@@ -248,7 +282,7 @@
 
     <div class="changelog-banner">
         <h4>📢 Nouveautés de la Version <span id="displayVersionHeader">v0.001</span> :</h4>
-        <div id="changelogText">• System réinitialisé et optimisé avec gestion des nuanciers (RAL, NCS).</div>
+        <div id="changelogText">• Gestionnaire d'API Token intégré & Mise à jour GitHub en direct.</div>
     </div>
 
     <input type="text" id="searchInput" class="search-box" placeholder="Rechercher une nuance (ex: RAL 9001, NCS...)" oninput="filterColors()">
@@ -298,13 +332,23 @@
         <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
     </div>
 
+    <!-- Panneau Admin -->
     <div id="adminPanel" class="panel">
         <h3>Panneau d'Administration Master</h3>
-        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#0284c7;" onclick="showAdminForm('addFolder')">📁 Créer un Nouveau Nuancier (Dossier)</button>
-        <button class="btn btn-admin" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('addSingle')">+ Ajouter une Couleur dans un Nuancier</button>
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#9333ea;" onclick="showAdminForm('importJson')">📥 Importer Nuancier</button>
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#0284c7;" onclick="showAdminForm('addFolder')">📁 Créer un Nuancier Vide</button>
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('addSingle')">+ Ajouter une Seule Couleur</button>
         <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour Source GitHub</button>
         <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
         
+        <!-- Formular Importer Nuancier et Couleur -->
+        <div id="importJsonForm" style="display:none; margin-top:10px; background:#111827; padding:10px; border-radius:6px;">
+            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Importer nuancier et couleur (JSON) :</p>
+            <input type="text" id="importFolderName" placeholder="Nom du Nuancier / Dossier (ex: NCS, RAL, ACC)">
+            <textarea id="importJsonArea" rows="6" placeholder='[&#10;  {"code": "RAL 1000", "hex": "#CCC58F"},&#10;  {"code": "RAL 1001", "hex": "#D1BC8A"}&#10;]'></textarea>
+            <button class="btn btn-save" onclick="importBulkJsonPalette()">🚀 Importer le Nuancier</button>
+        </div>
+
         <div id="addFolderForm" style="display:none; margin-top:10px; background:#111827; padding:10px; border-radius:6px;">
             <p style="font-size:11px; color:#60a5fa; margin-top:0;">Créer un dossier (ex: RAL, NCS) :</p>
             <input type="text" id="newFolderName" placeholder="Nom du nuancier">
@@ -318,13 +362,24 @@
             <button class="btn btn-save" onclick="saveSingleColorToFolder()">Enregistrer dans le dossier</button>
         </div>
 
-        <div id="updateAppForm" style="display:none; margin-top:10px;">
-            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">🚀 Mise à jour Directe GitHub :</p>
-            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
-            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
-            <label style="font-size:11px; color:#9ca3af;">Code Source HTML complet :</label>
-            <textarea id="sourceCodeInput" rows="5" placeholder="Collez le code complet ici..."></textarea>
-            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="publishToGithub()">🚀 Publier Update Direct</button>
+        <!-- Formular Update Git cu buton rapid de Token API -->
+        <div id="updateAppForm" style="display:none; margin-top:10px; background:#111827; padding:12px; border-radius:8px; border:1px solid var(--border);">
+            <p style="font-size:12px; color:#60a5fa; margin-top:0; font-weight:bold;">🚀 Mise à jour Directe GitHub :</p>
+            
+            <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="openTokenModal()">
+                🔑 Générer / Obtenir un Token GitHub API
+            </button>
+
+            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub (Sauvegardé) :</label>
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+                <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" style="margin-bottom:0;">
+                <button class="btn btn-admin" style="flex:0 0 70px; font-size:11px;" onclick="copySavedToken()">📋 Copier</button>
+            </div>
+
+            <label style="font-size:11px; color:#9ca3af;">Nouveau Code Source HTML complet :</label>
+            <textarea id="sourceCodeInput" rows="6" placeholder="Collez le code complet ici..."></textarea>
+            
+            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="publishToGithub()">🚀 Publier Update Direct sur GitHub</button>
         </div>
     </div>
 
@@ -333,6 +388,33 @@
 
     <div class="app-version-footer">
         La Centrale Peinture — Version <span id="footerVersionText">v0.001</span>
+    </div>
+</div>
+
+<!-- Modal Token Manager (Fără părăsirea aplicației) -->
+<div id="tokenModalOverlay" class="modal-overlay">
+    <div class="modal-content" style="text-align:center;">
+        <div class="modal-header">
+            <h3>🔑 API Token GitHub Manager</h3>
+            <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:#9ca3af; text-align:left; margin-bottom:10px;">
+            Obtenez rapidement votre Token pour autoriser la mise à jour directe. <b>L'application reste ouverte !</b>
+        </p>
+        <a href="https://github.com/settings/tokens/new?description=La-Centrale-App&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">
+            🔗 Ouvrir GitHub pour Générer le Token (Scope: repo)
+        </a>
+        <div style="background:#111827; padding:10px; border-radius:8px; text-align:left; font-size:11px; color:#9ca3af; margin-bottom:10px;">
+            1. Sur la page GitHub, défilez vers le bas et appuyez sur <b>Generate token</b>.<br>
+            2. Copiez le code généré (ex: <i>ghp_...</i>).<br>
+            3. Collez-le ci-dessous pour le sauvegarder dans l'application :
+        </div>
+        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff; font-size:12px;">
+        
+        <div style="display:flex; gap:8px;">
+            <button class="btn btn-save" style="flex:1;" onclick="saveTokenFromModal()">💾 Enregistrer le Token</button>
+            <button class="btn btn-admin" style="flex:1;" onclick="copyTokenInModal()">📋 Copier</button>
+        </div>
     </div>
 </div>
 
@@ -347,6 +429,48 @@
 
     function getSavedToken() {
         return localStorage.getItem('central_github_token') || DEFAULT_GITHUB_TOKEN || "";
+    }
+
+    function openTokenModal() {
+        const saved = getSavedToken();
+        if (saved) document.getElementById('modalTokenInput').value = saved;
+        document.getElementById('tokenModalOverlay').style.display = 'flex';
+    }
+
+    function closeTokenModal() {
+        document.getElementById('tokenModalOverlay').style.display = 'none';
+    }
+
+    function saveTokenFromModal() {
+        const t = document.getElementById('modalTokenInput').value.trim();
+        if (t) {
+            localStorage.setItem('central_github_token', t);
+            document.getElementById('ghTokenInput').value = t;
+            closeTokenModal();
+            showAlert("Token GitHub API sauvegardé avec succès !", true);
+        } else {
+            alert("Veuillez coller un Token valide !");
+        }
+    }
+
+    function copyTokenInModal() {
+        const t = document.getElementById('modalTokenInput').value.trim() || getSavedToken();
+        if (t) {
+            navigator.clipboard.writeText(t);
+            showAlert("Token copié dans le presse-papier !", true);
+        } else {
+            alert("Aucun Token à copier.");
+        }
+    }
+
+    function copySavedToken() {
+        const t = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
+        if (t) {
+            navigator.clipboard.writeText(t);
+            showAlert("Token copié !", true);
+        } else {
+            showAlert("Aucun Token enregistré.");
+        }
     }
 
     function startRealTimeClock() {
@@ -495,6 +619,7 @@
     }
 
     function showAdminForm(type) {
+        document.getElementById('importJsonForm').style.display = (type === 'importJson') ? 'block' : 'none';
         document.getElementById('addFolderForm').style.display = (type === 'addFolder') ? 'block' : 'none';
         document.getElementById('addSingleForm').style.display = (type === 'addSingle') ? 'block' : 'none';
         document.getElementById('updateAppForm').style.display = (type === 'updateApp') ? 'block' : 'none';
@@ -520,6 +645,50 @@
 
     function saveToStorage() {
         localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase));
+    }
+
+    function importBulkJsonPalette() {
+        const folderInput = document.getElementById('importFolderName').value.trim().toUpperCase();
+        const rawJson = document.getElementById('importJsonArea').value.trim();
+
+        if (!rawJson) { alert("Veuillez coller le code JSON !"); return; }
+
+        try {
+            const list = JSON.parse(rawJson);
+            if (!Array.isArray(list)) { alert("Le format JSON doit être une liste [ ... ] !"); return; }
+
+            let added = 0;
+            list.forEach(item => {
+                if (item.code) {
+                    const cCode = item.code.trim().toUpperCase();
+                    const cPal = (item.palette || folderInput || "DIVERS").toUpperCase();
+                    
+                    const exists = customDatabase.some(c => c.code === cCode && c.palette === cPal);
+                    if (!exists) {
+                        const isDark = ["7016", "9005", "7021", "3020", "5010"].some(d => cCode.includes(d));
+                        const defaultBases = isDark 
+                            ? { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" }
+                            : { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" };
+
+                        customDatabase.push({
+                            code: cCode,
+                            palette: cPal,
+                            hex: item.hex || "#cbd5e1",
+                            bases: item.bases || defaultBases
+                        });
+                        added++;
+                    }
+                }
+            });
+
+            saveToStorage();
+            filterColors();
+            showAlert(`✅ ${added} couleurs importées avec succès dans le nuancier !`, true);
+            document.getElementById('importJsonArea').value = '';
+            document.getElementById('importFolderName').value = '';
+        } catch (e) {
+            alert("Erreur de format JSON. Vérifiez la syntaxe (virgules, guillemets).");
+        }
     }
 
     function createNewFolderPalette() {
