@@ -214,25 +214,24 @@
         .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
         .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* TASTATURA VIRTUALĂ CU SUPORT SHIFT */
+        /* TASTATURĂ VIRTUALĂ AZERTY COMPACTĂ PE RÂNDURI */
         .virtual-keyboard {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%;
-            background: #1e293b; padding: 8px 4px 16px 4px; z-index: 100000;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.7); border-top: 1px solid #334155;
+            background: #1e293b; padding: 10px 6px 20px 6px; z-index: 100000;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.8); border-top: 2px solid #334155;
             user-select: none;
         }
-        .vk-row { display: flex; justify-content: center; margin-bottom: 6px; gap: 4px; }
+        .vk-row { display: flex; justify-content: center; margin-bottom: 5px; gap: 4px; width: 100%; }
         .vk-key {
             background: #334155; color: #fff; border: 1px solid #475569;
-            border-radius: 6px; padding: 12px 0; font-size: 16px; font-weight: bold;
-            cursor: pointer; flex: 1; max-width: 40px; text-align: center;
+            border-radius: 5px; padding: 10px 0; font-size: 15px; font-weight: bold;
+            cursor: pointer; flex: 1; text-align: center; user-select: none;
             transition: background 0.1s, transform 0.1s;
         }
         .vk-key:active { background: var(--accent); transform: scale(0.95); }
-        .vk-key.vk-wide { max-width: 65px; background: #475569; }
-        .vk-key.vk-space { max-width: 160px; flex: 3; font-size: 13px; }
-        .vk-key.vk-close { background: var(--danger); border-color: #991b1b; max-width: 45px; }
-        .vk-key.vk-shift { background: #475569; max-width: 55px; font-size: 13px; }
+        .vk-key.vk-space { flex: 4; font-size: 12px; background: #475569; }
+        .vk-key.vk-wide { flex: 1.5; font-size: 12px; background: #7f1d1d; }
+        .vk-key.vk-shift { flex: 1.5; font-size: 12px; background: #475569; }
         .vk-key.vk-shift.active { background: var(--accent); }
     </style>
 </head>
@@ -243,10 +242,7 @@
         <h2>La Centrale</h2>
         <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 chiffres)</p>
         
-        <!-- Caseta pentru Nume (fără tastatură nativă, controlată de tastatura virtuală) -->
         <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none">
-        
-        <!-- PIN cu pad numeric fix -->
         <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 chiffres)" readonly style="letter-spacing: 4px; font-weight: bold;" inputmode="none">
         
         <div class="login-pin-pad">
@@ -295,7 +291,7 @@
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
             <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
-            <div class="version-badge">v0.026</div>
+            <div class="version-badge">v0.027</div>
         </div>
     </div>
 
@@ -496,10 +492,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.026" inputmode="none">
+            <input type="text" id="newVersionInput" value="v0.027" inputmode="none">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Tastatură virtuală obligatorie permanentă, eliminare buton ON/OFF și suport complet Shift majuscule !" inputmode="none">
+            <input type="text" id="newChangelogInput" value="Titlu dinamic pe secțiunea baze și tastatură AZERTY compactă pe rânduri!" inputmode="none">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none">
@@ -519,7 +515,7 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.026</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.027</span>
     </div>
 </div>
 
@@ -608,7 +604,7 @@
     </div>
 </div>
 
-<!-- TASTATURĂ VIRTUALĂ CU SUPORT SHIFT (MAJUSCULE / MINUSCULE) -->
+<!-- TASTATURĂ VIRTUALĂ AZERTY COMPACTĂ PE RÂNDURI -->
 <div id="virtualKeyboard" class="virtual-keyboard">
     <div class="vk-row">
         <div class="vk-key" onclick="vKey('1')">1</div>
@@ -622,9 +618,9 @@
         <div class="vk-key" onclick="vKey('9')">9</div>
         <div class="vk-key" onclick="vKey('0')">0</div>
     </div>
-    <div class="vk-row" id="vkRowLetters">
-        <!-- Generat dinamic prin JS pentru a ține cont de starea Shift -->
-    </div>
+    <div class="vk-row" id="vkRow1"></div>
+    <div class="vk-row" id="vkRow2"></div>
+    <div class="vk-row" id="vkRow3"></div>
     <div class="vk-row">
         <div class="vk-key vk-shift" id="vkShiftBtn" onclick="toggleShift()">⬆️ SHIFT</div>
         <div class="vk-key" onclick="vKey('-')">-</div>
@@ -636,7 +632,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.026"; 
+    const CURRENT_APP_VERSION = "v0.027"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -650,7 +646,7 @@
     let currentAppSection = localStorage.getItem('central_app_section') || null;
 
     let activeVirtualInput = null;
-    let isShiftActive = false; // Starea pentru majuscule / minuscule
+    let isShiftActive = false; 
 
     function loginPinKey(val) {
         const pinInput = document.getElementById('regPin');
@@ -666,20 +662,46 @@
         }
     }
 
-    // Randarea tastelor cu litere în funcție de Shift
-    function renderVkLetters() {
-        const row = document.getElementById('vkRowLetters');
-        if (!row) return;
-        row.innerHTML = '';
-        const letters = ["A","Z","E","R","T","Y","U","I","O","P","Q","S","D","F","G","H","J","K","L","M","W","X","C","V","B","N"];
-        
-        letters.forEach(l => {
+    // Randarea tastaturii AZERTY pe 3 rânduri compacte
+    function renderVkRows() {
+        const row1 = document.getElementById('vkRow1');
+        const row2 = document.getElementById('vkRow2');
+        const row3 = document.getElementById('vkRow3');
+        if(!row1 || !row2 || !row3) return;
+
+        row1.innerHTML = '';
+        row2.innerHTML = '';
+        row3.innerHTML = '';
+
+        const r1 = ["A","Z","E","R","T","Y","U","I","O","P"];
+        const r2 = ["Q","S","D","F","G","H","J","K","L","M"];
+        const r3 = ["W","X","C","V","B","N"];
+
+        r1.forEach(l => {
             const char = isShiftActive ? l : l.toLowerCase();
             const div = document.createElement('div');
             div.className = 'vk-key';
             div.textContent = char;
             div.onclick = () => vKey(char);
-            row.appendChild(div);
+            row1.appendChild(div);
+        });
+
+        r2.forEach(l => {
+            const char = isShiftActive ? l : l.toLowerCase();
+            const div = document.createElement('div');
+            div.className = 'vk-key';
+            div.textContent = char;
+            div.onclick = () => vKey(char);
+            row2.appendChild(div);
+        });
+
+        r3.forEach(l => {
+            const char = isShiftActive ? l : l.toLowerCase();
+            const div = document.createElement('div');
+            div.className = 'vk-key';
+            div.textContent = char;
+            div.onclick = () => vKey(char);
+            row3.appendChild(div);
         });
     }
 
@@ -691,12 +713,12 @@
         } else {
             shiftBtn.classList.remove('active');
         }
-        renderVkLetters();
+        renderVkRows();
     }
 
-    renderVkLetters();
+    renderVkRows();
 
-    // Deschide tastatura virtuală pe orice input/textarea permis (inclusiv regUser) blocând complet tastatura nativă
+    // Deschide tastatura virtuală pe orice input/textarea permis
     document.addEventListener('click', function(e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
             if(e.target.id !== 'regPin' && e.target.id !== 'authPass' && e.target.type !== 'password' && e.target.type !== 'select-one') {
@@ -986,7 +1008,7 @@
             basesSec.style.display = 'none';
             stockSec.style.display = 'block';
         } else {
-            title.textContent = "La Centrale";
+            title.textContent = "La Centrale — Vérifie les Bases";
             subtitle.textContent = "Système de Recherche de Couleurs & Bases";
             stockSec.style.display = 'none';
             basesSec.style.display = 'block';
