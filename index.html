@@ -909,7 +909,11 @@
         checkForAppUpdates();
     });
 
-</script>
+</script>    function closeUpdateModal() {
+        document.getElementById('forceDownloadModal').style.display = 'none';
+        document.getElementById('userLockScreen').style.display = 'flex'; // Te lasă să te conectezi
+    }
+
 
 </body>
 </html>
