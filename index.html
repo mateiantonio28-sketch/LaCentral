@@ -17,7 +17,7 @@
     <!-- FIREBASE SDK (Realtime Collaboration) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBtphQCRQRkBA6gcb4nqTKhmf8ti1XH2w",
@@ -33,12 +33,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Expunem funcțiile Firebase la nivel global pentru aplicație
         window.FB_db = db;
         window.FB_ref = ref;
         window.FB_set = set;
         window.FB_onValue = onValue;
         window.FB_push = push;
+        window.FB_remove = remove;
     </script>
 
     <style>
@@ -79,7 +79,6 @@
         .top-left-actions { display: flex; gap: 6px; align-items: center; }
         .refresh-btn { background-color: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         
-        /* Butonul cu 3 puncte pentru notificările colegilor */
         .collab-btn { background-color: var(--panel-bg); border: 1px solid var(--border); color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; position: relative; }
         .collab-badge { position: absolute; top: -4px; right: -4px; background: var(--danger); color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 10px; display: none; font-weight: bold; }
 
@@ -219,7 +218,6 @@
 
 <div class="container" id="mainContainer">
     
-    <!-- BARĂ SUPERIOARĂ CU REFRESH, MENIU COLABORATIV 3 PUNCTE ȘI VERSIUNE -->
     <div class="top-bar">
         <div class="top-left-actions">
             <button class="refresh-btn" onclick="clearSystemCache()">🔄 Vider Cache</button>
@@ -227,7 +225,7 @@
                 ⋮ <span id="collabBadge" class="collab-badge">0</span>
             </button>
         </div>
-        <div class="version-badge">v0.012</div>
+        <div class="version-badge">v0.013</div>
     </div>
 
     <div class="header" style="margin-top: 0;">
@@ -359,10 +357,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.012">
+            <input type="text" id="newVersionInput" value="v0.013">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Notifications en temps réel entre collègues via Firebase !">
+            <input type="text" id="newChangelogInput" value="Mise à jour en un clic (Tout Accepter) et suppression auto des notifications lues !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -396,7 +394,7 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.012</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.013</span>
     </div>
 </div>
 
@@ -408,6 +406,12 @@
             <button class="btn-close-modal" onclick="closeCollabModal()">✕</button>
         </div>
         <p style="font-size:12px; color:#9ca3af; margin-top:0;">Modifications de bases réalisées par vos collègues sur le terrain :</p>
+        
+        <!-- BUTON NOU: ACCEPTER TOUT D'UN CLIC -->
+        <div id="acceptAllContainer" style="display:none; margin-bottom: 10px;">
+            <button class="btn btn-save" style="background-color: var(--accent); padding: 8px; font-size: 12px;" onclick="acceptAllCollabUpdates()">⚡ Tout accepter d'un coup (Mise à jour globale)</button>
+        </div>
+
         <div id="collabNotificationsList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
             <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>
         </div>
@@ -527,7 +531,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.012"; 
+    const CURRENT_APP_VERSION = "v0.013"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -788,7 +792,7 @@
             document.getElementById('mainContainer').style.display = 'block';
             document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
             checkAndShowChangelog();
-            initFirebaseListeners(); // Pornim ascultătorul de notificări
+            initFirebaseListeners();
             return;
         }
         initUserScreen();
@@ -903,8 +907,9 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
-    // --- FIREBASE SYNC & NOTIFICĂRI ÎNTRE COLEGI ---
-    let pendingCollabUpdates = JSON.parse(localStorage.getItem('central_pending_collab')) || [];
+    // --- FIREBASE SYNC & COLABORARE ÎNTRE COLEGI (V0.013) ---
+    let pendingCollabUpdates = [];
+    let dismissedUpdateIds = JSON.parse(localStorage.getItem('central_dismissed_updates')) || [];
 
     function initFirebaseListeners() {
         if (!window.FB_db) {
@@ -917,10 +922,15 @@
             const data = snapshot.val();
             if (data) {
                 let updatesList = Object.values(data);
-                // Filtrăm doar ce este mai nou sau neconfirmat de userul local
                 let myName = localUser ? localUser.name : "Anonyme";
                 
-                pendingCollabUpdates = updatesList.filter(u => u.author !== myName);
+                // Excludem ce a fost trimis de noi înșine SAU ce a fost deja acceptat/șters de pe acest telefon
+                pendingCollabUpdates = updatesList.filter(u => u.author !== myName && !dismissedUpdateIds.includes(u.id));
+                
+                updateCollabBadge();
+                renderCollabNotifications();
+            } else {
+                pendingCollabUpdates = [];
                 updateCollabBadge();
                 renderCollabNotifications();
             }
@@ -963,13 +973,18 @@
 
     function renderCollabNotifications() {
         const list = document.getElementById('collabNotificationsList');
+        const acceptAllDiv = document.getElementById('acceptAllContainer');
         if (!list) return;
         list.innerHTML = '';
 
         if (pendingCollabUpdates.length === 0) {
+            acceptAllDiv.style.display = 'none';
             list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>';
             return;
         }
+
+        // Afișăm butonul "Tout accepter" dacă sunt mai multe notificări
+        acceptAllDiv.style.display = 'block';
 
         pendingCollabUpdates.forEach(upd => {
             const div = document.createElement('div');
@@ -980,13 +995,14 @@
             div.innerHTML = `
                 <div style="font-size:12px; color:#60a5fa; font-weight:bold;">👤 ${upd.author} a modifié ${upd.code} (${upd.palette})</div>
                 <div style="font-size:11px; color:#d1d5db;">Nouvelles bases : ${basesStr}</div>
-                <button class="btn btn-save" style="padding:6px; font-size:11px; margin-top:4px;" onclick="applyCollabUpdate('${upd.code}', '${upd.palette}', '${encodeURIComponent(JSON.stringify(upd.bases))}')">📥 Mettre à jour sur mon appareil</button>
+                <button class="btn btn-save" style="padding:6px; font-size:11px; margin-top:4px;" onclick="applySingleCollabUpdate('${upd.id}', '${upd.code}', '${upd.palette}', '${encodeURIComponent(JSON.stringify(upd.bases))}')">📥 Mettre à jour sur mon appareil</button>
             `;
             list.appendChild(div);
         });
     }
 
-    function applyCollabUpdate(code, palette, encodedBases) {
+    // Acceptare individuală (șterge notificarea curentă de pe ecranul tău)
+    function applySingleCollabUpdate(updateId, code, palette, encodedBases) {
         const newBases = JSON.parse(decodeURIComponent(encodedBases));
         const itemIndex = customDatabase.findIndex(c => c.code === code && c.palette === palette);
         
@@ -995,11 +1011,43 @@
             saveToStorage();
             filterColors();
             filterDedicatedPalette();
-            showAlert(`✅ Modification appliquée pour ${code} !`, true);
-            closeCollabModal();
-        } else {
-            alert("La couleur n'existe pas dans votre base locale.");
         }
+
+        // Adăugăm în lista de elemente ascunse/șterse local ca să dispara din listă
+        dismissedUpdateIds.push(updateId);
+        localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
+
+        // Actualizăm starea vizuală imediat
+        pendingCollabUpdates = pendingCollabUpdates.filter(u => u.id !== updateId);
+        updateCollabBadge();
+        renderCollabNotifications();
+
+        showAlert(`✅ Mise à jour appliquée pour ${code} !`, true);
+    }
+
+    // Funcția NOUĂ: Acceptă absolut toate modificările deodată dintr-un singur click
+    function acceptAllCollabUpdates() {
+        if (pendingCollabUpdates.length === 0) return;
+
+        pendingCollabUpdates.forEach(upd => {
+            const itemIndex = customDatabase.findIndex(c => c.code === upd.code && c.palette === upd.palette);
+            if (itemIndex >= 0) {
+                customDatabase[itemIndex].bases = upd.bases;
+            }
+            dismissedUpdateIds.push(upd.id);
+        });
+
+        saveToStorage();
+        filterColors();
+        filterDedicatedPalette();
+
+        localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
+        pendingCollabUpdates = [];
+        updateCollabBadge();
+        renderCollabNotifications();
+
+        showAlert(`⚡ Toutes les modifications de l'équipe ont été appliquées !`, true);
+        closeCollabModal();
     }
     // ----------------------------------------------------
 
@@ -1030,7 +1078,7 @@
             customDatabase[index].bases = updatedBases;
             saveToStorage(); filterColors(); filterDedicatedPalette(); closeEditModal();
             
-            // Trimitem notificarea instant spre ceilalți colegi prin Firebase
+            // Trimitem notificarea în timp real prin Firebase
             broadcastBaseUpdate(customDatabase[index].code, customDatabase[index].palette, updatedBases);
 
             showAlert(`Bases mises à jour et partagées avec l'équipe !`, true);
