@@ -1,0 +1,2345 @@
+[
+  {
+    "code": "RAL 1000",
+    "palette": "RAL",
+    "hex": "#CCC58F",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1001",
+    "palette": "RAL",
+    "hex": "#D1BC8A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1002",
+    "palette": "RAL",
+    "hex": "#D2B55B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1003",
+    "palette": "RAL",
+    "hex": "#FDAE1B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1004",
+    "palette": "RAL",
+    "hex": "#E4A010",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1005",
+    "palette": "RAL",
+    "hex": "#C89F1E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1006",
+    "palette": "RAL",
+    "hex": "#E1A100",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1007",
+    "palette": "RAL",
+    "hex": "#E88C00",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1011",
+    "palette": "RAL",
+    "hex": "#AF8A54",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1012",
+    "palette": "RAL",
+    "hex": "#DDAF27",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1013",
+    "palette": "RAL",
+    "hex": "#E3D9C6",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1014",
+    "palette": "RAL",
+    "hex": "#DDCA98",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1015",
+    "palette": "RAL",
+    "hex": "#E6D6B8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1016",
+    "palette": "RAL",
+    "hex": "#EDEE38",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1017",
+    "palette": "RAL",
+    "hex": "#F5B16D",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1018",
+    "palette": "RAL",
+    "hex": "#F8D13F",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1019",
+    "palette": "RAL",
+    "hex": "#9E8E79",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1020",
+    "palette": "RAL",
+    "hex": "#A09470",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1021",
+    "palette": "RAL",
+    "hex": "#F3BC10",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1023",
+    "palette": "RAL",
+    "hex": "#F3C010",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1024",
+    "palette": "RAL",
+    "hex": "#B8974B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1026",
+    "palette": "RAL",
+    "hex": "#FFFF00",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1027",
+    "palette": "RAL",
+    "hex": "#9B801A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1028",
+    "palette": "RAL",
+    "hex": "#FFAA00",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1032",
+    "palette": "RAL",
+    "hex": "#DDB20F",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1033",
+    "palette": "RAL",
+    "hex": "#FA9B23",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1034",
+    "palette": "RAL",
+    "hex": "#ED9B40",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1035",
+    "palette": "RAL",
+    "hex": "#A8988B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1036",
+    "palette": "RAL",
+    "hex": "#B08A61",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 1037",
+    "palette": "RAL",
+    "hex": "#F08B00",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2000",
+    "palette": "RAL",
+    "hex": "#DC6B27",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2001",
+    "palette": "RAL",
+    "hex": "#B8401B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 2002",
+    "palette": "RAL",
+    "hex": "#C6392B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 2003",
+    "palette": "RAL",
+    "hex": "#FA6800",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2004",
+    "palette": "RAL",
+    "hex": "#E75B12",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2005",
+    "palette": "RAL",
+    "hex": "#FF2300",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 2007",
+    "palette": "RAL",
+    "hex": "#FFAA00",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2008",
+    "palette": "RAL",
+    "hex": "#D76128",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2009",
+    "palette": "RAL",
+    "hex": "#DE5308",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2010",
+    "palette": "RAL",
+    "hex": "#D45D2B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2011",
+    "palette": "RAL",
+    "hex": "#EC6A0A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2012",
+    "palette": "RAL",
+    "hex": "#C35837",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 2013",
+    "palette": "RAL",
+    "hex": "#983D1D",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3000",
+    "palette": "RAL",
+    "hex": "#A72920",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3001",
+    "palette": "RAL",
+    "hex": "#9B2423",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3002",
+    "palette": "RAL",
+    "hex": "#921E19",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3003",
+    "palette": "RAL",
+    "hex": "#8B1C1C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3004",
+    "palette": "RAL",
+    "hex": "#701F28",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3005",
+    "palette": "RAL",
+    "hex": "#5E2028",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3007",
+    "palette": "RAL",
+    "hex": "#402225",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3009",
+    "palette": "RAL",
+    "hex": "#703731",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3011",
+    "palette": "RAL",
+    "hex": "#7E292C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3012",
+    "palette": "RAL",
+    "hex": "#B98270",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 3013",
+    "palette": "RAL",
+    "hex": "#923229",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3014",
+    "palette": "RAL",
+    "hex": "#CF727A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 3015",
+    "palette": "RAL",
+    "hex": "#E2A9B3",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 3016",
+    "palette": "RAL",
+    "hex": "#A1382A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3017",
+    "palette": "RAL",
+    "hex": "#D14152",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3018",
+    "palette": "RAL",
+    "hex": "#D33245",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3020",
+    "palette": "RAL",
+    "hex": "#CC1100",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3022",
+    "palette": "RAL",
+    "hex": "#D96853",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 3024",
+    "palette": "RAL",
+    "hex": "#F80000",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3026",
+    "palette": "RAL",
+    "hex": "#FE0000",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3027",
+    "palette": "RAL",
+    "hex": "#B42041",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3028",
+    "palette": "RAL",
+    "hex": "#E72512",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3031",
+    "palette": "RAL",
+    "hex": "#A32A29",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3032",
+    "palette": "RAL",
+    "hex": "#721422",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 3033",
+    "palette": "RAL",
+    "hex": "#B24C39",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 4001",
+    "palette": "RAL",
+    "hex": "#8A5A83",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 4002",
+    "palette": "RAL",
+    "hex": "#933D50",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 4003",
+    "palette": "RAL",
+    "hex": "#D05B92",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 4004",
+    "palette": "RAL",
+    "hex": "#69193B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 4005",
+    "palette": "RAL",
+    "hex": "#76689A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 4006",
+    "palette": "RAL",
+    "hex": "#A02B73",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 4007",
+    "palette": "RAL",
+    "hex": "#4A2335",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 4008",
+    "palette": "RAL",
+    "hex": "#903373",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 4009",
+    "palette": "RAL",
+    "hex": "#A18594",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 4010",
+    "palette": "RAL",
+    "hex": "#C73F7A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 4011",
+    "palette": "RAL",
+    "hex": "#56406C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 4012",
+    "palette": "RAL",
+    "hex": "#6B687D",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 5000",
+    "palette": "RAL",
+    "hex": "#384E70",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5001",
+    "palette": "RAL",
+    "hex": "#1F4762",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5002",
+    "palette": "RAL",
+    "hex": "#2B2C7C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5003",
+    "palette": "RAL",
+    "hex": "#2A345A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5004",
+    "palette": "RAL",
+    "hex": "#1D1E2A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5005",
+    "palette": "RAL",
+    "hex": "#154889",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5007",
+    "palette": "RAL",
+    "hex": "#3E5F8A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5008",
+    "palette": "RAL",
+    "hex": "#313B4D",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5009",
+    "palette": "RAL",
+    "hex": "#2E5978",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5010",
+    "palette": "RAL",
+    "hex": "#10427A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5011",
+    "palette": "RAL",
+    "hex": "#1E2436",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5012",
+    "palette": "RAL",
+    "hex": "#3B83B3",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 5013",
+    "palette": "RAL",
+    "hex": "#232C46",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5014",
+    "palette": "RAL",
+    "hex": "#637D96",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 5015",
+    "palette": "RAL",
+    "hex": "#2271B3",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 5017",
+    "palette": "RAL",
+    "hex": "#063971",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5018",
+    "palette": "RAL",
+    "hex": "#3F888F",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 5019",
+    "palette": "RAL",
+    "hex": "#1B4D79",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5020",
+    "palette": "RAL",
+    "hex": "#1D334A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5021",
+    "palette": "RAL",
+    "hex": "#256D7B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5022",
+    "palette": "RAL",
+    "hex": "#252850",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5023",
+    "palette": "RAL",
+    "hex": "#49678D",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5024",
+    "palette": "RAL",
+    "hex": "#5D9B9E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 5025",
+    "palette": "RAL",
+    "hex": "#2A6478",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 5026",
+    "palette": "RAL",
+    "hex": "#102C54",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6000",
+    "palette": "RAL",
+    "hex": "#327662",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6001",
+    "palette": "RAL",
+    "hex": "#28713E",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6002",
+    "palette": "RAL",
+    "hex": "#276235",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6003",
+    "palette": "RAL",
+    "hex": "#4B573E",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6004",
+    "palette": "RAL",
+    "hex": "#0E4243",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6005",
+    "palette": "RAL",
+    "hex": "#0F4336",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6006",
+    "palette": "RAL",
+    "hex": "#40433B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6007",
+    "palette": "RAL",
+    "hex": "#283425",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6008",
+    "palette": "RAL",
+    "hex": "#35382E",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6009",
+    "palette": "RAL",
+    "hex": "#26392F",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6010",
+    "palette": "RAL",
+    "hex": "#3E753B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6011",
+    "palette": "RAL",
+    "hex": "#68825B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6012",
+    "palette": "RAL",
+    "hex": "#31403D",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6013",
+    "palette": "RAL",
+    "hex": "#7D8471",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6014",
+    "palette": "RAL",
+    "hex": "#474536",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6015",
+    "palette": "RAL",
+    "hex": "#3D3D36",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6016",
+    "palette": "RAL",
+    "hex": "#026A47",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6017",
+    "palette": "RAL",
+    "hex": "#568246",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6018",
+    "palette": "RAL",
+    "hex": "#639B3B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6019",
+    "palette": "RAL",
+    "hex": "#BDD8B7",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6020",
+    "palette": "RAL",
+    "hex": "#3B4731",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6021",
+    "palette": "RAL",
+    "hex": "#8CA47E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6022",
+    "palette": "RAL",
+    "hex": "#3A352B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6024",
+    "palette": "RAL",
+    "hex": "#008754",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6025",
+    "palette": "RAL",
+    "hex": "#53753B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6026",
+    "palette": "RAL",
+    "hex": "#005D52",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6027",
+    "palette": "RAL",
+    "hex": "#81C0BB",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6028",
+    "palette": "RAL",
+    "hex": "#2D5546",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6029",
+    "palette": "RAL",
+    "hex": "#007243",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6032",
+    "palette": "RAL",
+    "hex": "#27825C",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6033",
+    "palette": "RAL",
+    "hex": "#49877C",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6034",
+    "palette": "RAL",
+    "hex": "#7FB5B5",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6035",
+    "palette": "RAL",
+    "hex": "#1B542C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6036",
+    "palette": "RAL",
+    "hex": "#05443B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 6037",
+    "palette": "RAL",
+    "hex": "#008F39",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 6038",
+    "palette": "RAL",
+    "hex": "#00B533",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7000",
+    "palette": "RAL",
+    "hex": "#788896",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7001",
+    "palette": "RAL",
+    "hex": "#8A959E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7002",
+    "palette": "RAL",
+    "hex": "#7B7C6E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7003",
+    "palette": "RAL",
+    "hex": "#6C7059",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7004",
+    "palette": "RAL",
+    "hex": "#969998",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7005",
+    "palette": "RAL",
+    "hex": "#6B706E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7006",
+    "palette": "RAL",
+    "hex": "#756F61",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7008",
+    "palette": "RAL",
+    "hex": "#746246",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7009",
+    "palette": "RAL",
+    "hex": "#5B6259",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7010",
+    "palette": "RAL",
+    "hex": "#575D57",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7011",
+    "palette": "RAL",
+    "hex": "#555D61",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7012",
+    "palette": "RAL",
+    "hex": "#596163",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7013",
+    "palette": "RAL",
+    "hex": "#555245",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7015",
+    "palette": "RAL",
+    "hex": "#51565C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7016",
+    "palette": "RAL",
+    "hex": "#373E48",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7021",
+    "palette": "RAL",
+    "hex": "#2F3234",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7022",
+    "palette": "RAL",
+    "hex": "#4B4D46",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7023",
+    "palette": "RAL",
+    "hex": "#818479",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7024",
+    "palette": "RAL",
+    "hex": "#474A51",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7026",
+    "palette": "RAL",
+    "hex": "#373F43",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7030",
+    "palette": "RAL",
+    "hex": "#939388",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7031",
+    "palette": "RAL",
+    "hex": "#5D6970",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7032",
+    "palette": "RAL",
+    "hex": "#B8B9A8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7033",
+    "palette": "RAL",
+    "hex": "#818979",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7034",
+    "palette": "RAL",
+    "hex": "#939176",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7035",
+    "palette": "RAL",
+    "hex": "#CBD0CC",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7036",
+    "palette": "RAL",
+    "hex": "#9A9697",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7037",
+    "palette": "RAL",
+    "hex": "#7C7F7D",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7038",
+    "palette": "RAL",
+    "hex": "#B5B8B1",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7039",
+    "palette": "RAL",
+    "hex": "#6C6960",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7040",
+    "palette": "RAL",
+    "hex": "#9DA3A6",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7042",
+    "palette": "RAL",
+    "hex": "#8D9295",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7043",
+    "palette": "RAL",
+    "hex": "#4E5452",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 7044",
+    "palette": "RAL",
+    "hex": "#BDBDB2",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7045",
+    "palette": "RAL",
+    "hex": "#91969A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7046",
+    "palette": "RAL",
+    "hex": "#82898F",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7047",
+    "palette": "RAL",
+    "hex": "#CFD0CB",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 7048",
+    "palette": "RAL",
+    "hex": "#898176",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 8000",
+    "palette": "RAL",
+    "hex": "#886B35",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 8001",
+    "palette": "RAL",
+    "hex": "#A05A2C",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 8002",
+    "palette": "RAL",
+    "hex": "#734233",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8003",
+    "palette": "RAL",
+    "hex": "#80461B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8004",
+    "palette": "RAL",
+    "hex": "#8E402A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8007",
+    "palette": "RAL",
+    "hex": "#703D23",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8008",
+    "palette": "RAL",
+    "hex": "#734A29",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8011",
+    "palette": "RAL",
+    "hex": "#5B3A29",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8012",
+    "palette": "RAL",
+    "hex": "#673831",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8014",
+    "palette": "RAL",
+    "hex": "#49392D",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8015",
+    "palette": "RAL",
+    "hex": "#633A34",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8016",
+    "palette": "RAL",
+    "hex": "#4C2F27",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8017",
+    "palette": "RAL",
+    "hex": "#45322E",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8019",
+    "palette": "RAL",
+    "hex": "#403A3A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8022",
+    "palette": "RAL",
+    "hex": "#211F20",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8023",
+    "palette": "RAL",
+    "hex": "#A65E2E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 8024",
+    "palette": "RAL",
+    "hex": "#795038",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8025",
+    "palette": "RAL",
+    "hex": "#755847",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8028",
+    "palette": "RAL",
+    "hex": "#4E3B31",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 8029",
+    "palette": "RAL",
+    "hex": "#6C3B30",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 9001",
+    "palette": "RAL",
+    "hex": "#FDFBF7",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9002",
+    "palette": "RAL",
+    "hex": "#E7E8E2",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9003",
+    "palette": "RAL",
+    "hex": "#F4F4F4",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9004",
+    "palette": "RAL",
+    "hex": "#282828",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 9005",
+    "palette": "RAL",
+    "hex": "#0A0A0A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 9006",
+    "palette": "RAL",
+    "hex": "#A5A8A6",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9007",
+    "palette": "RAL",
+    "hex": "#8F8F8F",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9010",
+    "palette": "RAL",
+    "hex": "#F0EDE6",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9011",
+    "palette": "RAL",
+    "hex": "#1C1D21",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 9016",
+    "palette": "RAL",
+    "hex": "#F6F6F6",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9017",
+    "palette": "RAL",
+    "hex": "#1E1E1E",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "RAL 9018",
+    "palette": "RAL",
+    "hex": "#D7D7D7",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9022",
+    "palette": "RAL",
+    "hex": "#9C9C9C",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "RAL 9023",
+    "palette": "RAL",
+    "hex": "#828282",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  }
+]
