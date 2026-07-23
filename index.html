@@ -75,7 +75,6 @@
             background: #111827; color: #fff; font-size: 14px; text-align: center;
         }
 
-        /* Modal Selector Secțiune Principală */
         .section-selector-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 99998; display: none;
@@ -220,7 +219,6 @@
 </head>
 <body>
 
-<!-- ECRAN CONECTARE CU ROLURI -->
 <div id="userLockScreen" class="lock-screen">
     <div class="lock-card">
         <h2>La Centrale</h2>
@@ -243,7 +241,6 @@
     </div>
 </div>
 
-<!-- POPUP SELECTOR CATEGORIE / SECȚIUNE -->
 <div id="sectionSelectorModal" class="section-selector-overlay">
     <div class="section-selector-card">
         <h2 style="color:var(--primary); margin-top:0;">Choisissez la Section</h2>
@@ -262,7 +259,7 @@
                 ⋮ <span id="collabBadge" class="collab-badge">0</span>
             </button>
         </div>
-        <div class="version-badge">v0.014</div>
+        <div class="version-badge">v0.015</div>
     </div>
 
     <div class="header" style="margin-top: 0;">
@@ -283,7 +280,6 @@
         </div>
     </div>
 
-    <!-- CONȚINUT SECȚIUNE 1: VERIFIE LES BASES -->
     <div id="sectionBasesContent">
         <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" oninput="debouncedFilterColors()">
 
@@ -296,7 +292,6 @@
             <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
         </div>
 
-        <!-- ZONA DOSARELOR DE NUANCIERE -->
         <div class="palette-group" style="margin-top: 16px; border: 1px solid var(--accent);">
             <div class="palette-header" onclick="toggleMainNuancier()" style="background-color: #1e3a8a;">
                 <span>📚 Tous les Nuanciers (Dossiers)</span>
@@ -307,7 +302,6 @@
             </div>
         </div>
 
-        <!-- CĂUTARE DEDICATĂ PE PALETAR -->
         <div id="dedicatedSearchPanel" class="panel" style="display:none; border-color: var(--accent); margin-top: 16px;">
             <button class="btn-back" onclick="closeDedicatedSearch()">← Retour aux Nuanciers</button>
             <h3 id="dedicatedSearchTitle" style="color: #60a5fa; margin-bottom: 12px; font-size: 16px;">Recherche dans: ...</h3>
@@ -316,7 +310,6 @@
         </div>
     </div>
 
-    <!-- CONȚINUT SECȚIUNE 2: VERIFIE LE STOCK (CERERI GĂLEȚI / PRODUSE) -->
     <div id="sectionStockContent" style="display: none;">
         <div class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
             <h3 style="color:#4ade80;">📦 Demande de Réapprovisionnement de Stock</h3>
@@ -336,7 +329,6 @@
 
     <div id="alertBanner" class="alert-box"></div>
 
-    <!-- Ghidul de Baze Dinamic -->
     <div id="guidePanel" class="panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <h3 style="margin:0;">Équivalences des Bases</h3>
@@ -366,7 +358,6 @@
         <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
     </div>
 
-    <!-- Panoul de Administrare Master -->
     <div id="adminPanel" class="panel">
         <h3>Panneau d'Administration Master</h3>
 
@@ -436,10 +427,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.014">
+            <input type="text" id="newVersionInput" value="v0.015">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Sélection de section (Bases / Stock), gestion des rôles et alertes stock avec son !">
+            <input type="text" id="newChangelogInput" value="Alarme persistante avec sons multiples et vibrations pour les alertes stock !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -458,11 +449,10 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.014</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.015</span>
     </div>
 </div>
 
-<!-- Modal Notificare Colaborativă (Baze) -->
 <div id="collabModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -481,7 +471,6 @@
     </div>
 </div>
 
-<!-- Modal Notificare Update -->
 <div id="changelogModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
         <h3 style="color:#10b981; margin-top:0; font-size:18px;">🎉 L'Application a été mise à jour !</h3>
@@ -493,7 +482,6 @@
     </div>
 </div>
 
-<!-- Modal Token Manager -->
 <div id="tokenModalOverlay" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <div class="modal-header">
@@ -506,7 +494,6 @@
     </div>
 </div>
 
-<!-- Modal Editare Completă Baze Culoare -->
 <div id="editModalOverlay" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -538,7 +525,6 @@
     </div>
 </div>
 
-<!-- TASTATURA VIRTUALĂ -->
 <div id="virtualKeyboard" class="virtual-keyboard">
     <div class="vk-row">
         <div class="vk-key" onclick="vKey('1')">1</div>
@@ -594,7 +580,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.014"; 
+    const CURRENT_APP_VERSION = "v0.015"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -1006,24 +992,32 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
-    // --- FIREBASE SYNC & COLABORARE (BASES + STOCK CU SUNET) ---
+    // --- ALARMĂ PERSISTENTĂ: SUNET MULTIPLU + VIBRAȚII (V0.015) ---
     let pendingCollabUpdates = [];
     let dismissedUpdateIds = JSON.parse(localStorage.getItem('central_dismissed_updates')) || [];
     let stockRequestsList = [];
 
-    // Funcție pentru redare alertă sonoră (Bip digital)
-    function playAlertSound() {
+    function playPersistentAlarm() {
+        // 1. Vibrație fizică pe telefon (Model de alarmă: 400ms vibrație, 200ms pauză, repetat de 4 ori)
+        if ("vibrate" in navigator) {
+            try { navigator.vibrate([400, 200, 400, 200, 600, 200, 600]); } catch(e) {}
+        }
+
+        // 2. Alarmă sonoră lungă (repetată de 5 ori cadențat)
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Notă La 
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
+            for (let i = 0; i < 5; i++) {
+                let startTime = audioCtx.currentTime + (i * 0.25);
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth'; // Sunet mai strident, tip alarmă
+                osc.frequency.setValueAtTime(660 + (i * 100), startTime);
+                gain.gain.setValueAtTime(0.4, startTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.2);
+            }
         } catch(e) {}
     }
 
@@ -1033,20 +1027,25 @@
             return;
         }
 
-        // Ascultator Baze culori
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 let updatesList = Object.values(data);
                 let myName = localUser ? localUser.name : "Anonyme";
+                let prevCount = pendingCollabUpdates.length;
+                
                 pendingCollabUpdates = updatesList.filter(u => u.author !== myName && !dismissedUpdateIds.includes(u.id));
+                
+                // Dacă au apărut notificări noi pe baze și suntem pe secțiunea baze -> Alarmă!
+                if (pendingCollabUpdates.length > prevCount && prevCount >= 0) {
+                    playPersistentAlarm();
+                }
                 updateCollabBadge();
                 renderCollabNotifications();
             }
         });
 
-        // Ascultator Cereri de Stoc
         const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
         window.FB_onValue(stockRef, (snapshot) => {
             const data = snapshot.val();
@@ -1055,9 +1054,9 @@
                 let previousCount = stockRequestsList.length;
                 stockRequestsList = rawStock.filter(s => s.status === 'pending');
                 
-                // Dacă suntem magazinier și a apărut o cerere nouă -> Sunet de avertizare!
-                if (localUser && localUser.role === 'Magazinier' && stockRequestsList.length > previousCount && previousCount > 0) {
-                    playAlertSound();
+                // Dacă suntem magazinier și a sosit o comandă nouă de găleți -> ALARMĂ LUNGĂ + VIBRAȚII!
+                if (localUser && localUser.role === 'Magazinier' && stockRequestsList.length > previousCount && previousCount >= 0) {
+                    playPersistentAlarm();
                 }
                 renderStockRequests();
             } else {
@@ -1078,31 +1077,25 @@
         });
     }
 
-    // --- GESTIUNE STOC ȘI GĂLEȚI ---
     function sendStockRequest() {
         const prod = document.getElementById('stockProduct').value.trim();
         const qty = document.getElementById('stockQuantity').value.trim();
         const loc = document.getElementById('stockLocation').value.trim();
 
-        if (!prod || !qty || !loc) { alert("Remplissez tous les champs pour la demande de stock !"); return; }
-        if (!window.FB_db) { alert("Erreur de connexion Firebase."); return; }
+        if (!prod || !qty || !loc) { alert("Remplissez tous les champs !"); return; }
+        if (!window.FB_db) { alert("Erreur Firebase."); return; }
 
         const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
         const newReqRef = window.FB_push(stockRef);
         
         window.FB_set(newReqRef, {
-            id: newReqRef.key,
-            author: localUser ? localUser.name : "Inconnu",
-            product: prod,
-            quantity: qty,
-            location: loc,
-            status: 'pending',
-            timestamp: Date.now()
+            id: newReqRef.key, author: localUser ? localUser.name : "Inconnu",
+            product: prod, quantity: qty, location: loc, status: 'pending', timestamp: Date.now()
         });
 
         document.getElementById('stockProduct').value = '';
         document.getElementById('stockLocation').value = '';
-        showAlert("📨 Demande de stock envoyée au magazinier !", true);
+        showAlert("📨 Demande envoyée au magazinier !", true);
     }
 
     function renderStockRequests() {
@@ -1118,7 +1111,6 @@
         stockRequestsList.forEach(req => {
             const div = document.createElement('div');
             div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
-            
             let isMagazinier = localUser && localUser.role === 'Magazinier';
 
             div.innerHTML = `
@@ -1137,8 +1129,7 @@
         if (!window.FB_db) return;
         const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
         window.FB_set(reqRef, 'completed').then(() => {
-            showAlert("✅ Stock validé et marqué comme réapprovisionné !", true);
-            // Ștergem local din listă
+            showAlert("✅ Stock validé !", true);
             stockRequestsList = stockRequestsList.filter(r => r.id !== reqId);
             renderStockRequests();
         });
@@ -1188,37 +1179,30 @@
     function applySingleCollabUpdate(updateId, code, palette, encodedBases) {
         const newBases = JSON.parse(decodeURIComponent(encodedBases));
         const itemIndex = customDatabase.findIndex(c => c.code === code && c.palette === palette);
-        
         if (itemIndex >= 0) {
             customDatabase[itemIndex].bases = newBases;
             saveToStorage(); filterColors(); filterDedicatedPalette();
         }
-
         dismissedUpdateIds.push(updateId);
         localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
-
         pendingCollabUpdates = pendingCollabUpdates.filter(u => u.id !== updateId);
         updateCollabBadge();
         renderCollabNotifications();
-
         showAlert(`✅ Mise à jour appliquée pour ${code} !`, true);
     }
 
     function acceptAllCollabUpdates() {
         if (pendingCollabUpdates.length === 0) return;
-
         pendingCollabUpdates.forEach(upd => {
             const itemIndex = customDatabase.findIndex(c => c.code === upd.code && c.palette === upd.palette);
             if (itemIndex >= 0) customDatabase[itemIndex].bases = upd.bases;
             dismissedUpdateIds.push(upd.id);
         });
-
         saveToStorage(); filterColors(); filterDedicatedPalette();
         localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
         pendingCollabUpdates = [];
         updateCollabBadge();
         renderCollabNotifications();
-
         showAlert(`⚡ Toutes les modifications ont été appliquées !`, true);
         closeCollabModal();
     }
