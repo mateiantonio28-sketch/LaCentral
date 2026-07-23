@@ -67,6 +67,7 @@
         .lock-card {
             background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
             padding: 24px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
         }
         .lock-card h2 { margin: 0 0 6px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
         .lock-card p { margin: 0 0 16px 0; font-size: 12px; color: #9ca3af; }
@@ -74,6 +75,14 @@
             width: 100%; padding: 12px; margin-bottom: 10px;
             border: 1px solid var(--border); border-radius: 8px;
             background: #111827; color: #fff; font-size: 14px; text-align: center;
+        }
+        .lock-card input[readonly], .lock-card select[readonly] { opacity: 1; cursor: pointer; }
+
+        /* Buton ON/OFF tastatură pe ecranul de login colț dreapta-sus */
+        .login-vk-toggle {
+            position: absolute; top: 12px; right: 12px;
+            background: #374151; color: #fff; border: 1px solid var(--border);
+            padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;
         }
 
         .section-selector-overlay {
@@ -123,7 +132,9 @@
 
         .actions-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
         .btn { flex: 1; min-width: 110px; padding: 10px; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.2s ease; }
-        .btn-admin { background-color: #374151; color: #fff; }
+        .btn-admin-discrete { background: transparent; border: 1px solid var(--border); color: #6b7280; padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; }
+        .btn-admin-discrete:hover { color: #fff; border-color: var(--accent); }
+
         .btn-ai { background-color: var(--ai-color); color: #fff; }
         .btn-guide { background-color: #0284c7; color: #fff; }
         .btn-danger { background-color: var(--danger); color: #fff; }
@@ -194,12 +205,11 @@
         }
         .folder-overview-item:hover { border-color: var(--accent); }
 
-        .app-version-footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-top: 10px; border-top: 1px dashed var(--border); margin-bottom: 80px; }
+        .app-version-footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-top: 10px; border-top: 1px dashed var(--border); margin-bottom: 80px; display: flex; justify-content: space-between; align-items: center; }
         .alert-box { display: none; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; font-weight: 600; text-align: center; }
         .alert-warning { background-color: #78350f; color: #fef3c7; border: 1px solid #b45309; }
         .alert-success { background-color: #14532d; color: #dcfce7; border: 1px solid #15803d; }
 
-        /* TABURI PENTRU MODUL STOCK (RAPID VS LISTĂ) */
         .stock-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
         .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
         .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
@@ -228,12 +238,15 @@
 
 <div id="userLockScreen" class="lock-screen">
     <div class="lock-card">
+        <!-- BUTON ON/OFF TASTATURĂ VIRTUALĂ PE LOGIN -->
+        <button id="loginVkToggle" class="login-vk-toggle" onclick="toggleVirtualKeyboard()">⌨️ App: ON</button>
+
         <h2>La Centrale</h2>
         <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 caractères)</p>
-        <input type="text" id="regUser" placeholder="Nom d'utilisateur">
-        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 caractères)">
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur" readonly>
+        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 caractères)" readonly>
         
-        <select id="regRole">
+        <select id="regRole" readonly>
             <option value="Teinteur">Teinteur</option>
             <option value="Vendeur">Vendeur</option>
             <option value="Magazinier">Magazinier</option>
@@ -241,19 +254,7 @@
             <option value="Préparateur de commande">Préparateur de commande</option>
         </select>
 
-        <!-- SELECTOR TASTATURĂ DIRECT DE LA LOGARE -->
-        <div style="margin-top:10px; margin-bottom:10px; text-align:left; background:#111827; padding:8px; border-radius:6px; border:1px solid var(--border);">
-            <label style="font-size:11px; color:#9ca3af; display:block; margin-bottom:4px;">Clavier à utiliser :</label>
-            <select id="regKeyboardPref" style="margin-bottom:0;">
-                <option value="app">⌨️ Clavier App (Virtuel)</option>
-                <option value="phone">📱 Clavier Téléphone (Natif)</option>
-            </select>
-        </div>
-
         <button class="btn btn-save" onclick="handleUserAuth()">Accéder à l'application</button>
-        <div style="margin-top:14px; border-top:1px dashed var(--border); padding-top:10px;">
-            <button class="btn btn-admin" style="width:100%; font-size:11px;" onclick="quickAdminAuthPrompt()">🔒 Accès Administrateur Master</button>
-        </div>
     </div>
 </div>
 
@@ -277,7 +278,7 @@
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
             <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
-            <div class="version-badge">v0.018</div>
+            <div class="version-badge">v0.019</div>
         </div>
     </div>
 
@@ -300,15 +301,13 @@
     </div>
 
     <div id="sectionBasesContent">
-        <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" oninput="debouncedFilterColors()">
+        <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" readonly oninput="debouncedFilterColors()">
 
         <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche Globale</div>
         <div id="resultsList" style="margin-bottom: 16px; display:none;"></div>
 
         <div class="actions-bar">
             <button class="btn btn-guide" onclick="togglePanel('guidePanel')">📖 Guide des Bases</button>
-            <button class="btn btn-admin" id="vkToggleBtn" onclick="toggleVirtualKeyboard()">⌨️ Clavier App: ON</button>
-            <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
         </div>
 
         <div class="palette-group" style="margin-top: 16px; border: 1px solid var(--accent);">
@@ -324,15 +323,14 @@
         <div id="dedicatedSearchPanel" class="panel" style="display:none; border-color: var(--accent); margin-top: 16px;">
             <button class="btn-back" onclick="closeDedicatedSearch()">← Retour aux Nuanciers</button>
             <h3 id="dedicatedSearchTitle" style="color: #60a5fa; margin-bottom: 12px; font-size: 16px;">Recherche dans: ...</h3>
-            <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." oninput="filterDedicatedPalette()">
+            <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." readonly oninput="filterDedicatedPalette()">
             <div id="dedicatedSearchResults" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
     </div>
 
-    <!-- SECȚIUNEA STOCK: MOD DUAL (CERERE RAPIDĂ VS LISTĂ MULTIPLĂ) -->
+    <!-- SECȚIUNEA STOCK -->
     <div id="sectionStockContent" style="display: none;">
         
-        <!-- Taburi de comutare -->
         <div class="stock-tabs">
             <button class="stock-tab-btn active" id="tabBtnSingle" onclick="switchStockMode('single')">⚡ Demande Rapide (1 Produit)</button>
             <button class="stock-tab-btn" id="tabBtnList" onclick="switchStockMode('list')">📋 Créer une Liste Multi-produits</button>
@@ -341,26 +339,26 @@
         <!-- MOD 1: UN SINGUR PRODUS -->
         <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
             <h3 style="color:#4ade80;">⚡ Demande Rapide de Seau / Produit</h3>
-            <input type="text" id="singleProduct" placeholder="Nom du produit (ex: Trimetal Ultramat)">
-            <input type="text" id="singleBase" placeholder="Base (ex: AW / AC / Blanc)">
+            <input type="text" id="singleProduct" placeholder="Nom du produit (ex: Trimetal Ultramat)" readonly>
+            <input type="text" id="singleBase" placeholder="Base (ex: AW / AC / Blanc)" readonly>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="singleBucketSize" placeholder="Capacité (ex: 10L / 4L)">
-                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1">
+                <input type="text" id="singleBucketSize" placeholder="Capacité (ex: 10L / 4L)" readonly>
+                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1" readonly>
             </div>
-            <input type="text" id="singleLocation" placeholder="Emplacement Rayon (ex: Rayon 3, Allée 2)">
+            <input type="text" id="singleLocation" placeholder="Emplacement Rayon (ex: Rayon 3, Allée 2)" readonly>
             <button class="btn btn-save" style="background-color:var(--success);" onclick="sendSingleStockRequest()">📨 Envoyer la Demande Urgente</button>
         </div>
 
         <!-- MOD 2: CREARE LISTĂ MULTIPLĂ -->
         <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
             <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock (Rayons)</h3>
-            <input type="text" id="listProduct" placeholder="Nom du produit">
-            <input type="text" id="listBase" placeholder="Base (ex: AW / AC)">
+            <input type="text" id="listProduct" placeholder="Nom du produit" readonly>
+            <input type="text" id="listBase" placeholder="Base (ex: AW / AC)" readonly>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="listBucketSize" placeholder="Capacité (ex: 10L)">
-                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1">
+                <input type="text" id="listBucketSize" placeholder="Capacité (ex: 10L)" readonly>
+                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1" readonly>
             </div>
-            <input type="text" id="listLocation" placeholder="Emplacement Rayon">
+            <input type="text" id="listLocation" placeholder="Emplacement Rayon" readonly>
             <button class="btn btn-save" style="background-color:#374151; margin-top:4px;" onclick="addStockItemToList()">➕ Ajouter à la liste</button>
             
             <div style="margin-top: 12px; background: #111827; padding: 10px; border-radius: 6px; border:1px solid var(--border);">
@@ -372,13 +370,11 @@
             </div>
         </div>
 
-        <!-- LISTELE / CERERILE ACTIVE -->
         <div class="section-label">Demandes de stock en cours :</div>
         <div id="stockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
             <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active.</div>
         </div>
 
-        <!-- LISTA PRODUSELOR OUT OF STOCK (EPUIZATE ÎN DEPOZIT) -->
         <div class="section-label" style="color:var(--danger); margin-top:24px;">❌ Produits Out of Stock (En attente de réapprovisionnement dépôt) :</div>
         <div id="outOfStockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
             <div style="text-align:center; padding:15px; color:#9ca3af; font-size:12px;">Aucun produit en rupture de stock.</div>
@@ -411,8 +407,8 @@
             <h3 style="margin:0;">Connexion Administrateur Master</h3>
             <button class="btn-close-modal" onclick="togglePanel('authPanel')">✕</button>
         </div>
-        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master">
-        <input type="password" id="authPass" placeholder="Mot de passe">
+        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master" readonly>
+        <input type="password" id="authPass" placeholder="Mot de passe" readonly>
         <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
     </div>
 
@@ -423,35 +419,35 @@
         <div id="editGuideForm" class="collapsible-content">
             <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Tons Clairs (Clair) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
-                <input type="text" id="guideClairTrimetal" placeholder="Trimetal">
-                <input type="text" id="guideClairHerbol" placeholder="Herbol">
-                <input type="text" id="guideClairSikkens" placeholder="Sikkens">
-                <input type="text" id="guideClairUnikalo" placeholder="Unikalo">
+                <input type="text" id="guideClairTrimetal" placeholder="Trimetal" readonly>
+                <input type="text" id="guideClairHerbol" placeholder="Herbol" readonly>
+                <input type="text" id="guideClairSikkens" placeholder="Sikkens" readonly>
+                <input type="text" id="guideClairUnikalo" placeholder="Unikalo" readonly>
             </div>
             
             <p style="font-size:11px; color:#60a5fa; margin-top:10px; font-weight:bold;">Tons Moyens (Moyen) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
-                <input type="text" id="guideMoyenTrimetal" placeholder="Trimetal">
-                <input type="text" id="guideMoyenHerbol" placeholder="Herbol">
-                <input type="text" id="guideMoyenSikkens" placeholder="Sikkens">
-                <input type="text" id="guideMoyenUnikalo" placeholder="Unikalo">
+                <input type="text" id="guideMoyenTrimetal" placeholder="Trimetal" readonly>
+                <input type="text" id="guideMoyenHerbol" placeholder="Herbol" readonly>
+                <input type="text" id="guideMoyenSikkens" placeholder="Sikkens" readonly>
+                <input type="text" id="guideMoyenUnikalo" placeholder="Unikalo" readonly>
             </div>
 
             <p style="font-size:11px; color:#60a5fa; margin-top:10px; font-weight:bold;">Tons Foncés (Foncé) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:10px;">
-                <input type="text" id="guideFonceTrimetal" placeholder="Trimetal">
-                <input type="text" id="guideFonceHerbol" placeholder="Herbol">
-                <input type="text" id="guideFonceSikkens" placeholder="Sikkens">
-                <input type="text" id="guideFonceUnikalo" placeholder="Unikalo">
+                <input type="text" id="guideFonceTrimetal" placeholder="Trimetal" readonly>
+                <input type="text" id="guideFonceHerbol" placeholder="Herbol" readonly>
+                <input type="text" id="guideFonceSikkens" placeholder="Sikkens" readonly>
+                <input type="text" id="guideFonceUnikalo" placeholder="Unikalo" readonly>
             </div>
             <button class="btn btn-save" onclick="saveGuideTable()">💾 Enregistrer le Guide</button>
         </div>
 
         <button class="collapsible-btn" onclick="toggleCollapse('manageSingleForm')">✏️ Ajouter / Modifier / Supprimer Couleur <span>▼</span></button>
         <div id="manageSingleForm" class="collapsible-content">
-            <select id="targetPaletteSelect" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
-            <input type="text" id="manageCode" placeholder="Code Couleur (ex: RAL 9001)">
-            <input type="text" id="manageHex" placeholder="Couleur HEX (ex: #FDFBF7)" value="#cbd5e1">
+            <select id="targetPaletteSelect" readonly style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
+            <input type="text" id="manageCode" placeholder="Code Couleur (ex: RAL 9001)" readonly>
+            <input type="text" id="manageHex" placeholder="Couleur HEX (ex: #FDFBF7)" value="#cbd5e1" readonly>
             <div style="display:flex; gap:6px; margin-bottom:8px;">
                 <button class="btn btn-save" style="flex:1;" onclick="saveSingleColorToFolder()">💾 Save / Update</button>
                 <button class="btn btn-danger" style="flex:1;" onclick="deleteSingleColorFromFolder()">🗑️ Supprimer</button>
@@ -463,13 +459,13 @@
         <div id="syncGitForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
             
             <label style="font-size:11px; color:#9ca3af;">Choisir un fichier existant ou créer un nouveau :</label>
-            <select id="gitExistingFilesSelect" onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;">
+            <select id="gitExistingFilesSelect" readonly onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;">
                 <option value="NEW">-- 📝 Créer un Nouveau Fichier --</option>
             </select>
 
-            <input type="text" id="syncFileName" placeholder="Nom du fichier (ex: farrow_ball.json)">
-            <input type="text" id="syncFolderPalette" placeholder="Nom du Dossier / Nuancier (ex: FARROW&BALL)">
-            <textarea id="syncFileContent" rows="6" placeholder='Collez ou modifiez le code JSON [{"code": "...", "hex": "..."}] ici...'></textarea>
+            <input type="text" id="syncFileName" placeholder="Nom du fichier (ex: farrow_ball.json)" readonly>
+            <input type="text" id="syncFolderPalette" placeholder="Nom du Dossier / Nuancier (ex: FARROW&BALL)" readonly>
+            <textarea id="syncFileContent" rows="6" placeholder='Collez ou modifiez le code JSON [{"code": "...", "hex": "..."}] ici...' readonly></textarea>
             
             <button class="btn btn-save" style="background-color:#2563eb;" onclick="uploadAndSyncNewPalette()">🚀 Enregistrer sur GitHub</button>
         </div>
@@ -485,16 +481,16 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.018">
+            <input type="text" id="newVersionInput" value="v0.019" readonly>
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Mode dual stock (1 produit vs liste), Out of Stock persistant, clavier configurable au login et historique 06:00-19:00 !">
+            <input type="text" id="newChangelogInput" value="Blocage natif de la tastatură, buton ON/OFF simplificat și admin discret în dreapta-jos !" readonly>
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
-            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
+            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" readonly>
 
             <label style="font-size:11px; color:#9ca3af;">Code Source HTML Complet :</label>
-            <textarea id="sourceCodeInput" rows="4" placeholder="Collez le code complet ici..."></textarea>
+            <textarea id="sourceCodeInput" rows="4" placeholder="Collez le code complet ici..." readonly></textarea>
             
             <button class="btn btn-save" style="background-color:var(--ai-color); margin-top:8px;" onclick="publishToGithub()">🚀 Publier Update & Notifier</button>
         </div>
@@ -502,12 +498,13 @@
         <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
     </div>
 
-    <div class="actions-bar" style="margin-top:20px;">
-        <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
+    <!-- BUTON ADMINISTRATOR DISCRET ÎN DREAPTA JOS -->
+    <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+        <button class="btn-admin-discrete" onclick="openAdminAuth()">🔒 Admin</button>
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.018</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.019</span>
     </div>
 </div>
 
@@ -560,7 +557,7 @@
             <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
         </div>
         <a href="https://github.com/settings/tokens/new?description=La-Centrale-App&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">🔗 Générer le Token GitHub</a>
-        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici">
+        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" readonly>
         <button class="btn btn-save" onclick="saveTokenFromModal()">💾 Enregistrer</button>
     </div>
 </div>
@@ -576,19 +573,19 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; margin-top: 10px;">
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Trimetal</label>
-                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
+                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly>
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Herbol</label>
-                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
+                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly>
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Sikkens</label>
-                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
+                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly>
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Unikalo</label>
-                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
+                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly>
             </div>
         </div>
 
@@ -651,7 +648,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.018"; 
+    const CURRENT_APP_VERSION = "v0.019"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -668,23 +665,13 @@
     let isVkEnabled = localStorage.getItem('central_vk_enabled') !== 'false'; 
 
     function applyVkState() {
-        const toggleBtn = document.getElementById('vkToggleBtn');
-        const inputsToProcess = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
-
-        inputsToProcess.forEach(el => {
-            if (isVkEnabled) {
-                el.setAttribute('readonly', 'true');
-            } else {
-                el.removeAttribute('readonly');
-            }
-        });
-
+        const toggleBtn = document.getElementById('loginVkToggle');
         if (toggleBtn) {
             if (isVkEnabled) {
-                toggleBtn.innerHTML = '⌨️ Clavier App: ON';
+                toggleBtn.innerHTML = '⌨️ App: ON';
                 toggleBtn.style.backgroundColor = 'var(--ai-color)';
             } else {
-                toggleBtn.innerHTML = '📱 Clavier Tél: OFF';
+                toggleBtn.innerHTML = '📱 Tél: OFF';
                 toggleBtn.style.backgroundColor = '#374151';
                 vClose();
             }
@@ -697,7 +684,7 @@
         applyVkState();
     }
 
-    // Atașare tastatură virtuală pe toate inputurile text/number din pagină
+    // Deschide tastatura virtuală pe orice input/textarea din aplicație, blocând complet tastatura nativă
     document.addEventListener('click', function(e) {
         if (isVkEnabled && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
             if(e.target.type !== 'password' && e.target.type !== 'select-one') {
@@ -929,24 +916,19 @@
             userInput.value = localUser.name;
             userInput.disabled = true;
             document.getElementById('regRole').value = localUser.role || "Teinteur";
-            document.getElementById('regKeyboardPref').value = isVkEnabled ? "app" : "phone";
         } else {
             subtitle.textContent = "Créer un profil local (PIN à 4 caractères)";
         }
+        applyVkState();
     }
 
     function handleUserAuth() {
         const name = document.getElementById('regUser').value.trim();
         const pin = document.getElementById('regPin').value.trim();
         const role = document.getElementById('regRole').value;
-        const kbPref = document.getElementById('regKeyboardPref').value;
 
         if (!name || pin.length !== 4) { alert("Nom et PIN 4 caractères obligatoires !"); return; }
         
-        isVkEnabled = (kbPref === 'app');
-        localStorage.setItem('central_vk_enabled', isVkEnabled);
-        applyVkState();
-
         if (!localUser) {
             localUser = { name: name, pin: pin, role: role };
             localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
@@ -1069,16 +1051,14 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
-    // --- LOGICĂ STOC DUAL, OUT OF STOCK ȘI ISTORIC 06:00-19:00 (V0.018) ---
     let pendingCollabUpdates = [];
     let dismissedUpdateIds = JSON.parse(localStorage.getItem('central_dismissed_updates')) || [];
     let stockRequestsList = [];
     let outOfStockList = [];
     let completedStockNotified = JSON.parse(localStorage.getItem('central_completed_notified')) || [];
-    let currentStockCartItems = []; // Coșul de produse pentru listă
+    let currentStockCartItems = []; 
 
     function playPersistentAlarm() {
-        // Dacă e Șef de echipă -> FĂRĂ SUNET
         if (localUser && localUser.role === "Chef d'équipe") return;
 
         if ("vibrate" in navigator) {
@@ -1167,7 +1147,6 @@
             return;
         }
 
-        // Ascultator Baze
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
             const data = snapshot.val();
@@ -1186,7 +1165,6 @@
             }
         });
 
-        // Ascultator Stocuri (Pending + Out of Stock + Completed)
         const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
         window.FB_onValue(stockRef, (snapshot) => {
             const data = snapshot.val();
@@ -1234,7 +1212,6 @@
         logDailyHistory(`✏️ ${authorName} a modifié les bases de ${code}`);
     }
 
-    // --- COMANDĂ UN SINGUR PRODUS ---
     function sendSingleStockRequest() {
         const prod = document.getElementById('singleProduct').value.trim();
         const base = document.getElementById('singleBase').value.trim();
@@ -1266,7 +1243,6 @@
         });
     }
 
-    // --- CREARE LISTĂ MULTIPLĂ ---
     function addStockItemToList() {
         const prod = document.getElementById('listProduct').value.trim();
         const base = document.getElementById('listBase').value.trim();
@@ -1380,7 +1356,6 @@
         });
     }
 
-    // --- LOGICĂ OUT OF STOCK ---
     function markOutOfStock(reqId) {
         if (!window.FB_db) return;
         const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
@@ -1419,7 +1394,7 @@
                 <div style="margin:4px 0;">${itemsHtml}</div>
                 <div style="display:flex; gap:6px; margin-top:6px;">
                     ${isMagazinier ? `<button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Arrivé & Validé</button>` : ``}
-                    <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1; background-color:#7f1d1d;" onclick="closeDemandStock('${req.id}')">🗑️ Clôturer la demande</button>
+                    <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1; background-color:#7f1d1d;" onclick="closeDemandStock('${req.id}')">🗑️ Clôturer</button>
                 </div>
             `;
             container.appendChild(div);
@@ -1519,7 +1494,6 @@
         logDailyHistory(`⚡ ${localUser.name} a accepté toutes les modifications en bloc`);
         closeCollabModal();
     }
-    // ----------------------------------------------------
 
     function openFullEdit(index) {
         const item = customDatabase[index];
