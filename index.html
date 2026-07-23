@@ -76,9 +76,9 @@
             border: 1px solid var(--border); border-radius: 8px;
             background: #111827; color: #fff; font-size: 14px; text-align: center;
         }
-        .lock-card input[readonly], .lock-card select[readonly] { opacity: 1; cursor: pointer; }
+        /* Câmpul de PIN rămâne mereu protejat, cel de nume folosește tastatura nativă dacă e nou */
+        .lock-card input[type="password"] { opacity: 1; cursor: pointer; }
 
-        /* Tastatura numerică fixă pe ecranul de login */
         .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
         .pin-key {
             background: #334155; color: #fff; border: 1px solid #475569;
@@ -87,12 +87,6 @@
             transition: background 0.1s;
         }
         .pin-key:active { background: var(--accent); }
-
-        .login-vk-toggle {
-            position: absolute; top: 12px; right: 12px;
-            background: #374151; color: #fff; border: 1px solid var(--border);
-            padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;
-        }
 
         .section-selector-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -247,16 +241,15 @@
 
 <div id="userLockScreen" class="lock-screen">
     <div class="lock-card">
-        <button id="loginVkToggle" class="login-vk-toggle" onclick="toggleVirtualKeyboard()">⌨️ App: ON</button>
-
         <h2>La Centrale</h2>
-        <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 caractères)</p>
-        <input type="text" id="regUser" placeholder="Nom d'utilisateur" readonly>
+        <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 chiffres)</p>
         
-        <!-- Caseta PIN conectată direct la pad-ul numeric fix -->
+        <!-- Câmpul de Nume: Folosește tastatura nativă dacă e nou (nu are valoare salvată) -->
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur">
+        
+        <!-- Câmpul PIN și Pad-ul numeric fix -->
         <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 chiffres)" readonly style="letter-spacing: 4px; font-weight: bold;">
         
-        <!-- TASTATURĂ NUMERICĂ FIXĂ PE PAGINA DE LOGIN -->
         <div class="login-pin-pad">
             <div class="pin-key" onclick="loginPinKey('1')">1</div>
             <div class="pin-key" onclick="loginPinKey('2')">2</div>
@@ -264,7 +257,7 @@
             <div class="pin-key" onclick="loginPinKey('4')">4</div>
             <div class="pin-key" onclick="loginPinKey('5')">5</div>
             <div class="pin-key" onclick="loginPinKey('6')">6</div>
-            <div class="pin-key" onclick="loginPinKey('7')">7</div>
+            <div class="pin-key" onclick="pinKeyAction('7')">7</div>
             <div class="pin-key" onclick="loginPinKey('8')">8</div>
             <div class="pin-key" onclick="loginPinKey('9')">9</div>
             <div class="pin-key" onclick="loginPinKey('C')" style="background:#7f1d1d;">C</div>
@@ -272,7 +265,7 @@
             <div class="pin-key" onclick="loginPinKey('DEL')" style="background:#475569;">⌫</div>
         </div>
 
-        <select id="regRole" readonly>
+        <select id="regRole">
             <option value="Teinteur">Teinteur</option>
             <option value="Vendeur">Vendeur</option>
             <option value="Magazinier">Magazinier</option>
@@ -303,8 +296,10 @@
             </button>
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
+            <!-- BUTON ON/OFF TASTATURĂ VIRTUALĂ DUPĂ LOGARE -->
+            <button id="mainVkToggle" class="btn" style="background:#374151; font-size:11px; padding:6px 10px;" onclick="toggleVirtualKeyboard()">⌨️ App: ON</button>
             <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
-            <div class="version-badge">v0.020</div>
+            <div class="version-badge">v0.021</div>
         </div>
     </div>
 
@@ -327,7 +322,7 @@
     </div>
 
     <div id="sectionBasesContent">
-        <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" readonly oninput="debouncedFilterColors()">
+        <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" oninput="debouncedFilterColors()">
 
         <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche Globale</div>
         <div id="resultsList" style="margin-bottom: 16px; display:none;"></div>
@@ -349,7 +344,7 @@
         <div id="dedicatedSearchPanel" class="panel" style="display:none; border-color: var(--accent); margin-top: 16px;">
             <button class="btn-back" onclick="closeDedicatedSearch()">← Retour aux Nuanciers</button>
             <h3 id="dedicatedSearchTitle" style="color: #60a5fa; margin-bottom: 12px; font-size: 16px;">Recherche dans: ...</h3>
-            <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." readonly oninput="filterDedicatedPalette()">
+            <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." oninput="filterDedicatedPalette()">
             <div id="dedicatedSearchResults" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
     </div>
@@ -364,25 +359,25 @@
 
         <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
             <h3 style="color:#4ade80;">⚡ Demande Rapide de Seau / Produit</h3>
-            <input type="text" id="singleProduct" placeholder="Nom du produit (ex: Trimetal Ultramat)" readonly>
-            <input type="text" id="singleBase" placeholder="Base (ex: AW / AC / Blanc)" readonly>
+            <input type="text" id="singleProduct" placeholder="Nom du produit (ex: Trimetal Ultramat)">
+            <input type="text" id="singleBase" placeholder="Base (ex: AW / AC / Blanc)">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="singleBucketSize" placeholder="Capacité (ex: 10L / 4L)" readonly>
-                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1" readonly>
+                <input type="text" id="singleBucketSize" placeholder="Capacité (ex: 10L / 4L)">
+                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1">
             </div>
-            <input type="text" id="singleLocation" placeholder="Emplacement Rayon (ex: Rayon 3, Allée 2)" readonly>
+            <input type="text" id="singleLocation" placeholder="Emplacement Rayon (ex: Rayon 3, Allée 2)">
             <button class="btn btn-save" style="background-color:var(--success);" onclick="sendSingleStockRequest()">📨 Envoyer la Demande Urgente</button>
         </div>
 
         <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
             <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock (Rayons)</h3>
-            <input type="text" id="listProduct" placeholder="Nom du produit" readonly>
-            <input type="text" id="listBase" placeholder="Base (ex: AW / AC)" readonly>
+            <input type="text" id="listProduct" placeholder="Nom du produit">
+            <input type="text" id="listBase" placeholder="Base (ex: AW / AC)">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="listBucketSize" placeholder="Capacité (ex: 10L)" readonly>
-                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1" readonly>
+                <input type="text" id="listBucketSize" placeholder="Capacité (ex: 10L)">
+                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1">
             </div>
-            <input type="text" id="listLocation" placeholder="Emplacement Rayon" readonly>
+            <input type="text" id="listLocation" placeholder="Emplacement Rayon">
             <button class="btn btn-save" style="background-color:#374151; margin-top:4px;" onclick="addStockItemToList()">➕ Ajouter à la liste</button>
             
             <div style="margin-top: 12px; background: #111827; padding: 10px; border-radius: 6px; border:1px solid var(--border);">
@@ -431,8 +426,8 @@
             <h3 style="margin:0;">Connexion Administrateur Master</h3>
             <button class="btn-close-modal" onclick="togglePanel('authPanel')">✕</button>
         </div>
-        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master" readonly>
-        <input type="password" id="authPass" placeholder="Mot de passe" readonly>
+        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master">
+        <input type="password" id="authPass" placeholder="Mot de passe">
         <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
     </div>
 
@@ -443,35 +438,35 @@
         <div id="editGuideForm" class="collapsible-content">
             <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Tons Clairs (Clair) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
-                <input type="text" id="guideClairTrimetal" placeholder="Trimetal" readonly>
-                <input type="text" id="guideClairHerbol" placeholder="Herbol" readonly>
-                <input type="text" id="guideClairSikkens" placeholder="Sikkens" readonly>
-                <input type="text" id="guideClairUnikalo" placeholder="Unikalo" readonly>
+                <input type="text" id="guideClairTrimetal" placeholder="Trimetal">
+                <input type="text" id="guideClairHerbol" placeholder="Herbol">
+                <input type="text" id="guideClairSikkens" placeholder="Sikkens">
+                <input type="text" id="guideClairUnikalo" placeholder="Unikalo">
             </div>
             
             <p style="font-size:11px; color:#60a5fa; margin-top:10px; font-weight:bold;">Tons Moyens (Moyen) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
-                <input type="text" id="guideMoyenTrimetal" placeholder="Trimetal" readonly>
-                <input type="text" id="guideMoyenHerbol" placeholder="Herbol" readonly>
-                <input type="text" id="guideMoyenSikkens" placeholder="Sikkens" readonly>
-                <input type="text" id="guideMoyenUnikalo" placeholder="Unikalo" readonly>
+                <input type="text" id="guideMoyenTrimetal" placeholder="Trimetal">
+                <input type="text" id="guideMoyenHerbol" placeholder="Herbol">
+                <input type="text" id="guideMoyenSikkens" placeholder="Sikkens">
+                <input type="text" id="guideMoyenUnikalo" placeholder="Unikalo">
             </div>
 
             <p style="font-size:11px; color:#60a5fa; margin-top:10px; font-weight:bold;">Tons Foncés (Foncé) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:10px;">
-                <input type="text" id="guideFonceTrimetal" placeholder="Trimetal" readonly>
-                <input type="text" id="guideFonceHerbol" placeholder="Herbol" readonly>
-                <input type="text" id="guideFonceSikkens" placeholder="Sikkens" readonly>
-                <input type="text" id="guideFonceUnikalo" placeholder="Unikalo" readonly>
+                <input type="text" id="guideFonceTrimetal" placeholder="Trimetal">
+                <input type="text" id="guideFonceHerbol" placeholder="Herbol">
+                <input type="text" id="guideFonceSikkens" placeholder="Sikkens">
+                <input type="text" id="guideFonceUnikalo" placeholder="Unikalo">
             </div>
             <button class="btn btn-save" onclick="saveGuideTable()">💾 Enregistrer le Guide</button>
         </div>
 
         <button class="collapsible-btn" onclick="toggleCollapse('manageSingleForm')">✏️ Ajouter / Modifier / Supprimer Couleur <span>▼</span></button>
         <div id="manageSingleForm" class="collapsible-content">
-            <select id="targetPaletteSelect" readonly style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
-            <input type="text" id="manageCode" placeholder="Code Couleur (ex: RAL 9001)" readonly>
-            <input type="text" id="manageHex" placeholder="Couleur HEX (ex: #FDFBF7)" value="#cbd5e1" readonly>
+            <select id="targetPaletteSelect" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
+            <input type="text" id="manageCode" placeholder="Code Couleur (ex: RAL 9001)">
+            <input type="text" id="manageHex" placeholder="Couleur HEX (ex: #FDFBF7)" value="#cbd5e1">
             <div style="display:flex; gap:6px; margin-bottom:8px;">
                 <button class="btn btn-save" style="flex:1;" onclick="saveSingleColorToFolder()">💾 Save / Update</button>
                 <button class="btn btn-danger" style="flex:1;" onclick="deleteSingleColorFromFolder()">🗑️ Supprimer</button>
@@ -483,13 +478,13 @@
         <div id="syncGitForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
             
             <label style="font-size:11px; color:#9ca3af;">Choisir un fichier existant ou créer un nouveau :</label>
-            <select id="gitExistingFilesSelect" readonly onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;">
+            <select id="gitExistingFilesSelect" onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;">
                 <option value="NEW">-- 📝 Créer un Nouveau Fichier --</option>
             </select>
 
-            <input type="text" id="syncFileName" placeholder="Nom du fichier (ex: farrow_ball.json)" readonly>
-            <input type="text" id="syncFolderPalette" placeholder="Nom du Dossier / Nuancier (ex: FARROW&BALL)" readonly>
-            <textarea id="syncFileContent" rows="6" placeholder='Collez ou modifiez le code JSON [{"code": "...", "hex": "..."}] ici...' readonly></textarea>
+            <input type="text" id="syncFileName" placeholder="Nom du fichier (ex: farrow_ball.json)">
+            <input type="text" id="syncFolderPalette" placeholder="Nom du Dossier / Nuancier (ex: FARROW&BALL)">
+            <textarea id="syncFileContent" rows="6" placeholder='Collez ou modifiez le code JSON [{"code": "...", "hex": "..."}] ici...'></textarea>
             
             <button class="btn btn-save" style="background-color:#2563eb;" onclick="uploadAndSyncNewPalette()">🚀 Enregistrer sur GitHub</button>
         </div>
@@ -505,16 +500,16 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.020" readonly>
+            <input type="text" id="newVersionInput" value="v0.021">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Tastatură numerică fixă pe ecranul de login și blocarea completă a tastaturii native !" readonly>
+            <input type="text" id="newChangelogInput" value="Tastatura nativă permisă la primul nume, pad numeric pe login și buton ON/OFF mutat în interiorul aplicației !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
-            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" readonly>
+            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
 
             <label style="font-size:11px; color:#9ca3af;">Code Source HTML Complet :</label>
-            <textarea id="sourceCodeInput" rows="4" placeholder="Collez le code complet ici..." readonly></textarea>
+            <textarea id="sourceCodeInput" rows="4" placeholder="Collez le code complet ici..."></textarea>
             
             <button class="btn btn-save" style="background-color:var(--ai-color); margin-top:8px;" onclick="publishToGithub()">🚀 Publier Update & Notifier</button>
         </div>
@@ -522,13 +517,12 @@
         <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
     </div>
 
-    <!-- BUTON ADMINISTRATOR DISCRET ÎN DREAPTA JOS -->
     <div style="display:flex; justify-content:flex-end; margin-top:20px;">
         <button class="btn-admin-discrete" onclick="openAdminAuth()">🔒 Admin</button>
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.020</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.021</span>
     </div>
 </div>
 
@@ -581,7 +575,7 @@
             <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
         </div>
         <a href="https://github.com/settings/tokens/new?description=La-Centrale-App&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">🔗 Générer le Token GitHub</a>
-        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" readonly>
+        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici">
         <button class="btn btn-save" onclick="saveTokenFromModal()">💾 Enregistrer</button>
     </div>
 </div>
@@ -597,19 +591,19 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; margin-top: 10px;">
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Trimetal</label>
-                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly>
+                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Herbol</label>
-                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly>
+                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Sikkens</label>
-                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly>
+                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Unikalo</label>
-                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly>
+                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;">
             </div>
         </div>
 
@@ -672,7 +666,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.020"; 
+    const CURRENT_APP_VERSION = "v0.021"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -689,7 +683,7 @@
     let isVkEnabled = localStorage.getItem('central_vk_enabled') !== 'false'; 
 
     function applyVkState() {
-        const toggleBtn = document.getElementById('loginVkToggle');
+        const toggleBtn = document.getElementById('mainVkToggle');
         if (toggleBtn) {
             if (isVkEnabled) {
                 toggleBtn.innerHTML = '⌨️ App: ON';
@@ -723,10 +717,11 @@
         }
     }
 
-    // Deschide tastatura virtuală pe orice input/textarea din aplicație, blocând complet tastatura nativă
+    // Deschide tastatura virtuală doar dacă e activată în interiorul aplicației
     document.addEventListener('click', function(e) {
         if (isVkEnabled && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-            if(e.target.id !== 'regPin' && e.target.type !== 'password' && e.target.type !== 'select-one') {
+            // Nu deschide tastatura virtuală pe câmpul de nume de la login (lăsăm tastatura nativă acolo)
+            if(e.target.id !== 'regUser' && e.target.id !== 'regPin' && e.target.type !== 'password' && e.target.type !== 'select-one') {
                 activeVirtualInput = e.target;
                 document.getElementById('virtualKeyboard').style.display = 'block';
             }
