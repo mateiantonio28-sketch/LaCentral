@@ -214,17 +214,17 @@
         .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
         .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* TASTATURĂ VIRTUALĂ AZERTY STANDARD IDENTICĂ TELEFONULUI */
+        /* TASTATURĂ VIRTUALĂ AZERTY STANDARD (GOOGLE/TELEFON) */
         .virtual-keyboard {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%;
             background: #1e293b; padding: 10px 4px 20px 4px; z-index: 100000;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.9); border-top: 2px solid #334155;
             user-select: none;
         }
-        .vk-row { display: flex; justify-content: center; margin-bottom: 5px; gap: 3px; width: 100%; max-width: 480px; margin-left: auto; margin-right: auto; }
+        .vk-row { display: flex; justify-content: center; margin-bottom: 6px; gap: 4px; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; }
         .vk-key {
             background: #334155; color: #fff; border: 1px solid #475569;
-            border-radius: 5px; padding: 11px 0; font-size: 14px; font-weight: bold;
+            border-radius: 6px; padding: 12px 0; font-size: 15px; font-weight: bold;
             cursor: pointer; flex: 1; text-align: center; user-select: none;
             transition: background 0.1s;
         }
@@ -242,9 +242,8 @@
         <h2>La Centrale</h2>
         <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 chiffres)</p>
         
-        <!-- Câmp blocat complet cu readonly + onfocus=blur pentru a interzice tastatura nativă -->
-        <input type="text" id="regUser" placeholder="Nom d'utilisateur" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 chiffres)" readonly style="letter-spacing: 4px; font-weight: bold;" onfocus="this.blur();">
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 chiffres)" readonly style="letter-spacing: 4px; font-weight: bold;" inputmode="none">
         
         <div class="login-pin-pad">
             <div class="pin-key" onclick="loginPinKey('1')">1</div>
@@ -292,7 +291,7 @@
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
             <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
-            <div class="version-badge">v0.028</div>
+            <div class="version-badge">v0.029</div>
         </div>
     </div>
 
@@ -315,7 +314,7 @@
     </div>
 
     <div id="sectionBasesContent">
-        <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" readonly onfocus="this.blur(); openVirtualKeyboard(this);" oninput="debouncedFilterColors()">
+        <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="debouncedFilterColors()">
 
         <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche Globale</div>
         <div id="resultsList" style="margin-bottom: 16px; display:none;"></div>
@@ -337,7 +336,7 @@
         <div id="dedicatedSearchPanel" class="panel" style="display:none; border-color: var(--accent); margin-top: 16px;">
             <button class="btn-back" onclick="closeDedicatedSearch()">← Retour aux Nuanciers</button>
             <h3 id="dedicatedSearchTitle" style="color: #60a5fa; margin-bottom: 12px; font-size: 16px;">Recherche dans: ...</h3>
-            <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." readonly onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterDedicatedPalette()">
+            <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterDedicatedPalette()">
             <div id="dedicatedSearchResults" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
     </div>
@@ -352,25 +351,25 @@
 
         <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
             <h3 style="color:#4ade80;">⚡ Demande Rapide de Seau / Produit</h3>
-            <input type="text" id="singleProduct" placeholder="Nom (ex: Trimetal / Sikkens / Herbol / Unikalo)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-            <input type="text" id="singleBase" placeholder="Base (ex: AW / AC / Blanc)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="singleProduct" placeholder="Nom (ex: Trimetal / Sikkens / Herbol / Unikalo)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="singleBase" placeholder="Base (ex: AW / AC / Blanc)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="singleBucketSize" placeholder="Capacité (0.75L, 2.5L, 5L, 12.5L, 16L)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="singleBucketSize" placeholder="Capacité (0.75L, 2.5L, 5L, 12.5L, 16L)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
-            <input type="text" id="singleLocation" placeholder="Emplacement (ex: AA, AB, BB, CB, MEZZA)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="singleLocation" placeholder="Emplacement (ex: AA, AB, BB, CB, MEZZA)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             <button class="btn btn-save" style="background-color:var(--success);" onclick="sendSingleStockRequest()">📨 Envoyer la Demande Urgente</button>
         </div>
 
         <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
             <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock (Rayons)</h3>
-            <input type="text" id="listProduct" placeholder="Nom (Trimetal, Sikkens, Herbol, Unikalo)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-            <input type="text" id="listBase" placeholder="Base (ex: AW / AC)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="listProduct" placeholder="Nom (Trimetal, Sikkens, Herbol, Unikalo)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="listBase" placeholder="Base (ex: AW / AC)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="listBucketSize" placeholder="Capacité (0.75L, 2.5L, 5L, 12.5L, 16L)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="listBucketSize" placeholder="Capacité (0.75L, 2.5L, 5L, 12.5L, 16L)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
-            <input type="text" id="listLocation" placeholder="Emplacement (AA, AB, BB, CB, MEZZA)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="listLocation" placeholder="Emplacement (AA, AB, BB, CB, MEZZA)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             <button class="btn btn-save" style="background-color:#374151; margin-top:4px;" onclick="addStockItemToList()">➕ Ajouter à la liste</button>
             
             <div style="margin-top: 12px; background: #111827; padding: 10px; border-radius: 6px; border:1px solid var(--border);">
@@ -419,8 +418,8 @@
             <h3 style="margin:0;">Connexion Administrateur Master</h3>
             <button class="btn-close-modal" onclick="togglePanel('authPanel')">✕</button>
         </div>
-        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-        <input type="password" id="authPass" placeholder="Mot de passe" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="password" id="authPass" placeholder="Mot de passe" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
         <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
     </div>
 
@@ -431,35 +430,35 @@
         <div id="editGuideForm" class="collapsible-content">
             <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Tons Clairs (Clair) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
-                <input type="text" id="guideClairTrimetal" placeholder="Trimetal" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideClairHerbol" placeholder="Herbol" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideClairSikkens" placeholder="Sikkens" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideClairUnikalo" placeholder="Unikalo" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideClairTrimetal" placeholder="Trimetal" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideClairHerbol" placeholder="Herbol" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideClairSikkens" placeholder="Sikkens" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideClairUnikalo" placeholder="Unikalo" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
             
             <p style="font-size:11px; color:#60a5fa; margin-top:10px; font-weight:bold;">Tons Moyens (Moyen) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
-                <input type="text" id="guideMoyenTrimetal" placeholder="Trimetal" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideMoyenHerbol" placeholder="Herbol" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideMoyenSikkens" placeholder="Sikkens" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideMoyenUnikalo" placeholder="Unikalo" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideMoyenTrimetal" placeholder="Trimetal" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideMoyenHerbol" placeholder="Herbol" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideMoyenSikkens" placeholder="Sikkens" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideMoyenUnikalo" placeholder="Unikalo" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
 
             <p style="font-size:11px; color:#60a5fa; margin-top:10px; font-weight:bold;">Tons Foncés (Foncé) :</p>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:10px;">
-                <input type="text" id="guideFonceTrimetal" placeholder="Trimetal" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideFonceHerbol" placeholder="Herbol" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideFonceSikkens" placeholder="Sikkens" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-                <input type="text" id="guideFonceUnikalo" placeholder="Unikalo" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideFonceTrimetal" placeholder="Trimetal" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideFonceHerbol" placeholder="Herbol" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideFonceSikkens" placeholder="Sikkens" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideFonceUnikalo" placeholder="Unikalo" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
             <button class="btn btn-save" onclick="saveGuideTable()">💾 Enregistrer le Guide</button>
         </div>
 
         <button class="collapsible-btn" onclick="toggleCollapse('manageSingleForm')">✏️ Ajouter / Modifier / Supprimer Couleur <span>▼</span></button>
         <div id="manageSingleForm" class="collapsible-content">
-            <select id="targetPaletteSelect" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
-            <input type="text" id="manageCode" placeholder="Code Couleur (ex: RAL 9001)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-            <input type="text" id="manageHex" placeholder="Couleur HEX (ex: #FDFBF7)" value="#cbd5e1" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+            <select id="targetPaletteSelect" inputmode="none" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
+            <input type="text" id="manageCode" placeholder="Code Couleur (ex: RAL 9001)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="manageHex" placeholder="Couleur HEX (ex: #FDFBF7)" value="#cbd5e1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             <div style="display:flex; gap:6px; margin-bottom:8px;">
                 <button class="btn btn-save" style="flex:1;" onclick="saveSingleColorToFolder()">💾 Save / Update</button>
                 <button class="btn btn-danger" style="flex:1;" onclick="deleteSingleColorFromFolder()">🗑️ Supprimer</button>
@@ -471,11 +470,11 @@
         <div id="syncGitForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
             
             <label style="font-size:11px; color:#9ca3af;">Choisir un fichier existant ou créer un nouveau :</label>
-            <select id="gitExistingFilesSelect" onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
+            <select id="gitExistingFilesSelect" inputmode="none" onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
 
-            <input type="text" id="syncFileName" placeholder="Nom du fichier (ex: farrow_ball.json)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-            <input type="text" id="syncFolderPalette" placeholder="Nom du Dossier / Nuancier (ex: FARROW&BALL)" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
-            <textarea id="syncFileContent" rows="6" placeholder='Collez ou modifiez le code JSON [{"code": "...", "hex": "..."}] ici...' readonly onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
+            <input type="text" id="syncFileName" placeholder="Nom du fichier (ex: farrow_ball.json)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="syncFolderPalette" placeholder="Nom du Dossier / Nuancier (ex: FARROW&BALL)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <textarea id="syncFileContent" rows="6" placeholder='Collez ou modifiez le code JSON [{"code": "...", "hex": "..."}] ici...' inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
             
             <button class="btn btn-save" style="background-color:#2563eb;" onclick="uploadAndSyncNewPalette()">🚀 Enregistrer sur GitHub</button>
         </div>
@@ -491,16 +490,16 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.028" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v0.029" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Tastatură AZERTY standard identică telefonului și corectarea bugului de scriere în panoul admin !" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newChangelogInput" value="Blocage absolu de la tastatură nativă prin inputmode=none și onfocus=blur pe toate inputurile !" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
-            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" readonly onfocus="this.blur();">
+            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
 
             <label style="font-size:11px; color:#9ca3af;">Code Source HTML Complet :</label>
-            <textarea id="sourceCodeInput" rows="4" placeholder="Collez le code complet ici..." readonly onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
+            <textarea id="sourceCodeInput" rows="4" placeholder="Collez le code complet ici..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
             
             <button class="btn btn-save" style="background-color:var(--ai-color); margin-top:8px;" onclick="publishToGithub()">🚀 Publier Update & Notifier</button>
         </div>
@@ -514,7 +513,7 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.028</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.029</span>
     </div>
 </div>
 
@@ -567,7 +566,7 @@
             <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
         </div>
         <a href="https://github.com/settings/tokens/new?description=La-Centrale-App&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">🔗 Générer le Token GitHub</a>
-        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
         <button class="btn btn-save" onclick="saveTokenFromModal()">💾 Enregistrer</button>
     </div>
 </div>
@@ -583,19 +582,19 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; margin-top: 10px;">
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Trimetal</label>
-                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Herbol</label>
-                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Sikkens</label>
-                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
             <div style="display: flex; flex-direction: column;">
                 <label class="section-label" style="margin: 0 0 6px 0;">Unikalo</label>
-                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" readonly onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
             </div>
         </div>
 
@@ -631,7 +630,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.028"; 
+    const CURRENT_APP_VERSION = "v0.029"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -661,7 +660,6 @@
         }
     }
 
-    // Randarea tastaturii AZERTY standard pe 3 rânduri corect proportionate
     function renderVkRows() {
         const row1 = document.getElementById('vkRow1');
         const row2 = document.getElementById('vkRow2');
@@ -717,8 +715,7 @@
 
     renderVkRows();
 
-    function openVirtualInput(inputEl) {
-        if(inputEl.id === 'regPin' || inputEl.id === 'authPass' || inputEl.type === 'password' || inputEl.type === 'select-one') return;
+    function openVirtualKeyboard(inputEl) {
         activeVirtualInput = inputEl;
         document.getElementById('virtualKeyboard').style.display = 'block';
     }
