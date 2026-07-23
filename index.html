@@ -138,10 +138,29 @@
         }
         .folder-overview-item:hover { border-color: var(--accent); }
 
-        .app-version-footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-top: 10px; border-top: 1px dashed var(--border); }
+        .app-version-footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-top: 10px; border-top: 1px dashed var(--border); margin-bottom: 80px; }
         .alert-box { display: none; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; font-weight: 600; text-align: center; }
         .alert-warning { background-color: #78350f; color: #fef3c7; border: 1px solid #b45309; }
         .alert-success { background-color: #14532d; color: #dcfce7; border: 1px solid #15803d; }
+
+        /* NOU: STILURI PENTRU TASTATURA VIRTUALĂ */
+        .virtual-keyboard {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #1e293b; padding: 8px 4px 16px 4px; z-index: 100000;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.7); border-top: 1px solid #334155;
+            user-select: none;
+        }
+        .vk-row { display: flex; justify-content: center; margin-bottom: 6px; gap: 4px; }
+        .vk-key {
+            background: #334155; color: #fff; border: 1px solid #475569;
+            border-radius: 6px; padding: 12px 0; font-size: 16px; font-weight: bold;
+            cursor: pointer; flex: 1; max-width: 40px; text-align: center;
+            transition: background 0.1s, transform 0.1s;
+        }
+        .vk-key:active { background: var(--accent); transform: scale(0.95); }
+        .vk-key.vk-wide { max-width: 65px; background: #475569; }
+        .vk-key.vk-space { max-width: 180px; flex: 3; font-size: 13px; }
+        .vk-key.vk-close { background: var(--danger); border-color: #991b1b; max-width: 50px; }
     </style>
 </head>
 <body>
@@ -176,8 +195,8 @@
         </div>
     </div>
 
-    <!-- Căutare optimizată -->
-    <input type="text" id="searchInput" class="search-box" placeholder="Rechercher (ex: RAL 9001, fl, fb...)" oninput="debouncedFilterColors()">
+    <!-- Căutare optimizată cu inputmode="none" pentru a ascunde tastatura nativă -->
+    <input type="text" id="searchInput" class="search-box" placeholder="Rechercher (ex: RAL 9001, fl...)" inputmode="none" oninput="debouncedFilterColors()">
 
     <!-- REZULTATE MUTATE AICI (Deasupra butoanelor, chiar sub căutare) -->
     <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche</div>
@@ -293,7 +312,7 @@
             <input type="text" id="newVersionInput" value="v0.010">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Dossiers intelligents, abréviations et Timer !">
+            <input type="text" id="newChangelogInput" value="Dossiers intelligents, abréviations, Timer et Clavier Virtuel !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -380,6 +399,61 @@
     </div>
 </div>
 
+<!-- NOU: TASTATURA VIRTUALĂ (AZERTY) -->
+<div id="virtualKeyboard" class="virtual-keyboard">
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('1')">1</div>
+        <div class="vk-key" onclick="vKey('2')">2</div>
+        <div class="vk-key" onclick="vKey('3')">3</div>
+        <div class="vk-key" onclick="vKey('4')">4</div>
+        <div class="vk-key" onclick="vKey('5')">5</div>
+        <div class="vk-key" onclick="vKey('6')">6</div>
+        <div class="vk-key" onclick="vKey('7')">7</div>
+        <div class="vk-key" onclick="vKey('8')">8</div>
+        <div class="vk-key" onclick="vKey('9')">9</div>
+        <div class="vk-key" onclick="vKey('0')">0</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('A')">A</div>
+        <div class="vk-key" onclick="vKey('Z')">Z</div>
+        <div class="vk-key" onclick="vKey('E')">E</div>
+        <div class="vk-key" onclick="vKey('R')">R</div>
+        <div class="vk-key" onclick="vKey('T')">T</div>
+        <div class="vk-key" onclick="vKey('Y')">Y</div>
+        <div class="vk-key" onclick="vKey('U')">U</div>
+        <div class="vk-key" onclick="vKey('I')">I</div>
+        <div class="vk-key" onclick="vKey('O')">O</div>
+        <div class="vk-key" onclick="vKey('P')">P</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('Q')">Q</div>
+        <div class="vk-key" onclick="vKey('S')">S</div>
+        <div class="vk-key" onclick="vKey('D')">D</div>
+        <div class="vk-key" onclick="vKey('F')">F</div>
+        <div class="vk-key" onclick="vKey('G')">G</div>
+        <div class="vk-key" onclick="vKey('H')">H</div>
+        <div class="vk-key" onclick="vKey('J')">J</div>
+        <div class="vk-key" onclick="vKey('K')">K</div>
+        <div class="vk-key" onclick="vKey('L')">L</div>
+        <div class="vk-key" onclick="vKey('M')">M</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('W')">W</div>
+        <div class="vk-key" onclick="vKey('X')">X</div>
+        <div class="vk-key" onclick="vKey('C')">C</div>
+        <div class="vk-key" onclick="vKey('V')">V</div>
+        <div class="vk-key" onclick="vKey('B')">B</div>
+        <div class="vk-key" onclick="vKey('N')">N</div>
+        <div class="vk-key" onclick="vKey('-')">-</div>
+        <div class="vk-key" onclick="vKey('.')">.</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key vk-close" onclick="vClose()">✕</div>
+        <div class="vk-key vk-space" onclick="vKey(' ')">ESPACE</div>
+        <div class="vk-key vk-wide" onclick="vDel()">⌫</div>
+    </div>
+</div>
+
 <script>
     const CURRENT_APP_VERSION = "v0.010"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
@@ -392,6 +466,35 @@
 
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
+
+    // --- NOU: LOGICĂ PENTRU TASTATURA VIRTUALĂ ---
+    let activeVirtualInput = null;
+
+    document.getElementById('searchInput').addEventListener('focus', function() {
+        activeVirtualInput = this;
+        document.getElementById('virtualKeyboard').style.display = 'block';
+    });
+
+    function vKey(char) {
+        if (!activeVirtualInput) return;
+        activeVirtualInput.value += char;
+        activeVirtualInput.dispatchEvent(new Event('input')); // Declanșează căutarea live
+    }
+
+    function vDel() {
+        if (!activeVirtualInput) return;
+        activeVirtualInput.value = activeVirtualInput.value.slice(0, -1);
+        activeVirtualInput.dispatchEvent(new Event('input'));
+    }
+
+    function vClose() {
+        document.getElementById('virtualKeyboard').style.display = 'none';
+        if (activeVirtualInput) {
+            activeVirtualInput.blur();
+            activeVirtualInput = null;
+        }
+    }
+    // ----------------------------------------------
 
     let guideBasesData = JSON.parse(localStorage.getItem('central_guide_bases_table')) || {
         clair: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" },
@@ -514,7 +617,6 @@
             const dateEl = document.getElementById('currentDateDisplay');
             if (dateEl) dateEl.textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
-            // NOUA LOGICĂ: CALCUL COUNTDOWN SESIUNE
             if (document.getElementById('mainContainer').style.display === 'block') {
                 let expiry = isAuthenticated ? localStorage.getItem('admin_session_expiry') : localStorage.getItem('user_session_expiry');
                 if (expiry) {
@@ -537,11 +639,10 @@
                         const s = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
                         timerSpan.textContent = `${h}:${m}:${s}`;
                         
-                        // Modificare vizuală dacă mai e puțin timp
-                        if (remaining < 3600000) { // Mai putin de 1 ora
-                            timerSpan.style.color = '#ef4444'; // Rosu alertă
+                        if (remaining < 3600000) { 
+                            timerSpan.style.color = '#ef4444'; 
                         } else {
-                            timerSpan.style.color = '#f59e0b'; // Portocaliu normal
+                            timerSpan.style.color = '#f59e0b'; 
                         }
                     }
                 }
@@ -574,7 +675,6 @@
             return;
         }
 
-        // Dacă e o zi nouă, ștergem temporar expirarea pentru a putea fi generată una nouă la login
         if (sessionDay !== today) {
             localStorage.removeItem('user_session_expiry');
         } else if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
@@ -610,19 +710,16 @@
             if (pin !== localUser.pin) { alert("Code PIN incorrect !"); return; }
         }
         
-        // LIMITARE LA 10 ORE PE ZI APLICATĂ
         const today = new Date().toLocaleDateString('ro-RO'); 
         let sessionDay = localStorage.getItem('session_start_day');
         let expiry = localStorage.getItem('user_session_expiry');
         
         if (sessionDay === today && expiry) {
-            // Dacă s-a logat deja azi și a expirat timpul din fundal
             if (Date.now() > parseInt(expiry, 10)) {
                 alert("Limita ta de 10 ore a expirat ! Aplicația se va redeschide mâine.");
-                return; // Oprește accesul
+                return; 
             }
         } else {
-            // Prima conectare din ziua respectivă generează timerul fix
             localStorage.setItem('session_start_day', today);
             expiry = (Date.now() + (10 * 3600 * 1000)).toString();
             localStorage.setItem('user_session_expiry', expiry);
@@ -635,7 +732,6 @@
     }
 
     function logoutUserSession() {
-        // NU mai ștergem `user_session_expiry` pentru ca limitarea de 10 ore zilnice să se păstreze în fundal
         isAuthenticated = false;
         localStorage.removeItem('admin_session_expiry');
         document.getElementById('mainContainer').style.display = 'none';
@@ -968,8 +1064,8 @@
             itemDiv.onclick = () => {
                 document.getElementById('searchInput').value = pName;
                 filterColors();
-                document.getElementById('mainNuancierContent').style.display = 'none'; // Ascunde folderele
-                document.getElementById('searchInput').scrollIntoView({ behavior: 'smooth', block: 'start' }); // Du-te sus
+                document.getElementById('mainNuancierContent').style.display = 'none';
+                document.getElementById('searchInput').scrollIntoView({ behavior: 'smooth', block: 'start' });
             };
             listContainer.appendChild(itemDiv);
         });
