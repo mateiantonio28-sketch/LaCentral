@@ -1,18 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><link rel="manifest" href="manifest.json">
-
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Centrale - Recherche Couleur & Base</title>
     
-    <!-- PWA Web App Manifest & Iconițe -->
-    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
-    <meta name="apple-mobile-web-app-title" content="La Centrale">
-    <meta name="application-name" content="La Centrale">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#111827">
 
     <style>
@@ -22,7 +15,6 @@
             --ai-color: #8b5cf6;
             --bg: #111827;
             --panel-bg: #1f2937;
-            --card-bg: #1f2937;
             --border: #374151;
             --text: #f3f4f6;
             --danger: #ef4444;
@@ -33,7 +25,6 @@
         body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
         .container { max-width: 720px; margin: 0 auto; display: none; }
 
-        /* Lock Screen */
         .lock-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -74,10 +65,9 @@
             margin-bottom: 16px;
             border-bottom: 2px solid var(--border);
         }
-        .header h1 { margin: 0; font-size: 22px; color: var(--primary); letter-spacing: -0.5px; text-transform: uppercase; }
-        .header p { margin: 4px 0 0 0; font-size: 12px; color: #9ca3af; font-weight: 500; }
+        .header h1 { margin: 0; font-size: 22px; color: var(--primary); text-transform: uppercase; }
+        .header p { margin: 4px 0 0 0; font-size: 12px; color: #9ca3af; }
 
-        /* Widget Timp Real și Sesiune */
         .live-timer-bar {
             display: flex;
             justify-content: space-between;
@@ -91,7 +81,6 @@
             color: #9ca3af;
         }
         .live-timer-bar span { font-weight: bold; color: #60a5fa; }
-        .session-timer { color: #f59e0b !important; }
 
         .search-box {
             width: 100%;
@@ -111,7 +100,7 @@
         .actions-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
         .btn {
             flex: 1;
-            min-width: 120px;
+            min-width: 110px;
             padding: 10px;
             border: none;
             border-radius: 8px;
@@ -123,10 +112,9 @@
         .btn-admin { background-color: #374151; color: #fff; }
         .btn-ai { background-color: var(--ai-color); color: #fff; }
         .btn-guide { background-color: #0284c7; color: #fff; }
-        .btn-install { background-color: var(--success); color: #fff; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .btn-danger { background-color: var(--danger); color: #fff; }
+        .btn-logout { background-color: #7f1d1d; color: #fca5a5; font-size: 11px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; }
 
-        /* Banner Noutăți Mises à jour */
         .changelog-banner {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid var(--accent);
@@ -158,75 +146,10 @@
             background: #111827;
             color: #fff;
         }
-        .panel textarea { resize: vertical; font-family: monospace; font-size: 11px; }
         .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
-
-        /* Modal Overlay */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(4px);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-        .modal-content {
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 480px;
-            padding: 18px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 8px;
-        }
-        .modal-header h3 { margin: 0; font-size: 15px; color: var(--primary); text-transform: uppercase; }
-        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 18px; font-weight: bold; cursor: pointer; }
-
-        .edit-bases-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .edit-bases-grid div { display: flex; flex-direction: column; }
-        .edit-bases-grid label { font-size: 11px; color: #60a5fa; font-weight: bold; margin-bottom: 2px; }
-
-        .guide-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
-        .guide-table th, .guide-table td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; }
-        .guide-table th { background-color: #111827; color: var(--primary); }
-
-        .chat-box {
-            height: 200px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px;
-            background: #111827;
-            margin-bottom: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .chat-msg { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
-        .chat-user { background: var(--accent); color: white; align-self: flex-end; }
-        .chat-ai { background: #374151; color: var(--primary); align-self: flex-start; }
 
         .palette-group { margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: var(--panel-bg); border: 1px solid var(--border); }
         .palette-header { padding: 10px 14px; background-color: #374151; color: var(--primary); font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .palette-header:hover { background-color: #4b5563; }
         .palette-count { background-color: #1f2937; color: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
         .palette-content { display: none; padding: 8px; background-color: #1f2937; }
 
@@ -250,31 +173,40 @@
             border-radius: 6px;
             border: 1px solid rgba(255,255,255,0.3);
             flex-shrink: 0;
-            cursor: pointer;
             box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
         }
 
         .color-code { font-size: 16px; font-weight: 700; color: var(--primary); }
 
-        .btn-edit {
-            background: #374151;
-            border: 1px solid #4b5563;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #f3f4f6;
-        }
-
-        .color-picker-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .color-picker-row input[type="color"] { width: 60px; height: 45px; padding: 0; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: none; }
-
         .brands-grid { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; border-top: 1px dashed var(--border); }
         .brand-badge { background: #1f2937; border: 1px solid #374151; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #9ca3af; }
         .brand-badge span { font-weight: 800; color: #60a5fa; }
 
-        .delete-cb { width: 18px; height: 18px; cursor: pointer; display: none; }
+        .chat-box {
+            height: 180px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            background: #111827;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .chat-msg { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
+        .chat-user { background: var(--accent); color: white; align-self: flex-end; }
+        .chat-ai { background: #374151; color: var(--primary); align-self: flex-start; }
+
+        .app-version-footer {
+            text-align: center;
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 24px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+        }
+
         .alert-box { display: none; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 12px; font-weight: 600; }
         .alert-warning { background-color: #78350f; color: #fef3c7; border: 1px solid #b45309; }
         .alert-success { background-color: #14532d; color: #dcfce7; border: 1px solid #15803d; }
@@ -282,7 +214,7 @@
 </head>
 <body>
 
-<!-- Ecran de Autentificare Utilizator / Admin -->
+<!-- Lock Screen -->
 <div id="userLockScreen" class="lock-screen">
     <div class="lock-card">
         <h2>La Centrale</h2>
@@ -296,37 +228,34 @@
     </div>
 </div>
 
+<!-- Main App Container -->
 <div class="container" id="mainContainer">
     
     <div class="header">
         <h1>La Centrale</h1>
         <p>Système de Recherche de Couleurs & Bases Techniques</p>
         
-        <!-- Live Timing Bar -->
         <div class="live-timer-bar">
             <div>📅 <span id="currentDateDisplay">--/--/---- --:--</span></div>
-            <div>⏱️ Session: <span id="sessionCountdown" class="session-timer">10:00:00</span></div>
+            <div>⏱️ Session: <span id="sessionCountdown" style="color:#f59e0b; font-weight:bold;">10:00:00</span></div>
         </div>
 
-        <div style="font-size:11px; color:#60a5fa; margin-top:6px;" id="welcomeUser"></div>
-    </div>
-
-    <!-- Banner Nouveautés de la mise à jour -->
-    <div class="changelog-banner" id="changelogBanner">
-        <h4>📢 Nouveautés de la Mise à Jour :</h4>
-        <div id="changelogText">
-            • Module de création automatique de raccourci sur l'écran d'accueil.<br>
-            • Mini-fenêtre intégrée de génération rapide de Token GitHub.<br>
-            • Amélioration de la stabilité et session active de 10 heures.
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <div style="font-size:11px; color:#60a5fa;" id="welcomeUser"></div>
+            <button class="btn-logout" onclick="logoutUserSession()">Déconnexion</button>
         </div>
     </div>
 
-    <input type="text" id="searchInput" class="search-box" placeholder="Saisir un code couleur (ex: RAL 9001, 7016...)" oninput="filterColors()">
+    <div class="changelog-banner">
+        <h4>📢 Nouveautés de la Version <span id="displayVersionHeader">v0.001</span> :</h4>
+        <div id="changelogText">• System réinitialisé et optimisé avec gestion des nuanciers (RAL, NCS).</div>
+    </div>
+
+    <input type="text" id="searchInput" class="search-box" placeholder="Rechercher une nuance (ex: RAL 9001, NCS...)" oninput="filterColors()">
 
     <div class="actions-bar">
-        <button id="installAppBtn" class="btn btn-install" onclick="triggerPwaInstall()">📲 Installer l'application</button>
         <button class="btn btn-guide" onclick="togglePanel('guidePanel')">📖 Guide des Bases</button>
-        <button class="btn btn-ai" onclick="togglePanel('aiPanel')">🤖 Assistant IA</button>
+        <button class="btn btn-ai" onclick="togglePanel('aiPanel')">🤖 Assistant IA Expert</button>
         <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
     </div>
 
@@ -334,32 +263,30 @@
 
     <div id="guidePanel" class="panel">
         <h3>Équivalences des Bases par Marque</h3>
-        <table class="guide-table" id="guideTable">
+        <table style="width:100%; border-collapse:collapse; font-size:12px;">
             <thead>
                 <tr>
-                    <th>Ton</th>
-                    <th>Trimetal</th>
-                    <th>Herbol</th>
-                    <th>Sikkens</th>
-                    <th>Unikalo</th>
-                    <th>Levis</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Ton</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Trimetal</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Herbol</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Sikkens</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Unikalo</th>
                 </tr>
             </thead>
-            <tbody id="guideTableBody"></tbody>
+            <tbody>
+                <tr><td style="border:1px solid var(--border); padding:6px;">Clair</td><td style="border:1px solid var(--border); padding:6px;">AW</td><td style="border:1px solid var(--border); padding:6px;">DU1</td><td style="border:1px solid var(--border); padding:6px;">W05</td><td style="border:1px solid var(--border); padding:6px;">Blanc</td></tr>
+                <tr><td style="border:1px solid var(--border); padding:6px;">Foncé</td><td style="border:1px solid var(--border); padding:6px;">AC</td><td style="border:1px solid var(--border); padding:6px;">DU3</td><td style="border:1px solid var(--border); padding:6px;">N00</td><td style="border:1px solid var(--border); padding:6px;">D</td></tr>
+            </tbody>
         </table>
-        <div id="guideAdminControls" style="margin-top:10px; display:none;">
-            <button id="btnEditGuide" class="btn btn-save" style="background-color:#0284c7; margin-bottom:6px;" onclick="enableGuideEditing()">✏️ Éditer le Guide</button>
-            <button id="btnSaveGuide" class="btn btn-save" style="display:none;" onclick="saveGuideData()">💾 Enregistrer le Guide</button>
-        </div>
     </div>
 
     <div id="aiPanel" class="panel">
-        <h3 style="color:var(--ai-color);">🤖 Assistant Virtual La Centrale</h3>
+        <h3 style="color:var(--ai-color);">🤖 Assistant IA Expert Peinture</h3>
         <div id="chatBox" class="chat-box">
-            <div class="chat-msg chat-ai">Bonjour ! Je peux modifier automatiquement vos bases. Écrivez par exemple : "RAL 9005 est base AC".</div>
+            <div class="chat-msg chat-ai">Bonjour ! Je peux vous aider à modifier ou chercher des bases. Tapez par exemple : "RAL 9005 est base AC".</div>
         </div>
         <div style="display:flex; gap:6px;">
-            <input type="text" id="aiInput" placeholder="Tapez votre consigne..." onkeydown="if(event.key==='Enter') sendAiMessage()">
+            <input type="text" id="aiInput" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter') sendAiMessage()">
             <button class="btn btn-ai" style="flex:0 0 70px;" onclick="sendAiMessage()">OK</button>
         </div>
     </div>
@@ -373,206 +300,50 @@
 
     <div id="adminPanel" class="panel">
         <h3>Panneau d'Administration Master</h3>
-        <button class="btn btn-admin" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('addSingle')">+ Ajouter une Couleur (Toutes les marques)</button>
-        <button class="btn btn-danger" style="width:100%; margin-bottom:6px;" onclick="toggleDeleteMode()">🗑️ Mode Suppression Multiple</button>
-        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#9333ea;" onclick="showAdminForm('importJson')">📥 Importer Codes / Nuanciers JSON</button>
-        <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour du Code Source (GitHub Direct)</button>
-        <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion</button>
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#0284c7;" onclick="showAdminForm('addFolder')">📁 Créer un Nouveau Nuancier (Dossier)</button>
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('addSingle')">+ Ajouter une Couleur dans un Nuancier</button>
+        <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour Source GitHub</button>
+        <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
         
+        <div id="addFolderForm" style="display:none; margin-top:10px; background:#111827; padding:10px; border-radius:6px;">
+            <p style="font-size:11px; color:#60a5fa; margin-top:0;">Créer un dossier (ex: RAL, NCS) :</p>
+            <input type="text" id="newFolderName" placeholder="Nom du nuancier">
+            <button class="btn btn-save" onclick="createNewFolderPalette()">Créer le Nuancier</button>
+        </div>
+
         <div id="addSingleForm" style="display:none; margin-top:10px;">
+            <select id="targetPaletteSelect" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;"></select>
             <input type="text" id="newCode" placeholder="Code Couleur (ex: RAL 9001)">
-            <select id="newPaletteSelect" onchange="checkNewPaletteInput()">
-                <option value="RAL">Nuancier RAL</option>
-                <option value="5051">5051 Color Concept</option>
-                <option value="4041">4041 Color Concept</option>
-                <option value="NCS">NCS</option>
-                <option value="ACC Color Map">ACC Color Map</option>
-                <option value="NEW">+ Créer un nouveau nuancier...</option>
-            </select>
-            <input type="text" id="newCustomPalette" placeholder="Nom du nuancier" style="display:none;">
-            <button class="btn btn-save" onclick="saveSingleColor()">Enregistrer la couleur</button>
+            <input type="text" id="newHex" placeholder="Code Hex" value="#cbd5e1">
+            <button class="btn btn-save" onclick="saveSingleColorToFolder()">Enregistrer dans le dossier</button>
         </div>
 
-        <div id="importJsonForm" style="display:none; margin-top:10px;">
-            <textarea id="importCode" rows="5" placeholder='[{"code": "RAL 9001", "palette": "RAL", "hex": "#fdfbf7"}]'></textarea>
-            <button class="btn btn-save" onclick="importJsonPalette()">Lancer l'importation JSON</button>
-        </div>
-
-        <!-- Formular Update Direct pe GitHub cu Generator Rapid de Token -->
         <div id="updateAppForm" style="display:none; margin-top:10px;">
-            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">🚀 Mise à jour Directe GitHub (Connecté Permanemment) :</p>
-            
-            <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 Générer / Obtenir un Token GitHub (Rapide)</button>
-
-            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub Access (Enregistré) :</label>
+            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">🚀 Mise à jour Directe GitHub :</p>
+            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
-
-            <label style="font-size:11px; color:#9ca3af;">Description des Nouveautés (en Français) :</label>
-            <input type="text" id="changelogInput" placeholder="Ex: Ajout du bouton d'installation rapide">
-            
-            <label style="font-size:11px; color:#9ca3af;">Nouveau Code Source HTML complet :</label>
-            <textarea id="sourceCodeInput" rows="6" placeholder="Collez le nouveau code HTML/JS ici..."></textarea>
-            
-            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="publishToGithub()">🚀 Publier Update Direct sur GitHub</button>
-        </div>
-
-        <div id="deleteMultiPanel" style="display:none; margin-top:10px; background:#451a1a; padding:10px; border-radius:6px; border:1px solid #7f1d1d;">
-            <p style="font-size:12px; color:#fca5a5; margin:0 0 8px 0; font-weight:bold;">Cochez les couleurs à supprimer ci-dessous puis cliquez sur Valider :</p>
-            <button class="btn btn-danger" style="width:100%;" onclick="confirmDeleteSelected()">Confirmer la Suppression (Code 2805 Requis)</button>
+            <label style="font-size:11px; color:#9ca3af;">Code Source HTML complet :</label>
+            <textarea id="sourceCodeInput" rows="5" placeholder="Collez le code complet ici..."></textarea>
+            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="publishToGithub()">🚀 Publier Update Direct</button>
         </div>
     </div>
 
-    <div class="section-label">Nuanciers Disponibles</div>
+    <div class="section-label">Dossiers de Nuanciers Disponibles</div>
     <div id="resultsList"></div>
 
-</div>
-
-<!-- Pop-up Modal Generare Rapidă Token fără închiderea aplicației -->
-<div id="tokenModalOverlay" class="modal-overlay">
-    <div class="modal-content" style="text-align:center;">
-        <div class="modal-header">
-            <h3>🔑 Générateur Rapid Token GitHub</h3>
-            <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
-        </div>
-        <p style="font-size:12px; color:#9ca3af; text-align:left; margin-bottom:10px;">
-            Cliquez sur le bouton ci-dessous pour ouvrir la page officielle de création de Token GitHub dans un nouvel onglet. <b>Votre application reste ouverte ici !</b>
-        </p>
-        <a href="https://github.com/settings/tokens/new?description=La-Centrale&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">
-            🔗 Ouvrir GitHub pour Créer le Token
-        </a>
-        <div style="background:#111827; padding:10px; border-radius:8px; text-align:left; font-size:11px; color:#9ca3af; margin-bottom:10px;">
-            1. Sur la page GitHub, défilez vers le bas et cliquez sur <b>Generate token</b>.<br>
-            2. Copiez le code généré (ex: <i>ghp_...</i>).<br>
-            3. Revenez dans cette fenêtre et collez-le ci-dessous :
-        </div>
-        <input type="text" id="modalTokenInput" placeholder="Collez le Token ghp_... ici" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff; font-size:12px;">
-        <button class="btn btn-save" onclick="saveTokenFromModal()">💾 Valider et Conserver le Token</button>
-    </div>
-</div>
-
-<!-- Pop-up Modal de Editare Baze -->
-<div id="editModalOverlay" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modalEditTitle">Ajuster les Bases</h3>
-            <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
-        </div>
-        
-        <input type="hidden" id="fullEditIndex" value="-1">
-        
-        <div id="masterOnlyFields" style="display:none;">
-            <label style="font-size:11px; color:#9ca3af;">Nom / Code :</label>
-            <input type="text" id="editCodeInput" style="width:100%; padding:8px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-
-            <label style="font-size:11px; color:#9ca3af;">Nuance Visuelle :</label>
-            <div class="color-picker-row">
-                <input type="color" id="fullColorPicker" value="#ffffff">
-            </div>
-        </div>
-
-        <label style="font-size:11px; color:#60a5fa; margin-bottom:6px; display:block; font-weight:bold;">Correction des Bases :</label>
-        <div class="edit-bases-grid">
-            <div>
-                <label>Trimetal</label>
-                <input type="text" id="editBaseTrimetal" placeholder="AW, AC" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-            <div>
-                <label>Herbol</label>
-                <input type="text" id="editBaseHerbol" placeholder="DU1, DU3" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-            <div>
-                <label>Sikkens</label>
-                <input type="text" id="editBaseSikkens" placeholder="W05, N00" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-            <div>
-                <label>Unikalo</label>
-                <input type="text" id="editBaseUnikalo" placeholder="Blanc, D" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-            <div style="grid-column: span 2;">
-                <label>Levis</label>
-                <input type="text" id="editBaseLevis" placeholder="White, Clear" style="padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-        </div>
-
-        <button class="btn btn-save" onclick="saveFullEdit()">Enregistrer les Bases</button>
-    </div>
-</div>
-
-<!-- Modal Ghidare Instalare iOS (iPhone) -->
-<div id="iosInstallModal" class="modal-overlay">
-    <div class="modal-content" style="text-align:center;">
-        <div class="modal-header">
-            <h3>📲 Installer sur iPhone / iPad</h3>
-            <button class="btn-close-modal" onclick="document.getElementById('iosInstallModal').style.display='none'">✕</button>
-        </div>
-        <p style="font-size:13px; color:#d1d5db; line-height:1.5;">
-            Pour créer un raccourci direct sur votre écran d'accueil iOS :
-        </p>
-        <div style="background:#111827; padding:12px; border-radius:8px; text-align:left; font-size:12px; color:#9ca3af; margin-bottom:12px;">
-            1. Appuyez sur le bouton <b>Partager</b> ( ⎘ ) en bas de Safari.<br><br>
-            2. Défilez vers le bas et sélectionnez <b>Sur l'écran d'accueil</b> ( ⊕ ).<br><br>
-            3. Appuyez sur <b>Ajouter</b> en haut à droite.
-        </div>
-        <button class="btn btn-save" onclick="document.getElementById('iosInstallModal').style.display='none'">J'ai compris</button>
+    <div class="app-version-footer">
+        La Centrale Peinture — Version <span id="footerVersionText">v0.001</span>
     </div>
 </div>
 
 <script>
-    const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
-    const GITHUB_REPO = "mateiantonio28-sketch/La-Central";
+    const CURRENT_APP_VERSION = "v0.001";
+    const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
 
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
-    let deferredPrompt = null;
-
-    // Detecție și Instalare PWA (Lansare Nativă Scurtătură)
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) installBtn.style.display = 'flex';
-    });
-
-    function triggerPwaInstall() {
-        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    showAlert("Raccourci en cours de création sur votre écran d'accueil !", true);
-                    document.getElementById('installAppBtn').style.display = 'none';
-                }
-                deferredPrompt = null;
-            });
-        } else if (isIos) {
-            document.getElementById('iosInstallModal').style.display = 'flex';
-        } else {
-            showAlert("Raccourci : Ouvrez le menu de votre navigateur (3 points) -> 'Ajouter à l'écran d'accueil'.");
-        }
-    }
-
-    function openTokenModal() {
-        document.getElementById('tokenModalOverlay').style.display = 'flex';
-    }
-
-    function closeTokenModal() {
-        document.getElementById('tokenModalOverlay').style.display = 'none';
-    }
-
-    function saveTokenFromModal() {
-        const t = document.getElementById('modalTokenInput').value.trim();
-        if (t) {
-            localStorage.setItem('central_github_token', t);
-            document.getElementById('ghTokenInput').value = t;
-            closeTokenModal();
-            showAlert("Token enregistré avec succès !", true);
-        } else {
-            alert("Veuillez coller votre token !");
-        }
-    }
 
     function getSavedToken() {
         return localStorage.getItem('central_github_token') || DEFAULT_GITHUB_TOKEN || "";
@@ -588,21 +359,21 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
 
-            document.getElementById('currentDateDisplay').textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            const dateEl = document.getElementById('currentDateDisplay');
+            if (dateEl) dateEl.textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
             const expiry = localStorage.getItem('admin_session_expiry') || localStorage.getItem('user_session_expiry');
             if (expiry) {
                 const diff = parseInt(expiry, 10) - Date.now();
                 if (diff <= 0) {
-                    logoutAdmin();
+                    logoutUserSession();
                 } else {
                     const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
                     const m = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
                     const s = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
-                    document.getElementById('sessionCountdown').textContent = `${h}:${m}:${s}`;
+                    const countEl = document.getElementById('sessionCountdown');
+                    if (countEl) countEl.textContent = `${h}:${m}:${s}`;
                 }
-            } else {
-                document.getElementById('sessionCountdown').textContent = "10:00:00";
             }
         }, 1000);
     }
@@ -616,15 +387,14 @@
             isAuthenticated = true;
             document.getElementById('userLockScreen').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
-            document.getElementById('welcomeUser').textContent = "Connecté en tant que : Master Administrateur";
-            document.getElementById('guideAdminControls').style.display = 'block';
+            document.getElementById('welcomeUser').textContent = "Connecté : Master Administrateur";
             return;
         }
 
         if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
             document.getElementById('userLockScreen').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
-            document.getElementById('welcomeUser').textContent = `Utilisateur connecté : ${localUser.name}`;
+            document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
             return;
         }
 
@@ -649,7 +419,7 @@
         const pin = document.getElementById('regPin').value.trim();
 
         if (!name || pin.length !== 4) {
-            alert("Veuillez saisir un nom et un code PIN exactement à 4 caractères !");
+            alert("Veuillez saisir un nom et un code PIN à 4 caractères !");
             return;
         }
 
@@ -663,11 +433,18 @@
             }
         }
 
-        localStorage.setItem('user_session_expiry', (Date.now() + TEN_HOURS_MS).toString());
-
+        localStorage.setItem('user_session_expiry', (Date.now() + (10 * 3600 * 1000)).toString());
         document.getElementById('userLockScreen').style.display = 'none';
         document.getElementById('mainContainer').style.display = 'block';
-        document.getElementById('welcomeUser').textContent = `Utilisateur connecté : ${localUser.name}`;
+        document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
+    }
+
+    function logoutUserSession() {
+        localStorage.removeItem('user_session_expiry');
+        localStorage.removeItem('admin_session_expiry');
+        document.getElementById('mainContainer').style.display = 'none';
+        document.getElementById('userLockScreen').style.display = 'flex';
+        initUserScreen();
     }
 
     function quickAdminAuthPrompt() {
@@ -692,224 +469,104 @@
 
     function grantAdminAccess() {
         isAuthenticated = true;
-        localStorage.setItem('admin_session_expiry', (Date.now() + TEN_HOURS_MS).toString());
+        localStorage.setItem('admin_session_expiry', (Date.now() + (10 * 3600 * 1000)).toString());
 
         document.getElementById('userLockScreen').style.display = 'none';
         document.getElementById('mainContainer').style.display = 'block';
         document.getElementById('authPanel').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
-        document.getElementById('guideAdminControls').style.display = 'block';
-        document.getElementById('welcomeUser').textContent = "Connecté en tant que : Master Administrateur";
+        document.getElementById('welcomeUser').textContent = "Connecté : Master Administrateur";
         
         const token = getSavedToken();
-        if (token) {
-            document.getElementById('ghTokenInput').value = token;
-        }
+        if (token) document.getElementById('ghTokenInput').value = token;
+        updateTargetPaletteDropdown();
 
-        showAlert("Connexion Master Administrateur réussie (Session active 10h).", true);
+        showAlert("Connexion Master Administrateur réussie.", true);
     }
 
     function logoutAdmin() {
         isAuthenticated = false;
         localStorage.removeItem('admin_session_expiry');
-        localStorage.removeItem('user_session_expiry');
         document.getElementById('adminPanel').style.display = 'none';
-        document.getElementById('guideAdminControls').style.display = 'none';
         document.getElementById('mainContainer').style.display = 'none';
         document.getElementById('userLockScreen').style.display = 'flex';
         initUserScreen();
-        showAlert("Déconnexion réussie.", true);
+        showAlert("Déconnexion Admin réussie.", true);
     }
 
     function showAdminForm(type) {
+        document.getElementById('addFolderForm').style.display = (type === 'addFolder') ? 'block' : 'none';
         document.getElementById('addSingleForm').style.display = (type === 'addSingle') ? 'block' : 'none';
-        document.getElementById('importJsonForm').style.display = (type === 'importJson') ? 'block' : 'none';
         document.getElementById('updateAppForm').style.display = (type === 'updateApp') ? 'block' : 'none';
         
+        if (type === 'addSingle') updateTargetPaletteDropdown();
         if (type === 'updateApp') {
             const token = getSavedToken();
             if (token) document.getElementById('ghTokenInput').value = token;
+            document.getElementById('sourceCodeInput').value = document.documentElement.outerHTML;
         }
     }
-
-    function checkNewPaletteInput() {
-        const sel = document.getElementById('newPaletteSelect').value;
-        document.getElementById('newCustomPalette').style.display = (sel === 'NEW') ? 'block' : 'none';
-    }
-
-    async function publishToGithub() {
-        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
-        const newCode = document.getElementById('sourceCodeInput').value.trim();
-        const changelogDesc = document.getElementById('changelogInput').value.trim();
-
-        if (!token) { showAlert("Veuillez saisir votre Token Access GitHub !"); return; }
-        if (!newCode) { showAlert("Veuillez coller le nouveau code source !"); return; }
-
-        localStorage.setItem('central_github_token', token);
-        showAlert("Connexion et publication directe sur GitHub en cours...");
-
-        try {
-            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
-            const getRes = await fetch(getUrl, {
-                headers: { "Authorization": `token ${token}` }
-            });
-
-            if (!getRes.ok) throw new Error("Accès refusé. Vérifiez le Token GitHub.");
-
-            const getData = await getRes.json();
-            const fileSha = getData.sha;
-
-            let finalCode = newCode;
-            if (changelogDesc) {
-                finalCode = finalCode.replace(/<div id="changelogText">[\s\S]*?<\/div>/, `<div id="changelogText">• ${changelogDesc}</div>`);
-            }
-
-            const encodedContent = btoa(unescape(encodeURIComponent(finalCode)));
-
-            const putRes = await fetch(getUrl, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `token ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    message: `Update: ${changelogDesc || 'Nouvelle version La-Centrale'}`,
-                    content: encodedContent,
-                    sha: fileSha
-                })
-            });
-
-            if (putRes.ok) {
-                showAlert("🚀 Mise à jour effectuée et publiée sur GitHub ! Déploiement auto en 1-2 min.", true);
-                setTimeout(() => { location.reload(); }, 2000);
-            } else {
-                const errData = await putRes.json();
-                showAlert(`Erreur GitHub: ${errData.message || "Échec de publication"}`);
-            }
-
-        } catch (err) {
-            showAlert(`Erreur: ${err.message}`);
-        }
-    }
-
-    const defaultGuideData = [
-        { ton: "Clair", trimetal: "AW / SW", herbol: "DU1 / LU1", sikkens: "W05 / AW", unikalo: "Blanc / B+", levis: "White" },
-        { ton: "Foncé", trimetal: "AC / SC", herbol: "DU3 / LU4", sikkens: "N00 / AC", unikalo: "C / D", levis: "Clear" }
-    ];
-
-    let guideData = JSON.parse(localStorage.getItem('central_guide_bases_data')) || defaultGuideData;
-
-    function renderGuideTable() {
-        const tbody = document.getElementById('guideTableBody');
-        tbody.innerHTML = '';
-        guideData.forEach(row => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${row.ton}</strong></td>
-                <td>${row.trimetal}</td>
-                <td>${row.herbol}</td>
-                <td>${row.sikkens}</td>
-                <td>${row.unikalo}</td>
-                <td>${row.levis}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    const brandBasesMap = {
-        dark: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D", Levis: "Clear" },
-        light: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc", Levis: "White" }
-    };
 
     const defaultDatabase = [
-        { code: "RAL 9001", palette: "RAL", hex: "#fdfbf7", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc", Levis: "White" } },
-        { code: "RAL 9010", palette: "RAL", hex: "#f0ede6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc", Levis: "White" } },
-        { code: "RAL 7016", palette: "RAL", hex: "#373e48", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D", Levis: "Clear" } },
-        { code: "RAL 9005", palette: "RAL", hex: "#0a0a0a", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D", Levis: "Clear" } }
+        { code: "RAL 9001", palette: "RAL", hex: "#fdfbf7", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
+        { code: "RAL 9010", palette: "RAL", hex: "#f0ede6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
+        { code: "RAL 7016", palette: "RAL", hex: "#373e48", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
+        { code: "RAL 9005", palette: "RAL", hex: "#0a0a0a", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
+        { code: "S 1005-Y20R", palette: "NCS", hex: "#f4f0e6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } }
     ];
 
     let customDatabase = JSON.parse(localStorage.getItem('central_unified_paint_data')) || defaultDatabase;
-    let isDeleteMode = false;
     let openPalettes = {};
 
     function saveToStorage() {
         localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase));
     }
 
-    function showAlert(msg, isSuccess = false) {
-        const b = document.getElementById('alertBanner');
-        b.className = `alert-box ${isSuccess ? 'alert-success' : 'alert-warning'}`;
-        b.textContent = msg;
-        b.style.display = 'block';
-        setTimeout(() => { b.style.display = 'none'; }, 4000);
-    }
+    function createNewFolderPalette() {
+        const folderName = document.getElementById('newFolderName').value.trim().toUpperCase();
+        if (!folderName) { alert("Veuillez saisir un nom de nuancier !"); return; }
 
-    function togglePanel(panelId) {
-        const panel = document.getElementById(panelId);
-        const isVisible = (panel.style.display === 'block');
-        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-        if (!isVisible) panel.style.display = 'block';
-    }
+        customDatabase.push({
+            code: `${folderName} Exemples`,
+            palette: folderName,
+            hex: "#cbd5e1",
+            bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" }
+        });
 
-    function openAdminAuth() {
-        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-        if (isAuthenticated) {
-            document.getElementById('adminPanel').style.display = 'block';
-        } else {
-            document.getElementById('authPanel').style.display = 'block';
-        }
-    }
-
-    function openFullEdit(index) {
-        const item = customDatabase[index];
-        document.getElementById('fullEditIndex').value = index;
-        document.getElementById('modalEditTitle').textContent = `Modifier bases: ${item.code}`;
-        
-        document.getElementById('masterOnlyFields').style.display = isAuthenticated ? 'block' : 'none';
-        document.getElementById('editCodeInput').value = item.code;
-        document.getElementById('fullColorPicker').value = item.hex || '#cbd5e1';
-
-        const b = item.bases || {};
-        document.getElementById('editBaseTrimetal').value = b.Trimetal || "";
-        document.getElementById('editBaseHerbol').value = b.Herbol || "";
-        document.getElementById('editBaseSikkens').value = b.Sikkens || "";
-        document.getElementById('editBaseUnikalo').value = b.Unikalo || "";
-        document.getElementById('editBaseLevis').value = b.Levis || "";
-
-        document.getElementById('editModalOverlay').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-        document.getElementById('editModalOverlay').style.display = 'none';
-    }
-
-    function saveFullEdit() {
-        const index = parseInt(document.getElementById('fullEditIndex').value);
-        if (index >= 0) {
-            if (isAuthenticated) {
-                const newCode = document.getElementById('editCodeInput').value.trim().toUpperCase();
-                if (newCode) customDatabase[index].code = newCode;
-                customDatabase[index].hex = document.getElementById('fullColorPicker').value;
-            }
-
-            customDatabase[index].bases = {
-                Trimetal: document.getElementById('editBaseTrimetal').value.trim().toUpperCase(),
-                Herbol: document.getElementById('editBaseHerbol').value.trim().toUpperCase(),
-                Sikkens: document.getElementById('editBaseSikkens').value.trim().toUpperCase(),
-                Unikalo: document.getElementById('editBaseUnikalo').value.trim(),
-                Levis: document.getElementById('editBaseLevis').value.trim()
-            };
-
-            saveToStorage();
-            filterColors();
-            closeEditModal();
-            showAlert(`Bases mises à jour avec succès pour ${customDatabase[index].code}.`, true);
-        }
-    }
-
-    function togglePalette(paletteName) {
-        openPalettes[paletteName] = !openPalettes[paletteName];
+        saveToStorage();
         filterColors();
+        showAlert(`📁 Nuancier '${folderName}' créé avec succès !`, true);
+        document.getElementById('newFolderName').value = '';
+    }
+
+    function updateTargetPaletteDropdown() {
+        const select = document.getElementById('targetPaletteSelect');
+        select.innerHTML = '';
+        
+        const palettes = [...new Set(customDatabase.map(item => item.palette))];
+        palettes.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p;
+            opt.textContent = `Nuancier / Dossier : ${p}`;
+            select.appendChild(opt);
+        });
+    }
+
+    function saveSingleColorToFolder() {
+        const palette = document.getElementById('targetPaletteSelect').value || "RAL";
+        const code = document.getElementById('newCode').value.trim().toUpperCase();
+        const hex = document.getElementById('newHex').value.trim();
+
+        if (!code) { alert("Veuillez saisir un code couleur !"); return; }
+
+        const isDark = ["7016", "9005", "7021", "3020", "5010"].some(d => code.includes(d));
+        const bases = isDark ? { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } : { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" };
+
+        customDatabase.unshift({ code, palette, hex, bases });
+        saveToStorage();
+        filterColors();
+        showAlert(`Couleur ${code} ajoutée dans le dossier ${palette} !`, true);
+        document.getElementById('newCode').value = '';
     }
 
     function filterColors() {
@@ -917,10 +574,10 @@
         const container = document.getElementById('resultsList');
         container.innerHTML = '';
 
-        const filtered = customDatabase.filter(item => item.code.toLowerCase().includes(query));
+        const filtered = customDatabase.filter(item => item.code.toLowerCase().includes(query) || item.palette.toLowerCase().includes(query));
 
         if (filtered.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée dans les dossiers.</div>';
             return;
         }
 
@@ -940,22 +597,22 @@
             const header = document.createElement('div');
             header.className = 'palette-header';
             header.innerHTML = `
-                <span>Nuancier : ${pName}</span>
-                <span class="palette-count">${grouped[pName].length} codes</span>
+                <span>📁 Nuancier : ${pName}</span>
+                <span class="palette-count">${grouped[pName].length} teintes</span>
             `;
-            header.onclick = () => togglePalette(pName);
+            header.onclick = () => {
+                openPalettes[pName] = !openPalettes[pName];
+                filterColors();
+            };
 
             const content = document.createElement('div');
             content.className = 'palette-content';
             content.style.display = isOpen ? 'block' : 'none';
 
             grouped[pName].forEach(item => {
-                const gIndex = customDatabase.indexOf(item);
                 const card = document.createElement('div');
                 card.className = 'card';
 
-                const swatchColor = item.hex || '#cbd5e1';
-                
                 let brandsHtml = '';
                 if (item.bases) {
                     Object.keys(item.bases).forEach(bName => {
@@ -966,10 +623,9 @@
                 card.innerHTML = `
                     <div class="card-header">
                         <div class="card-title-zone">
-                            <div class="color-swatch-btn" style="background-color: ${swatchColor};" onclick="openFullEdit(${gIndex})"></div>
+                            <div class="color-swatch-btn" style="background-color: ${item.hex || '#cbd5e1'};"></div>
                             <div class="color-code">${item.code}</div>
                         </div>
-                        <button class="btn-edit" onclick="openFullEdit(${gIndex})">✏️ Bases</button>
                     </div>
                     <div class="brands-grid">${brandsHtml}</div>
                 `;
@@ -1003,21 +659,22 @@
             let targetItem = customDatabase.find(item => q.includes(item.code.toUpperCase()));
 
             if (targetItem) {
-                if (q.includes("AC") || q.includes("DU3") || q.includes("N00")) {
-                    targetItem.bases = { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D", Levis: "Clear" };
+                if (q.includes("AC") || q.includes("DU3") || q.includes("N00") || q.includes("FONCÉ")) {
+                    targetItem.bases = { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" };
                     saveToStorage();
                     filterColors();
-                    aiMsg.textContent = `✅ Bases mises à jour vers le ton Foncé pour ${targetItem.code}.`;
-                } else if (q.includes("AW") || q.includes("DU1") || q.includes("W05")) {
-                    targetItem.bases = { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc", Levis: "White" };
+                    aiMsg.textContent = `✅ Base mise à jour vers le ton Foncé pour ${targetItem.code}.`;
+                } else if (q.includes("AW") || q.includes("DU1") || q.includes("W05") || q.includes("CLAIR")) {
+                    targetItem.bases = { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" };
                     saveToStorage();
                     filterColors();
-                    aiMsg.textContent = `✅ Bases mises à jour vers le ton Clair pour ${targetItem.code}.`;
+                    aiMsg.textContent = `✅ Base mise à jour vers le ton Clair pour ${targetItem.code}.`;
                 } else {
-                    aiMsg.textContent = `Code ${targetItem.code} trouvé. Indiquez la base souhaitée (AC ou AW).`;
+                    let bStr = Object.entries(targetItem.bases).map(([k, v]) => `${k}: ${v}`).join(' | ');
+                    aiMsg.textContent = `🎨 ${targetItem.code} (${targetItem.palette}) -> Bases actuelles : ${bStr}.`;
                 }
             } else {
-                aiMsg.textContent = "Posez une question ou indiquez un changement (ex: 'RAL 9005 base AC').";
+                aiMsg.textContent = "Je peux ajuster vos bases ou répondre à vos questions. Tapez par exemple : 'RAL 7016 est base AC'.";
             }
 
             chatBox.appendChild(aiMsg);
@@ -1025,15 +682,67 @@
         }, 400);
     }
 
+    async function publishToGithub() {
+        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
+        const newCode = document.getElementById('sourceCodeInput').value.trim();
+
+        if (!token || !newCode) { showAlert("Veuillez remplir le Token et le code source !"); return; }
+
+        localStorage.setItem('central_github_token', token);
+        showAlert("Publication directe sur GitHub...");
+
+        try {
+            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
+            const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
+            if (!getRes.ok) throw new Error("Accès refusé. Vérifiez le Token.");
+
+            const getData = await getRes.json();
+            const encodedContent = btoa(unescape(encodeURIComponent(newCode)));
+
+            const putRes = await fetch(getUrl, {
+                method: "PUT",
+                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ message: "Update LaCentral via Admin", content: encodedContent, sha: getData.sha })
+            });
+
+            if (putRes.ok) {
+                showAlert("🚀 Mise à jour publiée avec succès sur GitHub !", true);
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showAlert("Erreur lors de la publication sur GitHub.");
+            }
+        } catch (err) {
+            showAlert(`Erreur: ${err.message}`);
+        }
+    }
+
+    function showAlert(msg, isSuccess = false) {
+        const b = document.getElementById('alertBanner');
+        b.className = `alert-box ${isSuccess ? 'alert-success' : 'alert-warning'}`;
+        b.textContent = msg;
+        b.style.display = 'block';
+        setTimeout(() => { b.style.display = 'none'; }, 4000);
+    }
+
+    function togglePanel(panelId) {
+        const panel = document.getElementById(panelId);
+        const isVisible = (panel.style.display === 'block');
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        if (!isVisible) panel.style.display = 'block';
+    }
+
+    function openAdminAuth() {
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        if (isAuthenticated) {
+            document.getElementById('adminPanel').style.display = 'block';
+        } else {
+            document.getElementById('authPanel').style.display = 'block';
+        }
+    }
+
     startRealTimeClock();
     checkActiveSession();
-    renderGuideTable();
     filterColors();
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').then(() => {
-    console.log('Service Worker Registrat cu succes!');
-  });
-}
 </script>
 
 </body>
