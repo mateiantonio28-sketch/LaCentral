@@ -179,7 +179,7 @@
     <!-- Căutare optimizată -->
     <input type="text" id="searchInput" class="search-box" placeholder="Rechercher (ex: RAL 9001, fl, fb...)" oninput="debouncedFilterColors()">
 
-    <!-- 🆕 REZULTATE MUTATE AICI (Deasupra butoanelor, chiar sub căutare) -->
+    <!-- REZULTATE MUTATE AICI (Deasupra butoanelor, chiar sub căutare) -->
     <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche</div>
     <div id="resultsList" style="margin-bottom: 16px; display:none;"></div>
 
@@ -190,7 +190,7 @@
 
     <div id="alertBanner" class="alert-box"></div>
 
-    <!-- Ghidul de Baze Dinamic (Acum cu 3 tonuri) -->
+    <!-- Ghidul de Baze Dinamic -->
     <div id="guidePanel" class="panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <h3 style="margin:0;">Équivalences des Bases</h3>
@@ -312,11 +312,11 @@
         <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
     </div>
 
-    <!-- 🆕 ZONA DOSARELOR DE NUANCIERE RESTRÂNSE ÎNTR-UN FOLDER PRINCIPAL -->
+    <!-- ZONA DOSARELOR DE NUANCIERE RESTRÂNSE ÎNTR-UN FOLDER PRINCIPAL -->
     <div class="palette-group" style="margin-top: 16px; border: 1px solid var(--accent);">
         <div class="palette-header" onclick="toggleMainNuancier()" style="background-color: #1e3a8a;">
             <span>📚 Tous les Nuanciers (Dossiers)</span>
-            <span id="mainNuancierCount" class="palette-count" style="background-color: var(--accent); color: white;">0</span>
+            <span id="mainNuancierCount" class="palette-count" style="background-color: var(--accent); color: white;">0 couleurs au total</span>
         </div>
         <div id="mainNuancierContent" class="palette-content" style="display:none; padding:12px; background: #111827;">
             <div id="foldersOverviewList" class="folders-overview-grid"></div>
@@ -324,7 +324,7 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.010</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.011</span>
     </div>
 </div>
 
@@ -386,7 +386,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.010"; 
+    const CURRENT_APP_VERSION = "v0.011"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -414,7 +414,6 @@
         }
     }
 
-    // Funcție nouă pentru deschiderea/închiderea folderului principal de Nuanciere
     function toggleMainNuancier() {
         const content = document.getElementById('mainNuancierContent');
         content.style.display = (content.style.display === 'block') ? 'none' : 'block';
@@ -903,8 +902,9 @@
             grouped[p]++;
         });
 
-        const totalFolders = Object.keys(grouped).length;
-        document.getElementById('mainNuancierCount').textContent = `${totalFolders} dossiers`;
+        // 🆕 AICI SE AFIȘEAZĂ NUMĂRUL TOTAL DE CULORI (Toate dosarele adunate)
+        const totalColors = customDatabase.length;
+        document.getElementById('mainNuancierCount').textContent = `${totalColors} couleurs au total`;
 
         Object.keys(grouped).sort().forEach(pName => {
             const itemDiv = document.createElement('div');
@@ -932,7 +932,6 @@
         }, 150);
     }
 
-    // --- NOUA LOGICĂ DE FILTRARE (ABREVIERI ȘI AFIȘARE SUS) ---
     function filterColors() {
         const query = document.getElementById('searchInput').value.trim().toLowerCase();
         const container = document.getElementById('resultsList');
@@ -941,7 +940,6 @@
 
         const queryTokens = query.split(/\s+/).filter(t => t);
 
-        // Dacă căsuța e goală, ascundem rezultatele de sus pentru a lăsa ecranul curat!
         if (queryTokens.length === 0) {
             label.style.display = 'none';
             container.style.display = 'none';
@@ -957,11 +955,8 @@
             
             return queryTokens.every(token => {
                 let isAbbr = false;
-                // Recunoaștere prescurtări FLAMANT
                 if (['fl', 'fi', 'fla'].includes(token) && pal.includes('flamant')) isAbbr = true;
-                // Recunoaștere prescurtări FARROW BALL
                 if (['fb', 'cfb'].includes(token) && pal.includes('farrow')) isAbbr = true;
-                // Recunoaștere prescurtări RAL
                 if (token === 'ral' && pal.includes('ral')) isAbbr = true;
                 
                 return isAbbr || code.includes(token) || pal.includes(token);
@@ -988,7 +983,7 @@
 
             const groupDiv = document.createElement('div');
             groupDiv.className = 'palette-group';
-            const isOpen = true; // Tot timpul deschis la căutare
+            const isOpen = true; 
             
             const header = document.createElement('div');
             header.className = 'palette-header';
