@@ -59,56 +59,27 @@
             text-align: center;
         }
 
-        .header {
-            text-align: center;
-            padding-bottom: 14px;
-            margin-bottom: 16px;
-            border-bottom: 2px solid var(--border);
-        }
+        .header { text-align: center; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
         .header h1 { margin: 0; font-size: 22px; color: var(--primary); text-transform: uppercase; }
         .header p { margin: 4px 0 0 0; font-size: 12px; color: #9ca3af; }
 
         .live-timer-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #1f2937;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin-top: 10px;
-            font-size: 11px;
-            color: #9ca3af;
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1f2937; border: 1px solid var(--border); border-radius: 8px;
+            padding: 8px 12px; margin-top: 10px; font-size: 11px; color: #9ca3af;
         }
-        .live-timer-bar span { font-weight: bold; color: #60a5fa; }
 
         .search-box {
-            width: 100%;
-            padding: 14px;
-            font-size: 17px;
-            font-weight: 600;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            outline: none;
-            background: #1f2937;
-            color: #fff;
+            width: 100%; padding: 14px; font-size: 17px; font-weight: 600;
+            border: 2px solid var(--border); border-radius: 10px; outline: none;
+            background: #1f2937; color: #fff;
         }
         .search-box:focus { border-color: var(--accent); }
 
         .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #9ca3af; margin: 14px 0 6px 2px; }
 
         .actions-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
-        .btn {
-            flex: 1;
-            min-width: 110px;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: center;
-        }
+        .btn { flex: 1; min-width: 110px; padding: 10px; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; }
         .btn-admin { background-color: #374151; color: #fff; }
         .btn-ai { background-color: var(--ai-color); color: #fff; }
         .btn-guide { background-color: #0284c7; color: #fff; }
@@ -116,71 +87,16 @@
         .btn-logout { background-color: #7f1d1d; color: #fca5a5; font-size: 11px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; }
         .btn-edit { background: #374151; border: 1px solid #4b5563; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; color: #f3f4f6; }
 
-        .changelog-banner {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid var(--accent);
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-        .changelog-banner h4 { margin: 0 0 4px 0; color: var(--accent); text-transform: uppercase; font-size: 11px; }
-
         .panel {
-            display: none;
-            background: var(--panel-bg);
-            padding: 16px;
-            border-radius: 10px;
-            margin-bottom: 14px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: none; background: var(--panel-bg); padding: 16px; border-radius: 10px;
+            margin-bottom: 14px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         .panel h3 { margin-top: 0; font-size: 14px; text-transform: uppercase; color: var(--primary); }
         .panel input, .panel select, .panel textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 8px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 13px;
-            background: #111827;
-            color: #fff;
+            width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 13px; background: #111827; color: #fff;
         }
         .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(4px);
-            z-index: 99999;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-        .modal-content {
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 480px;
-            padding: 18px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 8px;
-        }
-        .modal-header h3 { margin: 0; font-size: 15px; color: var(--primary); text-transform: uppercase; }
-        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 18px; font-weight: bold; cursor: pointer; }
 
         .palette-group { margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: var(--panel-bg); border: 1px solid var(--border); }
         .palette-header { padding: 10px 14px; background-color: #374151; color: var(--primary); font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -188,58 +104,20 @@
         .palette-content { display: none; padding: 8px; background-color: #1f2937; }
 
         .card {
-            background: #111827;
-            border-radius: 8px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            border: 1px solid var(--border);
-            border-left: 5px solid var(--accent);
+            background: #111827; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+            display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--border); border-left: 5px solid var(--accent);
         }
         .card-header { display: flex; align-items: center; justify-content: space-between; }
         .card-title-zone { display: flex; align-items: center; gap: 10px; }
         
-        .color-swatch-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.3);
-            flex-shrink: 0;
-            box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
-        }
-
+        .color-swatch-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); flex-shrink: 0; box-shadow: inset 0 0 4px rgba(0,0,0,0.5); }
         .color-code { font-size: 16px; font-weight: 700; color: var(--primary); }
 
         .brands-grid { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; border-top: 1px dashed var(--border); }
         .brand-badge { background: #1f2937; border: 1px solid #374151; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #9ca3af; }
         .brand-badge span { font-weight: 800; color: #60a5fa; }
 
-        .chat-box {
-            height: 180px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px;
-            background: #111827;
-            margin-bottom: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .chat-msg { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
-        .chat-user { background: var(--accent); color: white; align-self: flex-end; }
-        .chat-ai { background: #374151; color: var(--primary); align-self: flex-start; }
-
-        .app-version-footer {
-            text-align: center;
-            font-size: 11px;
-            color: #6b7280;
-            margin-top: 24px;
-            padding-top: 10px;
-            border-top: 1px dashed var(--border);
-        }
+        .app-version-footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-top: 10px; border-top: 1px dashed var(--border); }
 
         .alert-box { display: none; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 12px; font-weight: 600; }
         .alert-warning { background-color: #78350f; color: #fef3c7; border: 1px solid #b45309; }
@@ -278,16 +156,10 @@
         </div>
     </div>
 
-    <div class="changelog-banner">
-        <h4>📢 Nouveautés de la Version <span id="displayVersionHeader">v0.001</span> :</h4>
-        <div id="changelogText">• Intégration complète du nuancier RAL Classic (toutes les teintes).</div>
-    </div>
-
-    <input type="text" id="searchInput" class="search-box" placeholder="Rechercher une nuance (ex: RAL 9001, 7016...)" oninput="filterColors()">
+    <input type="text" id="searchInput" class="search-box" placeholder="Rechercher une nuance (ex: RAL 9001, ON.00.87...)" oninput="filterColors()">
 
     <div class="actions-bar">
         <button class="btn btn-guide" onclick="togglePanel('guidePanel')">📖 Guide des Bases</button>
-        <button class="btn btn-ai" onclick="togglePanel('aiPanel')">🤖 Assistant IA Expert</button>
         <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
     </div>
 
@@ -312,17 +184,6 @@
         </table>
     </div>
 
-    <div id="aiPanel" class="panel">
-        <h3 style="color:var(--ai-color);">🤖 Assistant IA Expert Peinture</h3>
-        <div id="chatBox" class="chat-box">
-            <div class="chat-msg chat-ai">Bonjour ! Je peux vous aider à modifier ou chercher des bases. Tapez par exemple : "RAL 9005 est base AC".</div>
-        </div>
-        <div style="display:flex; gap:6px;">
-            <input type="text" id="aiInput" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter') sendAiMessage()">
-            <button class="btn btn-ai" style="flex:0 0 70px;" onclick="sendAiMessage()">OK</button>
-        </div>
-    </div>
-
     <div id="authPanel" class="panel">
         <h3>Connexion Administrateur Master</h3>
         <input type="text" id="authUser" placeholder="Nom d'utilisateur Master">
@@ -330,55 +191,26 @@
         <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
     </div>
 
+    <!-- Panneau Admin cu încărcare directă din GitHub de Fișiere mari -->
     <div id="adminPanel" class="panel">
         <h3>Panneau d'Administration Master</h3>
-        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#9333ea;" onclick="showAdminForm('importJson')">📥 Importer Nuancier</button>
-        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#0284c7;" onclick="showAdminForm('addFolder')">📁 Créer un Nuancier Vide</button>
-        <button class="btn btn-admin" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('addSingle')">+ Ajouter une Seule Couleur</button>
+        
+        <div style="background:#111827; padding:10px; border-radius:6px; margin-bottom:10px; border:1px solid var(--border);">
+            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">🌐 Charger Nuancier Massif depuis GitHub (ex: 5051.json) :</p>
+            <input type="text" id="fetchFileName" placeholder="Nom du fichier sur GitHub (ex: 5051.json)">
+            <input type="text" id="fetchPaletteCategory" placeholder="Nom du nuancier dans l'application (ex: 5051)">
+            <button class="btn btn-save" style="background-color:#0284c7;" onclick="fetchFullPaletteFromGithub()">⚡ Télécharger & Importer les Milliers de Couleurs</button>
+        </div>
+
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#9333ea;" onclick="showAdminForm('importJson')">📥 Importer Nuancier (JSON Court)</button>
         <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#c2410c;" onclick="removeDuplicateColors()">🧹 Supprimer les Couleurs Doublons</button>
-        <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour Source GitHub</button>
         <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
         
         <div id="importJsonForm" style="display:none; margin-top:10px; background:#111827; padding:10px; border-radius:6px;">
-            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Importer nuancier et couleur (JSON) :</p>
-            <input type="text" id="importFolderName" placeholder="Nom du Nuancier / Dossier (ex: NCS, RAL, ACC)">
-            <textarea id="importJsonArea" rows="6" placeholder='[&#10;  {"code": "RAL 1000", "hex": "#CCC58F"},&#10;  {"code": "RAL 1001", "hex": "#D1BC8A"}&#10;]'></textarea>
+            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Importer nuancier (JSON) :</p>
+            <input type="text" id="importFolderName" placeholder="Nom du Nuancier / Dossier (ex: NCS, RAL)">
+            <textarea id="importJsonArea" rows="6" placeholder='[{"code": "RAL 1000", "hex": "#CCC58F"}]'></textarea>
             <button class="btn btn-save" onclick="importBulkJsonPalette()">🚀 Importer le Nuancier</button>
-        </div>
-
-        <div id="addFolderForm" style="display:none; margin-top:10px; background:#111827; padding:10px; border-radius:6px;">
-            <p style="font-size:11px; color:#60a5fa; margin-top:0;">Créer un dossier (ex: RAL, NCS) :</p>
-            <input type="text" id="newFolderName" placeholder="Nom du nuancier">
-            <button class="btn btn-save" onclick="createNewFolderPalette()">Créer le Nuancier</button>
-        </div>
-
-        <div id="addSingleForm" style="display:none; margin-top:10px;">
-            <select id="targetPaletteSelect" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;"></select>
-            <input type="text" id="newCode" placeholder="Code Couleur (ex: RAL 9001)">
-            <input type="text" id="newHex" placeholder="Code Hex" value="#cbd5e1">
-            <button class="btn btn-save" onclick="saveSingleColorToFolder()">Enregistrer dans le dossier</button>
-        </div>
-
-        <div id="updateAppForm" style="display:none; margin-top:10px; background:#111827; padding:12px; border-radius:8px; border:1px solid var(--border);">
-            <p style="font-size:12px; color:#60a5fa; margin-top:0; font-weight:bold;">🚀 Mise à jour Directe GitHub & Versioning :</p>
-            
-            <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="openTokenModal()">
-                🔑 Générer / Obtenir un Token GitHub API
-            </button>
-
-            <label style="font-size:11px; color:#9ca3af;">Numéro de Nouvelle Version (ex: v0.002) :</label>
-            <input type="text" id="newVersionInput" value="v0.002" placeholder="v0.002">
-
-            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
-            <div style="display:flex; gap:6px; margin-bottom:8px;">
-                <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" style="margin-bottom:0;">
-                <button class="btn btn-admin" style="flex:0 0 70px; font-size:11px;" onclick="copySavedToken()">📋 Copier</button>
-            </div>
-
-            <label style="font-size:11px; color:#9ca3af;">Nouveau Code Source HTML complet :</label>
-            <textarea id="sourceCodeInput" rows="6" placeholder="Collez le code complet ici..."></textarea>
-            
-            <button class="btn btn-save" style="background-color:var(--ai-color);" onclick="publishToGithub()">🚀 Publier Update Direct & Déconnecter les Utilisateurs</button>
         </div>
     </div>
 
@@ -386,139 +218,14 @@
     <div id="resultsList"></div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.001</span>
-    </div>
-</div>
-
-<!-- Modal Pop-up pentru editarea bazelor -->
-<div id="editModalOverlay" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modalEditTitle">Ajuster les Bases</h3>
-            <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
-        </div>
-        
-        <input type="hidden" id="fullEditIndex" value="-1">
-        
-        <label style="font-size:11px; color:#60a5fa; margin-bottom:6px; display:block; font-weight:bold;">Correction des Bases sur votre téléphone :</label>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
-            <div>
-                <label style="font-size:11px; color:#9ca3af;">Trimetal</label>
-                <input type="text" id="editBaseTrimetal" placeholder="AW, AC" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-            <div>
-                <label style="font-size:11px; color:#9ca3af;">Herbol</label>
-                <input type="text" id="editBaseHerbol" placeholder="DU1, DU3" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-            <div>
-                <label style="font-size:11px; color:#9ca3af;">Sikkens</label>
-                <input type="text" id="editBaseSikkens" placeholder="W05, N00" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-            <div>
-                <label style="font-size:11px; color:#9ca3af;">Unikalo</label>
-                <input type="text" id="editBaseUnikalo" placeholder="Blanc, D" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
-            </div>
-        </div>
-
-        <button class="btn btn-save" onclick="saveFullEdit()">Enregistrer les Bases</button>
-    </div>
-</div>
-
-<!-- Modal Forțat Download / Update dacă versiunea a fost schimbată -->
-<div id="forceDownloadModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content" style="text-align:center;">
-        <h3 style="color:#f59e0b; margin-top:0;">⚡ Mise à jour Obligatoire !</h3>
-        <p style="font-size:13px; color:#d1d5db; line-height:1.5;">
-            Une nouvelle version de <b>La Centrale</b> est disponible avec de nouvelles couleurs RAL. Vous avez été déconnecté pour appliquer les changements.
-        </p>
-        <a id="downloadAppLink" href="https://mateiantonio28-sketch.github.io/LaCentral/" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin:14px 0; background-color:#16a34a; padding:12px;">
-            📥 Télécharger / Mettre à jour l'application (GitHub)
-        </a>
-        <button class="btn btn-admin" style="width:100%; font-size:12px;" onclick="location.reload()">Recharger l'application</button>
-    </div>
-</div>
-
-<!-- Modal Token Manager -->
-<div id="tokenModalOverlay" class="modal-overlay">
-    <div class="modal-content" style="text-align:center;">
-        <div class="modal-header">
-            <h3>🔑 API Token GitHub Manager</h3>
-            <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
-        </div>
-        <p style="font-size:12px; color:#9ca3af; text-align:left; margin-bottom:10px;">
-            Obtenez rapidement votre Token pour autoriser la mise à jour directe. <b>L'application reste ouverte !</b>
-        </p>
-        <a href="https://github.com/settings/tokens/new?description=La-Centrale-App&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">
-            🔗 Ouvrir GitHub pour Générer le Token (Scope: repo)
-        </a>
-        <div style="background:#111827; padding:10px; border-radius:8px; text-align:left; font-size:11px; color:#9ca3af; margin-bottom:10px;">
-            1. Sur la page GitHub, défilez vers le bas et appuyez sur <b>Generate token</b>.<br>
-            2. Copiez le code généré (ex: <i>ghp_...</i>).<br>
-            3. Collez-le ci-dessous pour le sauvegarder dans l'application :
-        </div>
-        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff; font-size:12px;">
-        
-        <div style="display:flex; gap:8px;">
-            <button class="btn btn-save" style="flex:1;" onclick="saveTokenFromModal()">💾 Enregistrer le Token</button>
-            <button class="btn btn-admin" style="flex:1;" onclick="copyTokenInModal()">📋 Copier</button>
-        </div>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.002</span>
     </div>
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.001";
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
-    const GITHUB_FILE_PATH = "index.html";
-    const DEFAULT_GITHUB_TOKEN = ""; 
-
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
-
-    function getSavedToken() {
-        return localStorage.getItem('central_github_token') || DEFAULT_GITHUB_TOKEN || "";
-    }
-
-    function openTokenModal() {
-        const saved = getSavedToken();
-        if (saved) document.getElementById('modalTokenInput').value = saved;
-        document.getElementById('tokenModalOverlay').style.display = 'flex';
-    }
-
-    function closeTokenModal() {
-        document.getElementById('tokenModalOverlay').style.display = 'none';
-    }
-
-    function saveTokenFromModal() {
-        const t = document.getElementById('modalTokenInput').value.trim();
-        if (t) {
-            localStorage.setItem('central_github_token', t);
-            document.getElementById('ghTokenInput').value = t;
-            closeTokenModal();
-            showAlert("Token GitHub API sauvegardé avec succès !", true);
-        } else {
-            alert("Veuillez coller un Token valide !");
-        }
-    }
-
-    function copyTokenInModal() {
-        const t = document.getElementById('modalTokenInput').value.trim() || getSavedToken();
-        if (t) {
-            navigator.clipboard.writeText(t);
-            showAlert("Token copié dans le presse-papier !", true);
-        } else {
-            alert("Aucun Token à copier.");
-        }
-    }
-
-    function copySavedToken() {
-        const t = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
-        if (t) {
-            navigator.clipboard.writeText(t);
-            showAlert("Token copié !", true);
-        } else {
-            showAlert("Aucun Token enregistré.");
-        }
-    }
 
     function startRealTimeClock() {
         setInterval(() => {
@@ -647,11 +354,6 @@
         document.getElementById('authPanel').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         document.getElementById('welcomeUser').textContent = "Connecté : Master Administrateur";
-        
-        const token = getSavedToken();
-        if (token) document.getElementById('ghTokenInput').value = token;
-        updateTargetPaletteDropdown();
-
         showAlert("Connexion Master Administrateur réussie.", true);
     }
 
@@ -667,211 +369,11 @@
 
     function showAdminForm(type) {
         document.getElementById('importJsonForm').style.display = (type === 'importJson') ? 'block' : 'none';
-        document.getElementById('addFolderForm').style.display = (type === 'addFolder') ? 'block' : 'none';
-        document.getElementById('addSingleForm').style.display = (type === 'addSingle') ? 'block' : 'none';
-        document.getElementById('updateAppForm').style.display = (type === 'updateApp') ? 'block' : 'none';
-        
-        if (type === 'addSingle') updateTargetPaletteDropdown();
-        if (type === 'updateApp') {
-            const token = getSavedToken();
-            if (token) document.getElementById('ghTokenInput').value = token;
-            document.getElementById('sourceCodeInput').value = document.documentElement.outerHTML;
-        }
     }
 
-    // Baza de date completată cu toate nuanțele RAL Classic oficiale
     const defaultDatabase = [
-        { code: "RAL 1000", palette: "RAL", hex: "#CCC58F", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1001", palette: "RAL", hex: "#D1BC8A", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1002", palette: "RAL", hex: "#D2B55B", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1003", palette: "RAL", hex: "#FDAE1B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1004", palette: "RAL", hex: "#E4A010", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1005", palette: "RAL", hex: "#C89F1E", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1006", palette: "RAL", hex: "#E1A100", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1007", palette: "RAL", hex: "#E88C00", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1011", palette: "RAL", hex: "#AF8A54", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1012", palette: "RAL", hex: "#DDAF27", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1013", palette: "RAL", hex: "#E3D9C6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1014", palette: "RAL", hex: "#DDCA98", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1015", palette: "RAL", hex: "#E6D6B8", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1016", palette: "RAL", hex: "#EDEE38", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1017", palette: "RAL", hex: "#F5B16D", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1018", palette: "RAL", hex: "#F8D13F", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1019", palette: "RAL", hex: "#9E8E79", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1020", palette: "RAL", hex: "#A09470", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1021", palette: "RAL", hex: "#F3BC10", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1023", palette: "RAL", hex: "#F3C010", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1024", palette: "RAL", hex: "#B8974B", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 1027", palette: "RAL", hex: "#9B801A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1028", palette: "RAL", hex: "#FFAA00", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1032", palette: "RAL", hex: "#DDB20F", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1033", palette: "RAL", hex: "#FA9B23", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1034", palette: "RAL", hex: "#ED9B40", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 1037", palette: "RAL", hex: "#F08B00", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2000", palette: "RAL", hex: "#DC6B27", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2001", palette: "RAL", hex: "#B8401B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2002", palette: "RAL", hex: "#C6392B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2003", palette: "RAL", hex: "#FA6800", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2004", palette: "RAL", hex: "#E75B12", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2008", palette: "RAL", hex: "#D76128", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2009", palette: "RAL", hex: "#DE5308", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2010", palette: "RAL", hex: "#D45D2B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2011", palette: "RAL", hex: "#EC6A0A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 2012", palette: "RAL", hex: "#C35837", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3000", palette: "RAL", hex: "#A72920", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3001", palette: "RAL", hex: "#9B2423", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3002", palette: "RAL", hex: "#921E19", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3003", palette: "RAL", hex: "#8B1C1C", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3004", palette: "RAL", hex: "#701F28", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3005", palette: "RAL", hex: "#5E2028", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3007", palette: "RAL", hex: "#402225", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3009", palette: "RAL", hex: "#703731", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3011", palette: "RAL", hex: "#7E292C", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3012", palette: "RAL", hex: "#B98270", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 3013", palette: "RAL", hex: "#923229", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3014", palette: "RAL", hex: "#CF727A", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 3015", palette: "RAL", hex: "#E2A9B3", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 3016", palette: "RAL", hex: "#A1382A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3017", palette: "RAL", hex: "#D14152", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3018", palette: "RAL", hex: "#D33245", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3020", palette: "RAL", hex: "#CC1100", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3022", palette: "RAL", hex: "#D96853", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 3027", palette: "RAL", hex: "#B42041", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 3031", palette: "RAL", hex: "#A32A29", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4001", palette: "RAL", hex: "#8A5A83", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4002", palette: "RAL", hex: "#933D50", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4003", palette: "RAL", hex: "#D05B92", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4004", palette: "RAL", hex: "#69193B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4005", palette: "RAL", hex: "#76689A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4006", palette: "RAL", hex: "#A02B73", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4007", palette: "RAL", hex: "#4A2335", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4008", palette: "RAL", hex: "#903373", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 4009", palette: "RAL", hex: "#A18594", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 4010", palette: "RAL", hex: "#C73F7A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5000", palette: "RAL", hex: "#384E70", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5001", palette: "RAL", hex: "#1F4762", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5002", palette: "RAL", hex: "#2B2C7C", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5003", palette: "RAL", hex: "#2A345A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5004", palette: "RAL", hex: "#1D1E2A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5005", palette: "RAL", hex: "#154889", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5007", palette: "RAL", hex: "#3E5F8A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5008", palette: "RAL", hex: "#313B4D", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5009", palette: "RAL", hex: "#2E5978", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5010", palette: "RAL", hex: "#10427A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5011", palette: "RAL", hex: "#1E2436", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5012", palette: "RAL", hex: "#3B83B3", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5013", palette: "RAL", hex: "#232C46", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5014", palette: "RAL", hex: "#637D96", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 5015", palette: "RAL", hex: "#2271B3", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5017", palette: "RAL", hex: "#063971", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5018", palette: "RAL", hex: "#3F888F", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5019", palette: "RAL", hex: "#1B4D79", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5020", palette: "RAL", hex: "#1D334A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5021", palette: "RAL", hex: "#256D7B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5022", palette: "RAL", hex: "#252850", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5023", palette: "RAL", hex: "#49678D", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 5024", palette: "RAL", hex: "#5D9B9E", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 6000", palette: "RAL", hex: "#327662", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6001", palette: "RAL", hex: "#28713E", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6002", palette: "RAL", hex: "#276235", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6003", palette: "RAL", hex: "#4B573E", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6004", palette: "RAL", hex: "#0E4243", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6005", palette: "RAL", hex: "#0F4336", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6006", palette: "RAL", hex: "#40433B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6007", palette: "RAL", hex: "#283425", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6008", palette: "RAL", hex: "#35382E", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6009", palette: "RAL", hex: "#26392F", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6010", palette: "RAL", hex: "#3E753B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6011", palette: "RAL", hex: "#68825B", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 6012", palette: "RAL", hex: "#31403D", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6013", palette: "RAL", hex: "#7D8471", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 6014", palette: "RAL", hex: "#474536", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6015", palette: "RAL", hex: "#3D3D36", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6016", palette: "RAL", hex: "#026A47", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6017", palette: "RAL", hex: "#568246", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6018", palette: "RAL", hex: "#639B3B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6019", palette: "RAL", hex: "#BDD8B7", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 6020", palette: "RAL", hex: "#3B4731", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6021", palette: "RAL", hex: "#8CA47E", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 6022", palette: "RAL", hex: "#3A352B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6024", palette: "RAL", hex: "#008754", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6025", palette: "RAL", hex: "#53753B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6026", palette: "RAL", hex: "#005D52", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6027", palette: "RAL", hex: "#81C0BB", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 6028", palette: "RAL", hex: "#2D5546", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6029", palette: "RAL", hex: "#007243", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6032", palette: "RAL", hex: "#27825C", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6033", palette: "RAL", hex: "#49877C", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 6034", palette: "RAL", hex: "#7FB5B5", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7000", palette: "RAL", hex: "#788896", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7001", palette: "RAL", hex: "#8A959E", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7002", palette: "RAL", hex: "#7B7C6E", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7003", palette: "RAL", hex: "#6C7059", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7004", palette: "RAL", hex: "#969998", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7005", palette: "RAL", hex: "#6B706E", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7006", palette: "RAL", hex: "#756F61", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7008", palette: "RAL", hex: "#746246", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7009", palette: "RAL", hex: "#5B6259", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7010", palette: "RAL", hex: "#575D57", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7011", palette: "RAL", hex: "#555D61", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7012", palette: "RAL", hex: "#596163", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7013", palette: "RAL", hex: "#555245", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7015", palette: "RAL", hex: "#51565C", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7016", palette: "RAL", hex: "#373E48", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7021", palette: "RAL", hex: "#2F3234", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7022", palette: "RAL", hex: "#4B4D46", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7023", palette: "RAL", hex: "#818479", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7024", palette: "RAL", hex: "#474A51", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7026", palette: "RAL", hex: "#373F43", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7030", palette: "RAL", hex: "#939388", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7031", palette: "RAL", hex: "#5D6970", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7032", palette: "RAL", hex: "#B8B9A8", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7033", palette: "RAL", hex: "#818979", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7034", palette: "RAL", hex: "#939176", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7035", palette: "RAL", hex: "#CBD0CC", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7036", palette: "RAL", hex: "#9A9697", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7037", palette: "RAL", hex: "#7C7F7D", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7038", palette: "RAL", hex: "#B5B8B1", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7039", palette: "RAL", hex: "#6C6960", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7040", palette: "RAL", hex: "#9DA3A6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7042", palette: "RAL", hex: "#8D9295", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7043", palette: "RAL", hex: "#4E5452", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 7044", palette: "RAL", hex: "#BDBDB2", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7045", palette: "RAL", hex: "#91969A", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7046", palette: "RAL", hex: "#82898F", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 7047", palette: "RAL", hex: "#CFD0CB", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 8000", palette: "RAL", hex: "#886B35", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8001", palette: "RAL", hex: "#A05A2C", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8002", palette: "RAL", hex: "#734233", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8003", palette: "RAL", hex: "#80461B", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8004", palette: "RAL", hex: "#8E402A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8007", palette: "RAL", hex: "#703D23", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8008", palette: "RAL", hex: "#734A29", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8011", palette: "RAL", hex: "#5B3A29", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8012", palette: "RAL", hex: "#673831", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8014", palette: "RAL", hex: "#49392D", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8015", palette: "RAL", hex: "#633A34", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8016", palette: "RAL", hex: "#4C2F27", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8017", palette: "RAL", hex: "#45322E", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8019", palette: "RAL", hex: "#403A3A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8022", palette: "RAL", hex: "#211F20", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8023", palette: "RAL", hex: "#A65E2E", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8024", palette: "RAL", hex: "#795038", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8025", palette: "RAL", hex: "#755847", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 8028", palette: "RAL", hex: "#4E3B31", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
         { code: "RAL 9001", palette: "RAL", hex: "#FDFBF7", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 9002", palette: "RAL", hex: "#E7E8E2", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 9003", palette: "RAL", hex: "#F4F4F4", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 9004", palette: "RAL", hex: "#282828", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 9005", palette: "RAL", hex: "#0A0A0A", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 9006", palette: "RAL", hex: "#A5A8A6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 9007", palette: "RAL", hex: "#8F8F8F", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 9010", palette: "RAL", hex: "#F0EDE6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 9011", palette: "RAL", hex: "#1C1D21", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 9016", palette: "RAL", hex: "#F6F6F6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "RAL 9017", palette: "RAL", hex: "#1E1E1E", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } },
-        { code: "RAL 9018", palette: "RAL", hex: "#D7D7D7", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } },
-        { code: "S 1005-Y20R", palette: "NCS", hex: "#f4f0e6", bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" } }
+        { code: "RAL 7016", palette: "RAL", hex: "#373E48", bases: { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } }
     ];
 
     let customDatabase = JSON.parse(localStorage.getItem('central_unified_paint_data')) || defaultDatabase;
@@ -881,78 +383,29 @@
         localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase));
     }
 
-    function removeDuplicateColors() {
-        const initialCount = customDatabase.length;
-        const uniqueMap = new Map();
+    // Descărcare directă a fișierelor mari (ex: 5051.json) de pe GitHub fără copy-paste manual
+    async function fetchFullPaletteFromGithub() {
+        const file = document.getElementById('fetchFileName').value.trim();
+        const palName = (document.getElementById('fetchPaletteCategory').value.trim() || "5051").toUpperCase();
 
-        customDatabase.forEach(item => {
-            const key = `${(item.palette || 'RAL').toUpperCase()}_${item.code.toUpperCase()}`;
-            if (!uniqueMap.has(key)) {
-                uniqueMap.set(key, item);
-            }
-        });
+        if (!file) { alert("Saisissez le nom du fichier (ex: 5051.json)"); return; }
 
-        customDatabase = Array.from(uniqueMap.values());
-        const removed = initialCount - customDatabase.length;
-        saveToStorage();
-        filterColors();
-        showAlert(`🧹 ${removed} couleur(s) doublon(s) supprimée(s) avec succès !`, true);
-    }
-
-    function openFullEdit(index) {
-        const item = customDatabase[index];
-        if (!item) return;
-
-        document.getElementById('fullEditIndex').value = index;
-        document.getElementById('modalEditTitle').textContent = `Modifier bases: ${item.code}`;
-
-        const b = item.bases || {};
-        document.getElementById('editBaseTrimetal').value = b.Trimetal || "";
-        document.getElementById('editBaseHerbol').value = b.Herbol || "";
-        document.getElementById('editBaseSikkens').value = b.Sikkens || "";
-        document.getElementById('editBaseUnikalo').value = b.Unikalo || "";
-
-        document.getElementById('editModalOverlay').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-        document.getElementById('editModalOverlay').style.display = 'none';
-    }
-
-    function saveFullEdit() {
-        const index = parseInt(document.getElementById('fullEditIndex').value);
-        if (index >= 0 && customDatabase[index]) {
-            customDatabase[index].bases = {
-                Trimetal: document.getElementById('editBaseTrimetal').value.trim().toUpperCase(),
-                Herbol: document.getElementById('editBaseHerbol').value.trim().toUpperCase(),
-                Sikkens: document.getElementById('editBaseSikkens').value.trim().toUpperCase(),
-                Unikalo: document.getElementById('editBaseUnikalo').value.trim()
-            };
-
-            saveToStorage();
-            filterColors();
-            closeEditModal();
-            showAlert(`Bases mises à jour pour ${customDatabase[index].code} !`, true);
-        }
-    }
-
-    function importBulkJsonPalette() {
-        const folderInput = document.getElementById('importFolderName').value.trim().toUpperCase();
-        const rawJson = document.getElementById('importJsonArea').value.trim();
-
-        if (!rawJson) { alert("Veuillez coller le code JSON !"); return; }
+        showAlert(`Chargement de ${file} depuis GitHub en cours...`);
 
         try {
-            const list = JSON.parse(rawJson);
-            if (!Array.isArray(list)) { alert("Le format JSON doit être une liste [ ... ] !"); return; }
+            const url = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/${file}?t=${Date.now()}`;
+            const res = await fetch(url);
+            
+            if (!res.ok) throw new Error("Fichier non trouvé sur GitHub.");
 
+            const list = await res.json();
             let added = 0;
+
             list.forEach(item => {
                 if (item.code) {
                     const cCode = item.code.trim().toUpperCase();
-                    const cPal = (item.palette || folderInput || "DIVERS").toUpperCase();
+                    const exists = customDatabase.some(c => c.code === cCode && c.palette === palName);
                     
-                    const exists = customDatabase.some(c => c.code === cCode && c.palette === cPal);
                     if (!exists) {
                         const isDark = ["7016", "9005", "7021", "3020", "5010"].some(d => cCode.includes(d));
                         const defaultBases = isDark 
@@ -961,7 +414,7 @@
 
                         customDatabase.push({
                             code: cCode,
-                            palette: cPal,
+                            palette: palName,
                             hex: item.hex || "#cbd5e1",
                             bases: item.bases || defaultBases
                         });
@@ -972,59 +425,26 @@
 
             saveToStorage();
             filterColors();
-            showAlert(`✅ ${added} couleurs importées avec succès dans le nuancier !`, true);
-            document.getElementById('importJsonArea').value = '';
-            document.getElementById('importFolderName').value = '';
+            showAlert(`🎉 Succès : ${added} couleurs importées directement depuis GitHub !`, true);
         } catch (e) {
-            alert("Erreur de format JSON. Vérifiez la syntaxe (virgules, guillemets).");
+            alert(`Erreur : ${e.message}`);
         }
     }
 
-    function createNewFolderPalette() {
-        const folderName = document.getElementById('newFolderName').value.trim().toUpperCase();
-        if (!folderName) { alert("Veuillez saisir un nom de nuancier !"); return; }
+    function removeDuplicateColors() {
+        const initialCount = customDatabase.length;
+        const uniqueMap = new Map();
 
-        customDatabase.push({
-            code: `${folderName} Exemples`,
-            palette: folderName,
-            hex: "#cbd5e1",
-            bases: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" }
+        customDatabase.forEach(item => {
+            const key = `${(item.palette || 'RAL').toUpperCase()}_${item.code.toUpperCase()}`;
+            if (!uniqueMap.has(key)) uniqueMap.set(key, item);
         });
 
+        customDatabase = Array.from(uniqueMap.values());
+        const removed = initialCount - customDatabase.length;
         saveToStorage();
         filterColors();
-        showAlert(`📁 Nuancier '${folderName}' créé avec succès !`, true);
-        document.getElementById('newFolderName').value = '';
-    }
-
-    function updateTargetPaletteDropdown() {
-        const select = document.getElementById('targetPaletteSelect');
-        select.innerHTML = '';
-        
-        const palettes = [...new Set(customDatabase.map(item => item.palette))];
-        palettes.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p;
-            opt.textContent = `Nuancier / Dossier : ${p}`;
-            select.appendChild(opt);
-        });
-    }
-
-    function saveSingleColorToFolder() {
-        const palette = document.getElementById('targetPaletteSelect').value || "RAL";
-        const code = document.getElementById('newCode').value.trim().toUpperCase();
-        const hex = document.getElementById('newHex').value.trim();
-
-        if (!code) { alert("Veuillez saisir un code couleur !"); return; }
-
-        const isDark = ["7016", "9005", "7021", "3020", "5010"].some(d => code.includes(d));
-        const bases = isDark ? { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" } : { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" };
-
-        customDatabase.unshift({ code, palette, hex, bases });
-        saveToStorage();
-        filterColors();
-        showAlert(`Couleur ${code} ajoutée dans le dossier ${palette} !`, true);
-        document.getElementById('newCode').value = '';
+        showAlert(`🧹 ${removed} doublons supprimés !`, true);
     }
 
     function filterColors() {
@@ -1035,7 +455,7 @@
         const filtered = customDatabase.filter(item => item.code.toLowerCase().includes(query) || item.palette.toLowerCase().includes(query));
 
         if (filtered.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée dans les dossiers.</div>';
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
             return;
         }
 
@@ -1068,7 +488,6 @@
             content.style.display = isOpen ? 'block' : 'none';
 
             grouped[pName].forEach(item => {
-                const gIndex = customDatabase.indexOf(item);
                 const card = document.createElement('div');
                 card.className = 'card';
 
@@ -1085,7 +504,6 @@
                             <div class="color-swatch-btn" style="background-color: ${item.hex || '#cbd5e1'};"></div>
                             <div class="color-code">${item.code}</div>
                         </div>
-                        <button class="btn-edit" onclick="openFullEdit(${gIndex})">✏️ Bases</button>
                     </div>
                     <div class="brands-grid">${brandsHtml}</div>
                 `;
@@ -1096,119 +514,6 @@
             groupDiv.appendChild(content);
             container.appendChild(groupDiv);
         });
-    }
-
-    function sendAiMessage() {
-        const input = document.getElementById('aiInput');
-        const query = input.value.trim();
-        if (!query) return;
-
-        const chatBox = document.getElementById('chatBox');
-        const userMsg = document.createElement('div');
-        userMsg.className = 'chat-msg chat-user';
-        userMsg.textContent = query;
-        chatBox.appendChild(userMsg);
-
-        input.value = '';
-
-        setTimeout(() => {
-            const aiMsg = document.createElement('div');
-            aiMsg.className = 'chat-msg chat-ai';
-            const q = query.toUpperCase();
-            
-            let targetItem = customDatabase.find(item => q.includes(item.code.toUpperCase()));
-
-            if (targetItem) {
-                if (q.includes("AC") || q.includes("DU3") || q.includes("N00") || q.includes("FONCÉ")) {
-                    targetItem.bases = { Trimetal: "AC", Herbol: "DU3", Sikkens: "N00", Unikalo: "D" };
-                    saveToStorage();
-                    filterColors();
-                    aiMsg.textContent = `✅ Base mise à jour vers le ton Foncé pour ${targetItem.code}.`;
-                } else if (q.includes("AW") || q.includes("DU1") || q.includes("W05") || q.includes("CLAIR")) {
-                    targetItem.bases = { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" };
-                    saveToStorage();
-                    filterColors();
-                    aiMsg.textContent = `✅ Base mise à jour vers le ton Clair pour ${targetItem.code}.`;
-                } else {
-                    let bStr = Object.entries(targetItem.bases).map(([k, v]) => `${k}: ${v}`).join(' | ');
-                    aiMsg.textContent = `🎨 ${targetItem.code} (${targetItem.palette}) -> Bases actuelles : ${bStr}.`;
-                }
-            } else {
-                aiMsg.textContent = "Je peux ajuster vos bases ou répondre à vos questions. Tapez par exemple : 'RAL 7016 est base AC'.";
-            }
-
-            chatBox.appendChild(aiMsg);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }, 400);
-    }
-
-    async function publishToGithub() {
-        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
-        const newCode = document.getElementById('sourceCodeInput').value.trim();
-        const newVer = document.getElementById('newVersionInput').value.trim();
-
-        if (!token || !newCode) { showAlert("Veuillez remplir le Token et le code source !"); return; }
-
-        localStorage.setItem('central_github_token', token);
-        showAlert("Publication directe sur GitHub...");
-
-        try {
-            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
-            const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
-            if (!getRes.ok) throw new Error("Accès refusé. Vérifiez le Token.");
-
-            const getData = await getRes.json();
-            
-            let finalCode = newCode;
-            if (newVer) {
-                finalCode = finalCode.replace(/const CURRENT_APP_VERSION = ".*?"/, `const CURRENT_APP_VERSION = "${newVer}"`);
-            }
-
-            const encodedContent = btoa(unescape(encodeURIComponent(finalCode)));
-
-            const putRes = await fetch(getUrl, {
-                method: "PUT",
-                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify({ message: `Update version ${newVer || ''}`, content: encodedContent, sha: getData.sha })
-            });
-
-            if (putRes.ok) {
-                showAlert("🚀 Mise à jour publiée ! Déconnexion de tous les utilisateurs...", true);
-                setTimeout(() => {
-                    localStorage.clear();
-                    location.reload();
-                }, 2000);
-            } else {
-                showAlert("Erreur lors de la publication sur GitHub.");
-            }
-        } catch (err) {
-            showAlert(`Erreur: ${err.message}`);
-        }
-    }
-
-    // Verificator automat de versiune la fiecare deschidere (Forțează download / deconectare dacă versiunea difere)
-    async function checkForAppUpdates() {
-        try {
-            const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${GITHUB_FILE_PATH}?t=${Date.now()}`);
-            if (res.ok) {
-                const text = await res.text();
-                const match = text.match(/const CURRENT_APP_VERSION = "(.*?)";/);
-                if (match && match[1]) {
-                    const remoteVer = match[1];
-                    document.getElementById('displayVersionHeader').textContent = CURRENT_APP_VERSION;
-                    document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
-
-                    if (remoteVer !== CURRENT_APP_VERSION) {
-                        // Deconectează utilizatorul local și afișează fereastra de update obligatoriu
-                        localStorage.removeItem('user_session_expiry');
-                        localStorage.removeItem('admin_session_expiry');
-                        document.getElementById('forceDownloadModal').style.display = 'flex';
-                    }
-                }
-            }
-        } catch (e) {
-            console.log("Vérification version hors ligne.");
-        }
     }
 
     function showAlert(msg, isSuccess = false) {
@@ -1235,52 +540,9 @@
         }
     }
 
-    function openTokenModal() {
-        const saved = getSavedToken();
-        if (saved) document.getElementById('modalTokenInput').value = saved;
-        document.getElementById('tokenModalOverlay').style.display = 'flex';
-    }
-
-    function closeTokenModal() {
-        document.getElementById('tokenModalOverlay').style.display = 'none';
-    }
-
-    function saveTokenFromModal() {
-        const t = document.getElementById('modalTokenInput').value.trim();
-        if (t) {
-            localStorage.setItem('central_github_token', t);
-            document.getElementById('ghTokenInput').value = t;
-            closeTokenModal();
-            showAlert("Token GitHub API sauvegardé !", true);
-        } else {
-            alert("Veuillez coller un Token valide !");
-        }
-    }
-
-    function copyTokenInModal() {
-        const t = document.getElementById('modalTokenInput').value.trim() || getSavedToken();
-        if (t) {
-            navigator.clipboard.writeText(t);
-            showAlert("Token copié !", true);
-        } else {
-            alert("Aucun Token à copier.");
-        }
-    }
-
-    function copySavedToken() {
-        const t = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
-        if (t) {
-            navigator.clipboard.writeText(t);
-            showAlert("Token copié !", true);
-        } else {
-            showAlert("Aucun Token enregistré.");
-        }
-    }
-
     startRealTimeClock();
     checkActiveSession();
     filterColors();
-    checkForAppUpdates();
 </script>
 
 </body>
