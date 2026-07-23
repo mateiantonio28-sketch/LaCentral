@@ -115,6 +115,17 @@
         .btn-danger { background-color: var(--danger); color: #fff; }
         .btn-logout { background-color: #7f1d1d; color: #fca5a5; font-size: 11px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; }
 
+        .btn-edit {
+            background: #374151;
+            border: 1px solid #4b5563;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #f3f4f6;
+        }
+
         .changelog-banner {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid var(--accent);
@@ -148,7 +159,6 @@
         }
         .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
 
-        /* Modal Overlay */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -248,7 +258,6 @@
 </head>
 <body>
 
-<!-- Lock Screen -->
 <div id="userLockScreen" class="lock-screen">
     <div class="lock-card">
         <h2>La Centrale</h2>
@@ -262,7 +271,6 @@
     </div>
 </div>
 
-<!-- Main App Container -->
 <div class="container" id="mainContainer">
     
     <div class="header">
@@ -282,7 +290,7 @@
 
     <div class="changelog-banner">
         <h4>📢 Nouveautés de la Version <span id="displayVersionHeader">v0.001</span> :</h4>
-        <div id="changelogText">• Gestionnaire d'API Token intégré & Mise à jour GitHub en direct.</div>
+        <div id="changelogText">• Modification manuelle des bases pour tous les utilisateurs & Nettoyage des doublons.</div>
     </div>
 
     <input type="text" id="searchInput" class="search-box" placeholder="Rechercher une nuance (ex: RAL 9001, NCS...)" oninput="filterColors()">
@@ -332,16 +340,16 @@
         <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
     </div>
 
-    <!-- Panneau Admin -->
+    <!-- Panneau Admin cu buton de ștergere dubluri -->
     <div id="adminPanel" class="panel">
         <h3>Panneau d'Administration Master</h3>
         <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#9333ea;" onclick="showAdminForm('importJson')">📥 Importer Nuancier</button>
         <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#0284c7;" onclick="showAdminForm('addFolder')">📁 Créer un Nuancier Vide</button>
         <button class="btn btn-admin" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('addSingle')">+ Ajouter une Seule Couleur</button>
+        <button class="btn btn-admin" style="width:100%; margin-bottom:6px; background-color:#c2410c;" onclick="removeDuplicateColors()">🧹 Supprimer les Couleurs Doublons</button>
         <button class="btn btn-ai" style="width:100%; margin-bottom:6px;" onclick="showAdminForm('updateApp')">🔄 Mise à jour Source GitHub</button>
         <button class="btn btn-danger" style="width:100%; margin-top:10px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
         
-        <!-- Formular Importer Nuancier et Couleur -->
         <div id="importJsonForm" style="display:none; margin-top:10px; background:#111827; padding:10px; border-radius:6px;">
             <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Importer nuancier et couleur (JSON) :</p>
             <input type="text" id="importFolderName" placeholder="Nom du Nuancier / Dossier (ex: NCS, RAL, ACC)">
@@ -362,7 +370,6 @@
             <button class="btn btn-save" onclick="saveSingleColorToFolder()">Enregistrer dans le dossier</button>
         </div>
 
-        <!-- Formular Update Git cu buton rapid de Token API -->
         <div id="updateAppForm" style="display:none; margin-top:10px; background:#111827; padding:12px; border-radius:8px; border:1px solid var(--border);">
             <p style="font-size:12px; color:#60a5fa; margin-top:0; font-weight:bold;">🚀 Mise à jour Directe GitHub :</p>
             
@@ -370,7 +377,7 @@
                 🔑 Générer / Obtenir un Token GitHub API
             </button>
 
-            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub (Sauvegardé) :</label>
+            <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <div style="display:flex; gap:6px; margin-bottom:8px;">
                 <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" style="margin-bottom:0;">
                 <button class="btn btn-admin" style="flex:0 0 70px; font-size:11px;" onclick="copySavedToken()">📋 Copier</button>
@@ -391,7 +398,41 @@
     </div>
 </div>
 
-<!-- Modal Token Manager (Fără părăsirea aplicației) -->
+<!-- Modal Pop-up pentru editarea bazelor (Accesibil tuturor utilizatorilor) -->
+<div id="editModalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalEditTitle">Ajuster les Bases</h3>
+            <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
+        </div>
+        
+        <input type="hidden" id="fullEditIndex" value="-1">
+        
+        <label style="font-size:11px; color:#60a5fa; margin-bottom:6px; display:block; font-weight:bold;">Correction des Bases sur votre téléphone :</label>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
+            <div>
+                <label style="font-size:11px; color:#9ca3af;">Trimetal</label>
+                <input type="text" id="editBaseTrimetal" placeholder="AW, AC" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+            <div>
+                <label style="font-size:11px; color:#9ca3af;">Herbol</label>
+                <input type="text" id="editBaseHerbol" placeholder="DU1, DU3" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+            <div>
+                <label style="font-size:11px; color:#9ca3af;">Sikkens</label>
+                <input type="text" id="editBaseSikkens" placeholder="W05, N00" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+            <div>
+                <label style="font-size:11px; color:#9ca3af;">Unikalo</label>
+                <input type="text" id="editBaseUnikalo" placeholder="Blanc, D" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; background:#111827; color:#fff;">
+            </div>
+        </div>
+
+        <button class="btn btn-save" onclick="saveFullEdit()">Enregistrer les Bases</button>
+    </div>
+</div>
+
+<!-- Modal Token Manager -->
 <div id="tokenModalOverlay" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <div class="modal-header">
@@ -647,6 +688,63 @@
         localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase));
     }
 
+    // Funcție de Ștergere a Dublurilor (Panou Admin)
+    function removeDuplicateColors() {
+        const initialCount = customDatabase.length;
+        const uniqueMap = new Map();
+
+        customDatabase.forEach(item => {
+            const key = `${(item.palette || 'RAL').toUpperCase()}_${item.code.toUpperCase()}`;
+            if (!uniqueMap.has(key)) {
+                uniqueMap.set(key, item);
+            }
+        });
+
+        customDatabase = Array.from(uniqueMap.values());
+        const removed = initialCount - customDatabase.length;
+        saveToStorage();
+        filterColors();
+        showAlert(`🧹 ${removed} couleur(s) doublon(s) supprimée(s) avec succès !`, true);
+    }
+
+    // Funcții de Pop-up Modal pentru Modificarea Bazelor
+    function openFullEdit(index) {
+        const item = customDatabase[index];
+        if (!item) return;
+
+        document.getElementById('fullEditIndex').value = index;
+        document.getElementById('modalEditTitle').textContent = `Modifier bases: ${item.code}`;
+
+        const b = item.bases || {};
+        document.getElementById('editBaseTrimetal').value = b.Trimetal || "";
+        document.getElementById('editBaseHerbol').value = b.Herbol || "";
+        document.getElementById('editBaseSikkens').value = b.Sikkens || "";
+        document.getElementById('editBaseUnikalo').value = b.Unikalo || "";
+
+        document.getElementById('editModalOverlay').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModalOverlay').style.display = 'none';
+    }
+
+    function saveFullEdit() {
+        const index = parseInt(document.getElementById('fullEditIndex').value);
+        if (index >= 0 && customDatabase[index]) {
+            customDatabase[index].bases = {
+                Trimetal: document.getElementById('editBaseTrimetal').value.trim().toUpperCase(),
+                Herbol: document.getElementById('editBaseHerbol').value.trim().toUpperCase(),
+                Sikkens: document.getElementById('editBaseSikkens').value.trim().toUpperCase(),
+                Unikalo: document.getElementById('editBaseUnikalo').value.trim()
+            };
+
+            saveToStorage();
+            filterColors();
+            closeEditModal();
+            showAlert(`Bases mises à jour pour ${customDatabase[index].code} !`, true);
+        }
+    }
+
     function importBulkJsonPalette() {
         const folderInput = document.getElementById('importFolderName').value.trim().toUpperCase();
         const rawJson = document.getElementById('importJsonArea').value.trim();
@@ -779,6 +877,7 @@
             content.style.display = isOpen ? 'block' : 'none';
 
             grouped[pName].forEach(item => {
+                const gIndex = customDatabase.indexOf(item);
                 const card = document.createElement('div');
                 card.className = 'card';
 
@@ -795,6 +894,7 @@
                             <div class="color-swatch-btn" style="background-color: ${item.hex || '#cbd5e1'};"></div>
                             <div class="color-code">${item.code}</div>
                         </div>
+                        <button class="btn-edit" onclick="openFullEdit(${gIndex})">✏️ Bases</button>
                     </div>
                     <div class="brands-grid">${brandsHtml}</div>
                 `;
