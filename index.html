@@ -14,6 +14,33 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
     <meta name="theme-color" content="#111827">
 
+    <!-- FIREBASE SDK (Realtime Collaboration) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtphQCRQRkBA6gcb4nqTKhmf8ti1XH2w",
+            authDomain: "lacentral-b79a9.firebaseapp.com",
+            databaseURL: "https://lacentral-b79a9-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "lacentral-b79a9",
+            storageBucket: "lacentral-b79a9.appspot.com",
+            messagingSenderId: "187334069854",
+            appId: "1:187334069854:web:1892c8a3fb826341c52ecf",
+            measurementId: "G-QL335MPN5L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Expunem funcțiile Firebase la nivel global pentru aplicație
+        window.FB_db = db;
+        window.FB_ref = ref;
+        window.FB_set = set;
+        window.FB_onValue = onValue;
+        window.FB_push = push;
+    </script>
+
     <style>
         :root {
             --primary: #f8fafc;
@@ -48,9 +75,14 @@
             background: #111827; color: #fff; font-size: 14px; text-align: center;
         }
 
-        /* Modificat header-ul pentru a face loc butonului de refresh */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .top-left-actions { display: flex; gap: 6px; align-items: center; }
         .refresh-btn { background-color: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        
+        /* Butonul cu 3 puncte pentru notificările colegilor */
+        .collab-btn { background-color: var(--panel-bg); border: 1px solid var(--border); color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; position: relative; }
+        .collab-badge { position: absolute; top: -4px; right: -4px; background: var(--danger); color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 10px; display: none; font-weight: bold; }
+
         .version-badge { background-color: #1f2937; border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #9ca3af; font-weight: bold; }
 
         .header { text-align: center; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
@@ -187,10 +219,15 @@
 
 <div class="container" id="mainContainer">
     
-    <!-- BARĂ SUPERIOARĂ CU BUTON REFRESH ȘI VERSIUNE -->
+    <!-- BARĂ SUPERIOARĂ CU REFRESH, MENIU COLABORATIV 3 PUNCTE ȘI VERSIUNE -->
     <div class="top-bar">
-        <button class="refresh-btn" onclick="clearSystemCache()">🔄 Vider Cache & Refresh</button>
-        <div class="version-badge">v0.011</div>
+        <div class="top-left-actions">
+            <button class="refresh-btn" onclick="clearSystemCache()">🔄 Vider Cache</button>
+            <button class="collab-btn" onclick="openCollabModal()" title="Notifications Équipe">
+                ⋮ <span id="collabBadge" class="collab-badge">0</span>
+            </button>
+        </div>
+        <div class="version-badge">v0.012</div>
     </div>
 
     <div class="header" style="margin-top: 0;">
@@ -322,10 +359,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.011">
+            <input type="text" id="newVersionInput" value="v0.012">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Nouvelle recherche dédiée par nuancier et bouton Refresh Cache !">
+            <input type="text" id="newChangelogInput" value="Notifications en temps réel entre collègues via Firebase !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -350,7 +387,7 @@
         </div>
     </div>
 
-    <!-- CĂUTARE DEDICATĂ PE PALETAR (NOU) -->
+    <!-- CĂUTARE DEDICATĂ PE PALETAR -->
     <div id="dedicatedSearchPanel" class="panel" style="display:none; border-color: var(--accent); margin-top: 16px;">
         <button class="btn-back" onclick="closeDedicatedSearch()">← Retour aux Nuanciers</button>
         <h3 id="dedicatedSearchTitle" style="color: #60a5fa; margin-bottom: 12px; font-size: 16px;">Recherche dans: ...</h3>
@@ -359,7 +396,21 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.011</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.012</span>
+    </div>
+</div>
+
+<!-- Modal Notificare Colaborativă (Meniul 3 puncte) -->
+<div id="collabModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>👥 Notifications d'Équipe</h3>
+            <button class="btn-close-modal" onclick="closeCollabModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Modifications de bases réalisées par vos collègues sur le terrain :</p>
+        <div id="collabNotificationsList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>
+        </div>
     </div>
 </div>
 
@@ -476,7 +527,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.011"; 
+    const CURRENT_APP_VERSION = "v0.012"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -737,6 +788,7 @@
             document.getElementById('mainContainer').style.display = 'block';
             document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
             checkAndShowChangelog();
+            initFirebaseListeners(); // Pornim ascultătorul de notificări
             return;
         }
         initUserScreen();
@@ -784,6 +836,7 @@
         document.getElementById('mainContainer').style.display = 'block';
         document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
         checkAndShowChangelog();
+        initFirebaseListeners();
     }
 
     function logoutUserSession() {
@@ -827,6 +880,7 @@
 
         if(!isReauth) showAlert("Connexion Admin réussie.", true);
         checkAndShowChangelog();
+        initFirebaseListeners();
     }
 
     function logoutAdmin() {
@@ -849,6 +903,106 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
+    // --- FIREBASE SYNC & NOTIFICĂRI ÎNTRE COLEGI ---
+    let pendingCollabUpdates = JSON.parse(localStorage.getItem('central_pending_collab')) || [];
+
+    function initFirebaseListeners() {
+        if (!window.FB_db) {
+            setTimeout(initFirebaseListeners, 1000);
+            return;
+        }
+
+        const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
+        window.FB_onValue(updatesRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                let updatesList = Object.values(data);
+                // Filtrăm doar ce este mai nou sau neconfirmat de userul local
+                let myName = localUser ? localUser.name : "Anonyme";
+                
+                pendingCollabUpdates = updatesList.filter(u => u.author !== myName);
+                updateCollabBadge();
+                renderCollabNotifications();
+            }
+        });
+    }
+
+    function broadcastBaseUpdate(code, palette, newBases) {
+        if (!window.FB_db) return;
+        const authorName = localUser ? localUser.name : "Un collègue";
+        const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
+        const newUpdateRef = window.FB_push(updatesRef);
+        
+        window.FB_set(newUpdateRef, {
+            id: newUpdateRef.key,
+            author: authorName,
+            code: code,
+            palette: palette,
+            bases: newBases,
+            timestamp: Date.now()
+        });
+    }
+
+    function openCollabModal() {
+        document.getElementById('collabModal').style.display = 'flex';
+    }
+
+    function closeCollabModal() {
+        document.getElementById('collabModal').style.display = 'none';
+    }
+
+    function updateCollabBadge() {
+        const badge = document.getElementById('collabBadge');
+        if (pendingCollabUpdates.length > 0) {
+            badge.style.display = 'inline-block';
+            badge.textContent = pendingCollabUpdates.length;
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    function renderCollabNotifications() {
+        const list = document.getElementById('collabNotificationsList');
+        if (!list) return;
+        list.innerHTML = '';
+
+        if (pendingCollabUpdates.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>';
+            return;
+        }
+
+        pendingCollabUpdates.forEach(upd => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#111827; border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;";
+            
+            let basesStr = Object.keys(upd.bases).map(k => `${k}: ${upd.bases[k]}`).join(' | ');
+            
+            div.innerHTML = `
+                <div style="font-size:12px; color:#60a5fa; font-weight:bold;">👤 ${upd.author} a modifié ${upd.code} (${upd.palette})</div>
+                <div style="font-size:11px; color:#d1d5db;">Nouvelles bases : ${basesStr}</div>
+                <button class="btn btn-save" style="padding:6px; font-size:11px; margin-top:4px;" onclick="applyCollabUpdate('${upd.code}', '${upd.palette}', '${encodeURIComponent(JSON.stringify(upd.bases))}')">📥 Mettre à jour sur mon appareil</button>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function applyCollabUpdate(code, palette, encodedBases) {
+        const newBases = JSON.parse(decodeURIComponent(encodedBases));
+        const itemIndex = customDatabase.findIndex(c => c.code === code && c.palette === palette);
+        
+        if (itemIndex >= 0) {
+            customDatabase[itemIndex].bases = newBases;
+            saveToStorage();
+            filterColors();
+            filterDedicatedPalette();
+            showAlert(`✅ Modification appliquée pour ${code} !`, true);
+            closeCollabModal();
+        } else {
+            alert("La couleur n'existe pas dans votre base locale.");
+        }
+    }
+    // ----------------------------------------------------
+
     function openFullEdit(index) {
         const item = customDatabase[index];
         if (!item) return;
@@ -867,14 +1021,19 @@
     function saveFullEdit() {
         const index = parseInt(document.getElementById('fullEditIndex').value);
         if (index >= 0 && customDatabase[index]) {
-            customDatabase[index].bases = {
+            const updatedBases = {
                 Trimetal: document.getElementById('editBaseTrimetal').value.trim().toUpperCase(),
                 Herbol: document.getElementById('editBaseHerbol').value.trim().toUpperCase(),
                 Sikkens: document.getElementById('editBaseSikkens').value.trim().toUpperCase(),
                 Unikalo: document.getElementById('editBaseUnikalo').value.trim()
             };
+            customDatabase[index].bases = updatedBases;
             saveToStorage(); filterColors(); filterDedicatedPalette(); closeEditModal();
-            showAlert(`Bases mises à jour !`, true);
+            
+            // Trimitem notificarea instant spre ceilalți colegi prin Firebase
+            broadcastBaseUpdate(customDatabase[index].code, customDatabase[index].palette, updatedBases);
+
+            showAlert(`Bases mises à jour et partagées avec l'équipe !`, true);
         }
     }
 
@@ -935,7 +1094,6 @@
 
     async function autoSyncPalettes() {
         let addedCount = 0;
-        // GOLIRE BAZA DE DATE ÎNAINTE DE A REÎNCĂRCA (Pentru a preveni cumulul fals 8600+)
         let tempDatabase = [];
         
         for (let file of filesToSync) {
@@ -956,7 +1114,7 @@
             } catch (e) {}
         }
         if (addedCount > 0) {
-            customDatabase = tempDatabase; // Suprascriere curata
+            customDatabase = tempDatabase; 
             saveToStorage();
             filterColors();
             updateTargetPaletteDropdown();
@@ -1120,7 +1278,6 @@
                 <span class="palette-count">${grouped[pName]} teintes</span>
             `;
             
-            // NOUA LOGICĂ: Deschide o căutare dedicată pe acest paletar
             itemDiv.onclick = () => {
                 openDedicatedSearch(pName);
             };
@@ -1128,7 +1285,6 @@
         });
     }
 
-    // --- CĂUTARE DEDICATĂ (NOU) ---
     let activePaletteFocus = null;
 
     function openDedicatedSearch(pName) {
@@ -1191,7 +1347,6 @@
             container.appendChild(card);
         });
     }
-    // ------------------------------
 
     let searchTimeout = null;
     function debouncedFilterColors() {
@@ -1342,9 +1497,8 @@
         } catch (err) { showAlert(`❌ Erreur: ${err.message}`); }
     }
 
-    // Funcția care golește complet cache-ul pentru o fluidizare reală
     function clearSystemCache() {
-        if(confirm("Voulez-vous vraiment vider le cache et rafraîchir l'application ? Cela va libérer la mémoire et corriger les doublons de couleurs.")) {
+        if(confirm("Voulez-vous vraiment vider le cache et rafraîchir l'application ?")) {
             localStorage.clear();
             sessionStorage.clear();
             window.location.reload(true);
