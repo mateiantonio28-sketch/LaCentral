@@ -9,12 +9,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>La Centrale - Recherche Couleur & Base</title>
+    <title>La Centrale - Gestion & Stock</title>
     
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
     <meta name="theme-color" content="#111827">
 
-    <!-- FIREBASE SDK (Realtime Collaboration) -->
+    <!-- FIREBASE SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -69,11 +69,28 @@
         }
         .lock-card h2 { margin: 0 0 6px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
         .lock-card p { margin: 0 0 16px 0; font-size: 12px; color: #9ca3af; }
-        .lock-card input {
+        .lock-card input, .lock-card select {
             width: 100%; padding: 12px; margin-bottom: 10px;
             border: 1px solid var(--border); border-radius: 8px;
             background: #111827; color: #fff; font-size: 14px; text-align: center;
         }
+
+        /* Modal Selector Secțiune Principală */
+        .section-selector-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 99998; display: none;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .section-selector-card {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .section-btn {
+            background: #374151; color: white; border: 1px solid var(--border);
+            padding: 16px; border-radius: 8px; font-size: 15px; font-weight: bold;
+            cursor: pointer; width: 100%; margin-bottom: 12px; transition: background 0.2s;
+        }
+        .section-btn:hover { background: var(--accent); }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .top-left-actions { display: flex; gap: 6px; align-items: center; }
@@ -203,16 +220,36 @@
 </head>
 <body>
 
+<!-- ECRAN CONECTARE CU ROLURI -->
 <div id="userLockScreen" class="lock-screen">
     <div class="lock-card">
         <h2>La Centrale</h2>
         <p id="lockSubtitle">Connexion Utilisateur (PIN à 4 caractères)</p>
         <input type="text" id="regUser" placeholder="Nom d'utilisateur">
         <input type="password" id="regPin" maxlength="4" placeholder="Code PIN (4 caractères)">
+        
+        <select id="regRole">
+            <option value="Teinteur">Teinteur</option>
+            <option value="Vendeur">Vendeur</option>
+            <option value="Magazinier">Magazinier</option>
+            <option value="Chef d'équipe">Chef d'équipe</option>
+            <option value="Préparateur de commande">Préparateur de commande</option>
+        </select>
+
         <button class="btn btn-save" onclick="handleUserAuth()">Accéder à l'application</button>
         <div style="margin-top:14px; border-top:1px dashed var(--border); padding-top:10px;">
             <button class="btn btn-admin" style="width:100%; font-size:11px;" onclick="quickAdminAuthPrompt()">🔒 Accès Administrateur Master</button>
         </div>
+    </div>
+</div>
+
+<!-- POPUP SELECTOR CATEGORIE / SECȚIUNE -->
+<div id="sectionSelectorModal" class="section-selector-overlay">
+    <div class="section-selector-card">
+        <h2 style="color:var(--primary); margin-top:0;">Choisissez la Section</h2>
+        <p style="font-size:13px; color:#9ca3af; margin-bottom:20px;">Sélectionnez l'activité pour cette session :</p>
+        <button class="section-btn" onclick="selectAppSection('Bases')">🎨 Vérifie les Bases</button>
+        <button class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Vérifie le Stock</button>
     </div>
 </div>
 
@@ -225,12 +262,12 @@
                 ⋮ <span id="collabBadge" class="collab-badge">0</span>
             </button>
         </div>
-        <div class="version-badge">v0.013</div>
+        <div class="version-badge">v0.014</div>
     </div>
 
     <div class="header" style="margin-top: 0;">
-        <h1>La Centrale</h1>
-        <p>Système de Recherche de Couleurs & Bases Techniques</p>
+        <h1 id="appHeaderTitle">La Centrale</h1>
+        <p id="appHeaderSubtitle">Système de Recherche de Couleurs & Bases Techniques</p>
         
         <div class="live-timer-bar">
             <div>📅 <span id="currentDateDisplay">--/--/---- --:--</span></div>
@@ -239,20 +276,62 @@
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
             <div style="font-size:11px; color:#60a5fa;" id="welcomeUser"></div>
-            <button class="btn-logout" onclick="logoutUserSession()">Déconnexion</button>
+            <div>
+                <button class="btn btn-admin" style="padding:4px 8px; font-size:10px; margin-right:6px;" onclick="showSectionSelector()">⇄ Changer Section</button>
+                <button class="btn-logout" onclick="logoutUserSession()">Déconnexion</button>
+            </div>
         </div>
     </div>
 
-    <!-- Căutare Globală -->
-    <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" oninput="debouncedFilterColors()">
+    <!-- CONȚINUT SECȚIUNE 1: VERIFIE LES BASES -->
+    <div id="sectionBasesContent">
+        <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" oninput="debouncedFilterColors()">
 
-    <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche Globale</div>
-    <div id="resultsList" style="margin-bottom: 16px; display:none;"></div>
+        <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche Globale</div>
+        <div id="resultsList" style="margin-bottom: 16px; display:none;"></div>
 
-    <div class="actions-bar">
-        <button class="btn btn-guide" onclick="togglePanel('guidePanel')">📖 Guide des Bases</button>
-        <button class="btn btn-admin" id="vkToggleBtn" onclick="toggleVirtualKeyboard()">⌨️ Clavier App: ON</button>
-        <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
+        <div class="actions-bar">
+            <button class="btn btn-guide" onclick="togglePanel('guidePanel')">📖 Guide des Bases</button>
+            <button class="btn btn-admin" id="vkToggleBtn" onclick="toggleVirtualKeyboard()">⌨️ Clavier App: ON</button>
+            <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
+        </div>
+
+        <!-- ZONA DOSARELOR DE NUANCIERE -->
+        <div class="palette-group" style="margin-top: 16px; border: 1px solid var(--accent);">
+            <div class="palette-header" onclick="toggleMainNuancier()" style="background-color: #1e3a8a;">
+                <span>📚 Tous les Nuanciers (Dossiers)</span>
+                <span id="mainNuancierCount" class="palette-count" style="background-color: var(--accent); color: white;">0 couleurs</span>
+            </div>
+            <div id="mainNuancierContent" class="palette-content" style="display:none; padding:12px; background: #111827;">
+                <div id="foldersOverviewList" class="folders-overview-grid"></div>
+            </div>
+        </div>
+
+        <!-- CĂUTARE DEDICATĂ PE PALETAR -->
+        <div id="dedicatedSearchPanel" class="panel" style="display:none; border-color: var(--accent); margin-top: 16px;">
+            <button class="btn-back" onclick="closeDedicatedSearch()">← Retour aux Nuanciers</button>
+            <h3 id="dedicatedSearchTitle" style="color: #60a5fa; margin-bottom: 12px; font-size: 16px;">Recherche dans: ...</h3>
+            <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." oninput="filterDedicatedPalette()">
+            <div id="dedicatedSearchResults" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- CONȚINUT SECȚIUNE 2: VERIFIE LE STOCK (CERERI GĂLEȚI / PRODUSE) -->
+    <div id="sectionStockContent" style="display: none;">
+        <div class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
+            <h3 style="color:#4ade80;">📦 Demande de Réapprovisionnement de Stock</h3>
+            <p style="font-size:12px; color:#9ca3af; margin-top:0;">Besoin de seaux / produits sur un rayon ou un chantier ? Envoyez une demande directe au magazinier.</p>
+            
+            <input type="text" id="stockProduct" placeholder="Nom du produit / Type de seaux (ex: Trimetal Ultramat 10L)">
+            <input type="number" id="stockQuantity" placeholder="Quantité (ex: 4)" min="1" value="1">
+            <input type="text" id="stockLocation" placeholder="Adresse / Emplacement (ex: Rayon 3 / Chantier Liège)">
+            <button class="btn btn-save" style="background-color:var(--success);" onclick="sendStockRequest()">📨 Envoyer la Demande au Magazinier</button>
+        </div>
+
+        <div class="section-label">Demandes de stock en cours :</div>
+        <div id="stockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active.</div>
+        </div>
     </div>
 
     <div id="alertBanner" class="alert-box"></div>
@@ -357,10 +436,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.013">
+            <input type="text" id="newVersionInput" value="v0.014">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Mise à jour en un clic (Tout Accepter) et suppression auto des notifications lues !">
+            <input type="text" id="newChangelogInput" value="Sélection de section (Bases / Stock), gestion des rôles et alertes stock avec son !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -374,42 +453,26 @@
         <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="logoutAdmin()">🚪 Déconnexion Admin</button>
     </div>
 
-    <!-- ZONA DOSARELOR DE NUANCIERE -->
-    <div class="palette-group" style="margin-top: 16px; border: 1px solid var(--accent);">
-        <div class="palette-header" onclick="toggleMainNuancier()" style="background-color: #1e3a8a;">
-            <span>📚 Tous les Nuanciers (Dossiers)</span>
-            <span id="mainNuancierCount" class="palette-count" style="background-color: var(--accent); color: white;">0 couleurs</span>
-        </div>
-        <div id="mainNuancierContent" class="palette-content" style="display:none; padding:12px; background: #111827;">
-            <div id="foldersOverviewList" class="folders-overview-grid"></div>
-        </div>
-    </div>
-
-    <!-- CĂUTARE DEDICATĂ PE PALETAR -->
-    <div id="dedicatedSearchPanel" class="panel" style="display:none; border-color: var(--accent); margin-top: 16px;">
-        <button class="btn-back" onclick="closeDedicatedSearch()">← Retour aux Nuanciers</button>
-        <h3 id="dedicatedSearchTitle" style="color: #60a5fa; margin-bottom: 12px; font-size: 16px;">Recherche dans: ...</h3>
-        <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." oninput="filterDedicatedPalette()">
-        <div id="dedicatedSearchResults" style="max-height: 400px; overflow-y: auto;"></div>
+    <div class="actions-bar" style="margin-top:20px;">
+        <button class="btn btn-admin" onclick="openAdminAuth()">🔒 Administrateur</button>
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.013</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.014</span>
     </div>
 </div>
 
-<!-- Modal Notificare Colaborativă (Meniul 3 puncte) -->
+<!-- Modal Notificare Colaborativă (Baze) -->
 <div id="collabModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
             <h3>👥 Notifications d'Équipe</h3>
             <button class="btn-close-modal" onclick="closeCollabModal()">✕</button>
         </div>
-        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Modifications de bases réalisées par vos collègues sur le terrain :</p>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Modifications de bases réalisées par vos collègues :</p>
         
-        <!-- BUTON NOU: ACCEPTER TOUT D'UN CLIC -->
         <div id="acceptAllContainer" style="display:none; margin-bottom: 10px;">
-            <button class="btn btn-save" style="background-color: var(--accent); padding: 8px; font-size: 12px;" onclick="acceptAllCollabUpdates()">⚡ Tout accepter d'un coup (Mise à jour globale)</button>
+            <button class="btn btn-save" style="background-color: var(--accent); padding: 8px; font-size: 12px;" onclick="acceptAllCollabUpdates()">⚡ Tout accepter d'un coup</button>
         </div>
 
         <div id="collabNotificationsList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
@@ -475,7 +538,7 @@
     </div>
 </div>
 
-<!-- TASTATURA VIRTUALĂ (AZERTY) -->
+<!-- TASTATURA VIRTUALĂ -->
 <div id="virtualKeyboard" class="virtual-keyboard">
     <div class="vk-row">
         <div class="vk-key" onclick="vKey('1')">1</div>
@@ -531,7 +594,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.013"; 
+    const CURRENT_APP_VERSION = "v0.014"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -542,6 +605,7 @@
 
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
+    let currentAppSection = localStorage.getItem('central_app_section') || null;
 
     let activeVirtualInput = null;
     let isVkEnabled = localStorage.getItem('central_vk_enabled') !== 'false'; 
@@ -552,15 +616,19 @@
         const toggleBtn = document.getElementById('vkToggleBtn');
         
         if (isVkEnabled) {
-            searchInput.setAttribute('readonly', 'true'); 
-            dedicatedInput.setAttribute('readonly', 'true'); 
-            toggleBtn.innerHTML = '⌨️ Clavier App: ON';
-            toggleBtn.style.backgroundColor = 'var(--ai-color)';
+            if(searchInput) searchInput.setAttribute('readonly', 'true'); 
+            if(dedicatedInput) dedicatedInput.setAttribute('readonly', 'true'); 
+            if(toggleBtn) {
+                toggleBtn.innerHTML = '⌨️ Clavier App: ON';
+                toggleBtn.style.backgroundColor = 'var(--ai-color)';
+            }
         } else {
-            searchInput.removeAttribute('readonly');
-            dedicatedInput.removeAttribute('readonly');
-            toggleBtn.innerHTML = '📱 Clavier Tél: OFF';
-            toggleBtn.style.backgroundColor = '#374151';
+            if(searchInput) searchInput.removeAttribute('readonly');
+            if(dedicatedInput) dedicatedInput.removeAttribute('readonly');
+            if(toggleBtn) {
+                toggleBtn.innerHTML = '📱 Clavier Tél: OFF';
+                toggleBtn.style.backgroundColor = '#374151';
+            }
             vClose(); 
         }
     }
@@ -571,17 +639,16 @@
         applyVkState();
     }
 
-    document.getElementById('searchInput').addEventListener('click', function(e) {
-        if (isVkEnabled) { activeVirtualInput = this; document.getElementById('virtualKeyboard').style.display = 'block'; }
-    });
-    document.getElementById('searchInput').addEventListener('focus', function(e) {
-        if (isVkEnabled) { activeVirtualInput = this; document.getElementById('virtualKeyboard').style.display = 'block'; }
-    });
-    document.getElementById('dedicatedSearchInput').addEventListener('click', function(e) {
-        if (isVkEnabled) { activeVirtualInput = this; document.getElementById('virtualKeyboard').style.display = 'block'; }
-    });
-    document.getElementById('dedicatedSearchInput').addEventListener('focus', function(e) {
-        if (isVkEnabled) { activeVirtualInput = this; document.getElementById('virtualKeyboard').style.display = 'block'; }
+    ['searchInput', 'dedicatedSearchInput'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+            el.addEventListener('click', function() {
+                if (isVkEnabled) { activeVirtualInput = this; document.getElementById('virtualKeyboard').style.display = 'block'; }
+            });
+            el.addEventListener('focus', function() {
+                if (isVkEnabled) { activeVirtualInput = this; document.getElementById('virtualKeyboard').style.display = 'block'; }
+            });
+        }
     });
 
     function vKey(char) {
@@ -735,25 +802,18 @@
                     
                     if (remaining <= 0) {
                         timerSpan.textContent = "00:00:00";
-                        if (isAuthenticated) {
-                            logoutAdmin();
-                        } else {
+                        if (isAuthenticated) { logoutAdmin(); } 
+                        else {
                             document.getElementById('mainContainer').style.display = 'none';
                             document.getElementById('userLockScreen').style.display = 'flex';
                             initUserScreen();
                         }
-                        alert("Sesiunea a expirat ! Aplicația se va redeschide mâine.");
+                        alert("Sesiunea a expirat !");
                     } else {
                         const h = Math.floor(remaining / 3600000).toString().padStart(2, '0');
                         const m = Math.floor((remaining % 3600000) / 60000).toString().padStart(2, '0');
                         const s = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
                         timerSpan.textContent = `${h}:${m}:${s}`;
-                        
-                        if (remaining < 3600000) { 
-                            timerSpan.style.color = '#ef4444'; 
-                        } else {
-                            timerSpan.style.color = '#f59e0b'; 
-                        }
                     }
                 }
             }
@@ -787,10 +847,17 @@
 
         if (sessionDay !== today) {
             localStorage.removeItem('user_session_expiry');
+            localStorage.removeItem('central_app_section');
         } else if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
             document.getElementById('userLockScreen').style.display = 'none';
-            document.getElementById('mainContainer').style.display = 'block';
-            document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
+            
+            if (!currentAppSection) {
+                document.getElementById('sectionSelectorModal').style.display = 'flex';
+            } else {
+                applySectionView();
+            }
+
+            document.getElementById('welcomeUser').textContent = `${localUser.name} (${localUser.role})`;
             checkAndShowChangelog();
             initFirebaseListeners();
             return;
@@ -805,6 +872,7 @@
             subtitle.textContent = `Content de vous revoir ! Entrez le PIN pour ${localUser.name}`;
             userInput.value = localUser.name;
             userInput.disabled = true;
+            document.getElementById('regRole').value = localUser.role || "Teinteur";
         } else {
             subtitle.textContent = "Créer un profil local (PIN à 4 caractères)";
         }
@@ -813,32 +881,58 @@
     function handleUserAuth() {
         const name = document.getElementById('regUser').value.trim();
         const pin = document.getElementById('regPin').value.trim();
+        const role = document.getElementById('regRole').value;
+
         if (!name || pin.length !== 4) { alert("Nom et PIN 4 caractères obligatoires !"); return; }
         if (!localUser) {
-            localUser = { name: name, pin: pin };
+            localUser = { name: name, pin: pin, role: role };
             localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
         } else {
             if (pin !== localUser.pin) { alert("Code PIN incorrect !"); return; }
+            localUser.role = role;
+            localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
         }
         
         const today = new Date().toLocaleDateString('ro-RO'); 
-        let sessionDay = localStorage.getItem('session_start_day');
-        let expiry = localStorage.getItem('user_session_expiry');
-        
-        if (sessionDay === today && expiry) {
-            if (Date.now() > parseInt(expiry, 10)) {
-                alert("Limita ta de 10 ore a expirat ! Aplicația se va redeschide mâine.");
-                return; 
-            }
-        } else {
-            localStorage.setItem('session_start_day', today);
-            expiry = (Date.now() + (10 * 3600 * 1000)).toString();
-            localStorage.setItem('user_session_expiry', expiry);
-        }
+        localStorage.setItem('session_start_day', today);
+        let expiry = (Date.now() + (10 * 3600 * 1000)).toString();
+        localStorage.setItem('user_session_expiry', expiry);
 
         document.getElementById('userLockScreen').style.display = 'none';
+        document.getElementById('sectionSelectorModal').style.display = 'flex';
+    }
+
+    function showSectionSelector() {
+        document.getElementById('sectionSelectorModal').style.display = 'flex';
+    }
+
+    function selectAppSection(section) {
+        currentAppSection = section;
+        localStorage.setItem('central_app_section', section);
+        document.getElementById('sectionSelectorModal').style.display = 'none';
+        applySectionView();
+    }
+
+    function applySectionView() {
         document.getElementById('mainContainer').style.display = 'block';
-        document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
+        document.getElementById('welcomeUser').textContent = `${localUser.name} (${localUser.role})`;
+        
+        const title = document.getElementById('appHeaderTitle');
+        const subtitle = document.getElementById('appHeaderSubtitle');
+        const basesSec = document.getElementById('sectionBasesContent');
+        const stockSec = document.getElementById('sectionStockContent');
+
+        if (currentAppSection === 'Stock') {
+            title.textContent = "Gestion du Stock";
+            subtitle.textContent = "Réapprovisionnement de seaux et produits";
+            basesSec.style.display = 'none';
+            stockSec.style.display = 'block';
+        } else {
+            title.textContent = "La Centrale";
+            subtitle.textContent = "Système de Recherche de Couleurs & Bases";
+            stockSec.style.display = 'none';
+            basesSec.style.display = 'block';
+        }
         checkAndShowChangelog();
         initFirebaseListeners();
     }
@@ -846,6 +940,7 @@
     function logoutUserSession() {
         isAuthenticated = false;
         localStorage.removeItem('admin_session_expiry');
+        localStorage.removeItem('central_app_section');
         document.getElementById('mainContainer').style.display = 'none';
         document.getElementById('userLockScreen').style.display = 'flex';
         initUserScreen();
@@ -869,11 +964,17 @@
         isAuthenticated = true;
         localStorage.setItem('admin_session_expiry', (Date.now() + (10 * 3600 * 1000)).toString());
         document.getElementById('userLockScreen').style.display = 'none';
+        document.getElementById('sectionSelectorModal').style.display = 'none';
         document.getElementById('mainContainer').style.display = 'block';
         document.getElementById('authPanel').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
-        document.getElementById('welcomeUser').textContent = "Connecté : Master Administrateur";
         
+        if(!localUser) {
+            localUser = { name: "Antonio", role: "Master Admin" };
+        }
+        currentAppSection = 'Bases';
+        applySectionView();
+
         const token = getSavedToken();
         if (token) document.getElementById('ghTokenInput').value = token;
         
@@ -883,8 +984,6 @@
         document.getElementById('sourceCodeInput').value = document.documentElement.outerHTML;
 
         if(!isReauth) showAlert("Connexion Admin réussie.", true);
-        checkAndShowChangelog();
-        initFirebaseListeners();
     }
 
     function logoutAdmin() {
@@ -907,9 +1006,26 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
-    // --- FIREBASE SYNC & COLABORARE ÎNTRE COLEGI (V0.013) ---
+    // --- FIREBASE SYNC & COLABORARE (BASES + STOCK CU SUNET) ---
     let pendingCollabUpdates = [];
     let dismissedUpdateIds = JSON.parse(localStorage.getItem('central_dismissed_updates')) || [];
+    let stockRequestsList = [];
+
+    // Funcție pentru redare alertă sonoră (Bip digital)
+    function playAlertSound() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Notă La 
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        } catch(e) {}
+    }
 
     function initFirebaseListeners() {
         if (!window.FB_db) {
@@ -917,22 +1033,36 @@
             return;
         }
 
+        // Ascultator Baze culori
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 let updatesList = Object.values(data);
                 let myName = localUser ? localUser.name : "Anonyme";
-                
-                // Excludem ce a fost trimis de noi înșine SAU ce a fost deja acceptat/șters de pe acest telefon
                 pendingCollabUpdates = updatesList.filter(u => u.author !== myName && !dismissedUpdateIds.includes(u.id));
+                updateCollabBadge();
+                renderCollabNotifications();
+            }
+        });
+
+        // Ascultator Cereri de Stoc
+        const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
+        window.FB_onValue(stockRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                let rawStock = Object.values(data);
+                let previousCount = stockRequestsList.length;
+                stockRequestsList = rawStock.filter(s => s.status === 'pending');
                 
-                updateCollabBadge();
-                renderCollabNotifications();
+                // Dacă suntem magazinier și a apărut o cerere nouă -> Sunet de avertizare!
+                if (localUser && localUser.role === 'Magazinier' && stockRequestsList.length > previousCount && previousCount > 0) {
+                    playAlertSound();
+                }
+                renderStockRequests();
             } else {
-                pendingCollabUpdates = [];
-                updateCollabBadge();
-                renderCollabNotifications();
+                stockRequestsList = [];
+                renderStockRequests();
             }
         });
     }
@@ -944,22 +1074,78 @@
         const newUpdateRef = window.FB_push(updatesRef);
         
         window.FB_set(newUpdateRef, {
-            id: newUpdateRef.key,
-            author: authorName,
-            code: code,
-            palette: palette,
-            bases: newBases,
-            timestamp: Date.now()
+            id: newUpdateRef.key, author: authorName, code: code, palette: palette, bases: newBases, timestamp: Date.now()
         });
     }
 
-    function openCollabModal() {
-        document.getElementById('collabModal').style.display = 'flex';
+    // --- GESTIUNE STOC ȘI GĂLEȚI ---
+    function sendStockRequest() {
+        const prod = document.getElementById('stockProduct').value.trim();
+        const qty = document.getElementById('stockQuantity').value.trim();
+        const loc = document.getElementById('stockLocation').value.trim();
+
+        if (!prod || !qty || !loc) { alert("Remplissez tous les champs pour la demande de stock !"); return; }
+        if (!window.FB_db) { alert("Erreur de connexion Firebase."); return; }
+
+        const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
+        const newReqRef = window.FB_push(stockRef);
+        
+        window.FB_set(newReqRef, {
+            id: newReqRef.key,
+            author: localUser ? localUser.name : "Inconnu",
+            product: prod,
+            quantity: qty,
+            location: loc,
+            status: 'pending',
+            timestamp: Date.now()
+        });
+
+        document.getElementById('stockProduct').value = '';
+        document.getElementById('stockLocation').value = '';
+        showAlert("📨 Demande de stock envoyée au magazinier !", true);
     }
 
-    function closeCollabModal() {
-        document.getElementById('collabModal').style.display = 'none';
+    function renderStockRequests() {
+        const container = document.getElementById('stockRequestsList');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (stockRequestsList.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active de stock.</div>';
+            return;
+        }
+
+        stockRequestsList.forEach(req => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
+            
+            let isMagazinier = localUser && localUser.role === 'Magazinier';
+
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; color:#60a5fa; font-weight:bold;">📦 ${req.product} (Qté: ${req.quantity})</span>
+                    <span style="font-size:11px; background:#374151; padding:2px 6px; border-radius:4px;">Par ${req.author}</span>
+                </div>
+                <div style="font-size:12px; color:#d1d5db;">📍 Emplacement : ${req.location}</div>
+                ${isMagazinier ? `<button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; margin-top:4px;" onclick="validateStockRequest('${req.id}')">✅ Valider (Rayon Réapprovisionné)</button>` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation par le magazinier...</div>`}
+            `;
+            container.appendChild(div);
+        });
     }
+
+    function validateStockRequest(reqId) {
+        if (!window.FB_db) return;
+        const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
+        window.FB_set(reqRef, 'completed').then(() => {
+            showAlert("✅ Stock validé et marqué comme réapprovisionné !", true);
+            // Ștergem local din listă
+            stockRequestsList = stockRequestsList.filter(r => r.id !== reqId);
+            renderStockRequests();
+        });
+    }
+
+    function openCollabModal() { document.getElementById('collabModal').style.display = 'flex'; }
+    function closeCollabModal() { document.getElementById('collabModal').style.display = 'none'; }
 
     function updateCollabBadge() {
         const badge = document.getElementById('collabBadge');
@@ -983,13 +1169,11 @@
             return;
         }
 
-        // Afișăm butonul "Tout accepter" dacă sunt mai multe notificări
         acceptAllDiv.style.display = 'block';
 
         pendingCollabUpdates.forEach(upd => {
             const div = document.createElement('div');
             div.style.cssText = "background:#111827; border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;";
-            
             let basesStr = Object.keys(upd.bases).map(k => `${k}: ${upd.bases[k]}`).join(' | ');
             
             div.innerHTML = `
@@ -1001,23 +1185,18 @@
         });
     }
 
-    // Acceptare individuală (șterge notificarea curentă de pe ecranul tău)
     function applySingleCollabUpdate(updateId, code, palette, encodedBases) {
         const newBases = JSON.parse(decodeURIComponent(encodedBases));
         const itemIndex = customDatabase.findIndex(c => c.code === code && c.palette === palette);
         
         if (itemIndex >= 0) {
             customDatabase[itemIndex].bases = newBases;
-            saveToStorage();
-            filterColors();
-            filterDedicatedPalette();
+            saveToStorage(); filterColors(); filterDedicatedPalette();
         }
 
-        // Adăugăm în lista de elemente ascunse/șterse local ca să dispara din listă
         dismissedUpdateIds.push(updateId);
         localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
 
-        // Actualizăm starea vizuală imediat
         pendingCollabUpdates = pendingCollabUpdates.filter(u => u.id !== updateId);
         updateCollabBadge();
         renderCollabNotifications();
@@ -1025,28 +1204,22 @@
         showAlert(`✅ Mise à jour appliquée pour ${code} !`, true);
     }
 
-    // Funcția NOUĂ: Acceptă absolut toate modificările deodată dintr-un singur click
     function acceptAllCollabUpdates() {
         if (pendingCollabUpdates.length === 0) return;
 
         pendingCollabUpdates.forEach(upd => {
             const itemIndex = customDatabase.findIndex(c => c.code === upd.code && c.palette === upd.palette);
-            if (itemIndex >= 0) {
-                customDatabase[itemIndex].bases = upd.bases;
-            }
+            if (itemIndex >= 0) customDatabase[itemIndex].bases = upd.bases;
             dismissedUpdateIds.push(upd.id);
         });
 
-        saveToStorage();
-        filterColors();
-        filterDedicatedPalette();
-
+        saveToStorage(); filterColors(); filterDedicatedPalette();
         localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
         pendingCollabUpdates = [];
         updateCollabBadge();
         renderCollabNotifications();
 
-        showAlert(`⚡ Toutes les modifications de l'équipe ont été appliquées !`, true);
+        showAlert(`⚡ Toutes les modifications ont été appliquées !`, true);
         closeCollabModal();
     }
     // ----------------------------------------------------
@@ -1077,11 +1250,8 @@
             };
             customDatabase[index].bases = updatedBases;
             saveToStorage(); filterColors(); filterDedicatedPalette(); closeEditModal();
-            
-            // Trimitem notificarea în timp real prin Firebase
             broadcastBaseUpdate(customDatabase[index].code, customDatabase[index].palette, updatedBases);
-
-            showAlert(`Bases mises à jour et partagées avec l'équipe !`, true);
+            showAlert(`Bases mises à jour et partagées !`, true);
         }
     }
 
@@ -1143,7 +1313,6 @@
     async function autoSyncPalettes() {
         let addedCount = 0;
         let tempDatabase = [];
-        
         for (let file of filesToSync) {
             try {
                 const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${file}?v=${CURRENT_APP_VERSION}&t=${Date.now()}`);
@@ -1152,10 +1321,7 @@
                     data.forEach(item => {
                         if (item.code) {
                             const exists = tempDatabase.some(c => c.code === item.code && c.palette === item.palette);
-                            if (!exists) {
-                                tempDatabase.push(item);
-                                addedCount++;
-                            }
+                            if (!exists) { tempDatabase.push(item); addedCount++; }
                         }
                     });
                 }
@@ -1163,9 +1329,7 @@
         }
         if (addedCount > 0) {
             customDatabase = tempDatabase; 
-            saveToStorage();
-            filterColors();
-            updateTargetPaletteDropdown();
+            saveToStorage(); filterColors(); updateTargetPaletteDropdown();
         }
         renderFoldersOverview();
     }
@@ -1175,8 +1339,7 @@
         select.innerHTML = '<option value="NEW">-- 📝 Créer un Nouveau Fichier --</option>';
         filesToSync.forEach(file => {
             const opt = document.createElement('option');
-            opt.value = file;
-            opt.textContent = `📁 Éditer: ${file}`;
+            opt.value = file; opt.textContent = `📁 Éditer: ${file}`;
             select.appendChild(opt);
         });
     }
@@ -1189,8 +1352,7 @@
             document.getElementById('syncFileContent').value = '';
             return;
         }
-
-        showAlert(`⏳ Chargement de ${fileName} depuis Git...`);
+        showAlert(`⏳ Chargement de ${fileName}...`);
         try {
             const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${fileName}?t=${Date.now()}`);
             if (res.ok) {
@@ -1198,13 +1360,9 @@
                 document.getElementById('syncFileName').value = fileName;
                 document.getElementById('syncFolderPalette').value = data[0]?.palette || fileName.replace('.json','').toUpperCase();
                 document.getElementById('syncFileContent').value = JSON.stringify(data, null, 2);
-                showAlert(`✅ Fichier ${fileName} chargé. Vous pouvez modifier !`, true);
-            } else {
-                showAlert(`❌ Erreur au chargement du fichier.`);
+                showAlert(`✅ Fichier ${fileName} chargé.`, true);
             }
-        } catch(e) {
-            showAlert(`❌ Erreur réseau.`);
-        }
+        } catch(e) { showAlert(`❌ Erreur réseau.`); }
     }
 
     async function uploadAndSyncNewPalette() {
@@ -1213,20 +1371,17 @@
         let paletteName = document.getElementById('syncFolderPalette').value.trim().toUpperCase();
         let content = document.getElementById('syncFileContent').value.trim();
 
-        if (!token) { showAlert("❌ Erreur: Token GitHub manquant !"); return; }
-        if (!fileName || !paletteName) { showAlert("❌ Erreur: Nom du fichier ou du dossier manquant !"); return; }
-        if (!content) { showAlert("❌ Erreur: Contenu JSON vide !"); return; }
-        
+        if (!token || !fileName || !paletteName || !content) { showAlert("❌ Remplissez tous les champs !"); return; }
         if (!fileName.endsWith('.json')) fileName += '.json';
 
         try {
             const parsed = JSON.parse(content);
             parsed.forEach(item => { if (!item.palette) item.palette = paletteName; });
             content = JSON.stringify(parsed, null, 2);
-        } catch(e) { showAlert("❌ Erreur: Le texte collé n'est pas un JSON valide !"); return; }
+        } catch(e) { showAlert("❌ JSON invalide !"); return; }
 
         localStorage.setItem('central_github_token', token);
-        showAlert("⏳ Sauvegarde sur GitHub en cours...");
+        showAlert("⏳ Sauvegarde sur GitHub...");
 
         try {
             const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${fileName}`;
@@ -1236,14 +1391,10 @@
                 if (getRes.ok) fileSha = (await getRes.json()).sha;
             } catch(e) {}
 
-            const encodedContent = btoa(unescape(encodeURIComponent(content)));
-            const bodyData = { message: `Mise à jour nuancier [${paletteName}]: ${fileName}`, content: encodedContent };
-            if (fileSha) bodyData.sha = fileSha;
-
             const putRes = await fetch(getUrl, {
                 method: "PUT",
                 headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify(bodyData)
+                body: JSON.stringify({ message: `Update [${paletteName}]`, content: btoa(unescape(encodeURIComponent(content))), sha: fileSha })
             });
 
             if (putRes.ok) {
@@ -1252,98 +1403,61 @@
                     localStorage.setItem('central_synced_files', JSON.stringify(filesToSync));
                     populateGitFilesDropdown(); 
                 }
-
-                showAlert(`✅ Dossier [${paletteName}] / Fichier '${fileName}' sauvegardé sur GitHub !`, true);
-                
-                if (document.getElementById('gitExistingFilesSelect').value === "NEW") {
-                    document.getElementById('syncFileName').value = '';
-                    document.getElementById('syncFolderPalette').value = '';
-                    document.getElementById('syncFileContent').value = '';
-                }
-                
+                showAlert(`✅ Fichier sauvegardé sur GitHub !`, true);
                 autoSyncPalettes();
-            } else {
-                const errData = await putRes.json();
-                showAlert(`❌ Échec : ${errData.message || 'Erreur inconnue'}`);
             }
-        } catch (err) { showAlert(`❌ Erreur réseau : ${err.message}`); }
+        } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
     }
 
     async function createSystemBackup() {
         let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
-        if (!token) { showAlert("❌ Erreur: Token GitHub manquant pour le backup !"); return; }
-        
-        showAlert("⏳ Création du Backup complet sur GitHub...");
-        const backupFileName = "backup_database.json";
-        const content = JSON.stringify(customDatabase, null, 2);
-
+        if (!token) { showAlert("❌ Token GitHub manquant !"); return; }
+        showAlert("⏳ Création Backup...");
         try {
-            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${backupFileName}`;
+            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/backup_database.json`;
             let fileSha = "";
             try {
                 const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
                 if (getRes.ok) fileSha = (await getRes.json()).sha;
             } catch(e) {}
 
-            const encodedContent = btoa(unescape(encodeURIComponent(content)));
-            const bodyData = { message: `Backup Automatique Base de Données (${new Date().toLocaleString()})`, content: encodedContent };
-            if (fileSha) bodyData.sha = fileSha;
-
             const putRes = await fetch(getUrl, {
                 method: "PUT",
                 headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify(bodyData)
+                body: JSON.stringify({ message: `Backup`, content: btoa(unescape(encodeURIComponent(JSON.stringify(customDatabase, null, 2)))), sha: fileSha })
             });
-
-            if (putRes.ok) {
-                showAlert(`✅ Backup réussi ! Fichier ${backupFileName} créé/mis à jour sur GitHub.`, true);
-            } else {
-                showAlert(`❌ Échec du backup sur GitHub.`);
-            }
-        } catch (err) { showAlert(`❌ Erreur réseau : ${err.message}`); }
+            if (putRes.ok) showAlert(`✅ Backup réussi sur GitHub !`, true);
+        } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
     }
 
     function renderFoldersOverview() {
         const listContainer = document.getElementById('foldersOverviewList');
         if (!listContainer) return;
         listContainer.innerHTML = '';
-
         const grouped = {};
         customDatabase.forEach(item => {
             const p = item.palette || "RAL";
             if (!grouped[p]) grouped[p] = 0;
             grouped[p]++;
         });
-
-        const totalColors = customDatabase.length;
-        document.getElementById('mainNuancierCount').textContent = `${totalColors} couleurs`;
+        document.getElementById('mainNuancierCount').textContent = `${customDatabase.length} couleurs`;
 
         Object.keys(grouped).sort().forEach(pName => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'folder-overview-item';
-            itemDiv.innerHTML = `
-                <span style="font-weight:600; color:var(--primary);">📁 Nuancier : ${pName}</span>
-                <span class="palette-count">${grouped[pName]} teintes</span>
-            `;
-            
-            itemDiv.onclick = () => {
-                openDedicatedSearch(pName);
-            };
+            itemDiv.innerHTML = `<span style="font-weight:600; color:var(--primary);">📁 Nuancier : ${pName}</span><span class="palette-count">${grouped[pName]} teintes</span>`;
+            itemDiv.onclick = () => openDedicatedSearch(pName);
             listContainer.appendChild(itemDiv);
         });
     }
 
     let activePaletteFocus = null;
-
     function openDedicatedSearch(pName) {
         activePaletteFocus = pName;
         document.getElementById('mainNuancierContent').style.display = 'none';
         document.getElementById('dedicatedSearchPanel').style.display = 'block';
         document.getElementById('dedicatedSearchTitle').textContent = `Recherche dans : ${pName}`;
-        
-        const input = document.getElementById('dedicatedSearchInput');
-        input.value = '';
-        
+        document.getElementById('dedicatedSearchInput').value = '';
         filterDedicatedPalette();
         document.getElementById('dedicatedSearchPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -1368,7 +1482,7 @@
         });
 
         if (filtered.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée dans ce nuancier.</div>';
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
             return;
         }
 
@@ -1399,9 +1513,7 @@
     let searchTimeout = null;
     function debouncedFilterColors() {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            filterColors();
-        }, 150);
+        searchTimeout = setTimeout(() => filterColors(), 150);
     }
 
     function filterColors() {
@@ -1411,28 +1523,14 @@
         container.innerHTML = '';
 
         const queryTokens = query.split(/\s+/).filter(t => t);
+        if (queryTokens.length === 0) { label.style.display = 'none'; container.style.display = 'none'; return; }
 
-        if (queryTokens.length === 0) {
-            label.style.display = 'none';
-            container.style.display = 'none';
-            return;
-        }
-
-        label.style.display = 'block';
-        container.style.display = 'block';
+        label.style.display = 'block'; container.style.display = 'block';
 
         const filtered = customDatabase.filter(item => {
             const code = item.code.toLowerCase();
             const pal = (item.palette || "RAL").toLowerCase();
-            
-            return queryTokens.every(token => {
-                let isAbbr = false;
-                if (['fl', 'fi', 'fla'].includes(token) && pal.includes('flamant')) isAbbr = true;
-                if (['fb', 'cfb'].includes(token) && pal.includes('farrow')) isAbbr = true;
-                if (token === 'ral' && pal.includes('ral')) isAbbr = true;
-                
-                return isAbbr || code.includes(token) || pal.includes(token);
-            });
+            return queryTokens.every(token => code.includes(token) || pal.includes(token));
         });
 
         if (filtered.length === 0) {
@@ -1452,24 +1550,19 @@
 
         Object.keys(grouped).sort().forEach(pName => {
             if (renderedCount >= maxDisplay) return;
-
             const groupDiv = document.createElement('div');
             groupDiv.className = 'palette-group';
-            const isOpen = true; 
-            
             const header = document.createElement('div');
             header.className = 'palette-header';
             header.innerHTML = `<span>📁 Nuancier : ${pName}</span><span class="palette-count">${grouped[pName].length} teintes</span>`;
-            header.onclick = () => { openPalettes[pName] = !openPalettes[pName]; filterColors(); };
             
             const content = document.createElement('div');
             content.className = 'palette-content';
-            content.style.display = isOpen ? 'block' : 'none';
+            content.style.display = 'block';
 
             grouped[pName].forEach(item => {
                 if (renderedCount >= maxDisplay) return;
                 renderedCount++;
-
                 const gIndex = customDatabase.indexOf(item);
                 const card = document.createElement('div');
                 card.className = 'card';
@@ -1491,16 +1584,8 @@
                 `;
                 content.appendChild(card);
             });
-
             groupDiv.appendChild(header); groupDiv.appendChild(content); container.appendChild(groupDiv);
         });
-
-        if (filtered.length > maxDisplay) {
-            const limitNote = document.createElement('div');
-            limitNote.style.cssText = "text-align:center; padding:10px; font-size:11px; color:#f59e0b;";
-            limitNote.textContent = `Affichage limité à ${maxDisplay} résultats sur ${filtered.length}. Précisez votre recherche.`;
-            container.appendChild(limitNote);
-        }
     }
 
     async function publishToGithub() {
@@ -1509,15 +1594,14 @@
         const newVer = document.getElementById('newVersionInput').value.trim();
         const newChangelog = document.getElementById('newChangelogInput').value.trim();
 
-        if (!token || !newCode) { showAlert("❌ Remplissez le Token et le code source HTML !"); return; }
+        if (!token || !newCode) { showAlert("❌ Remplissez le Token et le code source !"); return; }
         localStorage.setItem('central_github_token', token);
-        showAlert("⏳ Publication de l'application en cours...");
+        showAlert("⏳ Publication...");
 
         try {
             const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
             const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
-            if (!getRes.ok) throw new Error("Accès refusé. Vérifiez le Token.");
-
+            if (!getRes.ok) throw new Error("Accès refusé.");
             const getData = await getRes.json();
             
             if (newVer) {
@@ -1525,39 +1609,30 @@
                 newCode = newCode.replace(/Version <span id="footerVersionText">.*?<\/span>/, `Version <span id="footerVersionText">${newVer}</span>`);
             }
 
-            const encodedContent = btoa(unescape(encodeURIComponent(newCode)));
-
             const putRes = await fetch(getUrl, {
                 method: "PUT",
                 headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify({ message: `Update ${newVer || ''}`, content: encodedContent, sha: getData.sha })
+                body: JSON.stringify({ message: `Update ${newVer}`, content: btoa(unescape(encodeURIComponent(newCode))), sha: getData.sha })
             });
 
             if (putRes.ok) {
-                showAlert("✅ Mise à jour publiée avec succès ! Redémarrage...", true);
-                localStorage.removeItem('user_session_expiry');
-                localStorage.removeItem('admin_session_expiry');
+                showAlert("✅ Mise à jour publiée !", true);
                 localStorage.setItem('pending_update_notification', newChangelog);
-                setTimeout(() => { forceCleanReload(); }, 2000);
-            } else {
-                showAlert("❌ Erreur lors de la mise à jour sur GitHub.");
+                setTimeout(() => forceCleanReload(), 2000);
             }
-        } catch (err) { showAlert(`❌ Erreur: ${err.message}`); }
+        } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
     }
 
     function clearSystemCache() {
-        if(confirm("Voulez-vous vraiment vider le cache et rafraîchir l'application ?")) {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.reload(true);
+        if(confirm("Voulez-vous vider le cache et rafraîchir ?")) {
+            localStorage.clear(); sessionStorage.clear(); window.location.reload(true);
         }
     }
 
     function showAlert(msg, isSuccess = false) {
         const b = document.getElementById('alertBanner');
         b.className = `alert-box ${isSuccess ? 'alert-success' : 'alert-warning'}`;
-        b.textContent = msg;
-        b.style.display = 'block';
+        b.textContent = msg; b.style.display = 'block';
         setTimeout(() => { b.style.display = 'none'; }, 6000);
     }
 
