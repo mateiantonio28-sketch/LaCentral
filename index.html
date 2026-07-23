@@ -77,6 +77,12 @@
             background: #111827; color: #fff; font-size: 14px; text-align: center;
         }
 
+        /* Indicator vizual de scriere (liniuță / border activ) */
+        input.active-input, textarea.active-input {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
         .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
         .pin-key {
             background: #334155; color: #fff; border: 1px solid #475569;
@@ -153,6 +159,13 @@
         }
         .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
 
+        /* Panou Admin poziționat mai sus pe ecran */
+        #authPanel {
+            position: fixed; top: 10vh; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; z-index: 999999; background: var(--panel-bg);
+            border: 2px solid var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+
         .collapsible-btn {
             width: 100%; text-align: left; background-color: #374151; color: #fff;
             padding: 12px; border: 1px solid var(--border); border-radius: 6px; 
@@ -214,7 +227,7 @@
         .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
         .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* TASTATURĂ VIRTUALĂ AZERTY STANDARD (GOOGLE/TELEFON) */
+        /* TASTATURĂ VIRTUALĂ AZERTY STANDARD IDENTICĂ TELEFONULUI */
         .virtual-keyboard {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%;
             background: #1e293b; padding: 10px 4px 20px 4px; z-index: 100000;
@@ -291,12 +304,12 @@
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
             <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
-            <div class="version-badge">v0.029</div>
+            <div class="version-badge">v0.030</div>
         </div>
     </div>
 
     <div class="header" style="margin-top: 0;">
-        <h1 id="appHeaderTitle">La Centrale</h1>
+        <h1 id="appHeaderTitle">Vérifie les Bases</h1>
         <p id="appHeaderSubtitle">Système de Recherche de Couleurs & Bases Techniques</p>
         
         <div class="live-timer-bar">
@@ -413,7 +426,7 @@
         </table>
     </div>
 
-    <div id="authPanel" class="panel">
+    <div id="authPanel" class="panel" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <h3 style="margin:0;">Connexion Administrateur Master</h3>
             <button class="btn-close-modal" onclick="togglePanel('authPanel')">✕</button>
@@ -490,10 +503,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.029" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v0.030" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Blocage absolu de la tastatură nativă prin inputmode=none și onfocus=blur pe toate inputurile !" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newChangelogInput" value="Validări stricte pe stock, panel admin ridicat sus, roluri out-of-stock și titlu curățat !" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -513,7 +526,7 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.029</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.030</span>
     </div>
 </div>
 
@@ -602,7 +615,7 @@
     </div>
 </div>
 
-<!-- TASTATURĂ VIRTUALĂ AZERTY STANDARD IDENTICĂ TELEFONULUI -->
+<!-- TASTATURĂ VIRTUALĂ AZERTY STANDARD -->
 <div id="virtualKeyboard" class="virtual-keyboard">
     <div class="vk-row">
         <div class="vk-key" onclick="vKey('1')">1</div>
@@ -630,7 +643,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.029"; 
+    const CURRENT_APP_VERSION = "v0.030"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -716,6 +729,8 @@
     renderVkRows();
 
     function openVirtualKeyboard(inputEl) {
+        document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
+        inputEl.classList.add('active-input');
         activeVirtualInput = inputEl;
         document.getElementById('virtualKeyboard').style.display = 'block';
     }
@@ -733,6 +748,7 @@
     }
 
     function vClose() {
+        document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
         document.getElementById('virtualKeyboard').style.display = 'none';
         if (activeVirtualInput) {
             activeVirtualInput.blur();
@@ -1000,7 +1016,7 @@
             basesSec.style.display = 'none';
             stockSec.style.display = 'block';
         } else {
-            title.textContent = "La Centrale — Vérifie les Bases";
+            title.textContent = "Vérifie les Bases";
             subtitle.textContent = "Système de Recherche de Couleurs & Bases";
             stockSec.style.display = 'none';
             basesSec.style.display = 'block';
@@ -1034,8 +1050,12 @@
     function validateAuth() {
         const u = document.getElementById('authUser').value.trim();
         const p = document.getElementById('authPass').value.trim();
-        if (u === "Antonio" && p === "28051994") { grantAdminAccess(); } 
-        else { showAlert("Identifiants Administrateur incorrects."); }
+        if (u === "Antonio" && p === "28051994") { 
+            document.getElementById('authPanel').style.display = 'none';
+            grantAdminAccess(); 
+        } else { 
+            showAlert("Identifiants Administrateur incorrects."); 
+        }
     }
 
     function grantAdminAccess(isReauth = false) {
@@ -1252,7 +1272,10 @@
         const qty = document.getElementById('singleQuantity').value.trim();
         const loc = document.getElementById('singleLocation').value.trim();
 
-        if (!prod || !qty || !loc) { alert("Remplissez le produit, la quantité et l'emplacement !"); return; }
+        if (!prod || !base || !bucket || !qty || !loc) { 
+            alert("❌ Veuillez remplir tous les champs de la commande avant d'envoyer !"); 
+            return; 
+        }
         if (!window.FB_db) { alert("Erreur Firebase."); return; }
 
         const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
@@ -1261,7 +1284,7 @@
         const listData = {
             id: newReqRef.key,
             author: localUser ? localUser.name : "Inconnu",
-            items: [{ product: prod, base: base || "N/A", bucketSize: bucket || "Standard", quantity: qty, location: loc }],
+            items: [{ product: prod, base: base, bucketSize: bucket, quantity: qty, location: loc }],
             status: 'pending',
             timestamp: Date.now()
         };
@@ -1283,9 +1306,12 @@
         const qty = document.getElementById('listQuantity').value.trim();
         const loc = document.getElementById('listLocation').value.trim();
 
-        if (!prod || !qty || !loc) { alert("Remplissez au moins le produit, la quantité et l'emplacement !"); return; }
+        if (!prod || !base || !bucket || !qty || !loc) { 
+            alert("❌ Veuillez remplir tous les champs pour ajouter l'article à la liste !"); 
+            return; 
+        }
 
-        currentStockCartItems.push({ product: prod, base: base || "N/A", bucketSize: bucket || "Standard", quantity: qty, location: loc });
+        currentStockCartItems.push({ product: prod, base: base, bucketSize: bucket, quantity: qty, location: loc });
 
         document.getElementById('listProduct').value = '';
         document.getElementById('listBase').value = '';
@@ -1411,7 +1437,9 @@
         outOfStockList.forEach(req => {
             const div = document.createElement('div');
             div.style.cssText = "background:#2a1215; border:1px solid #7f1d1d; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
-            let isMagazinier = localUser && localUser.role === 'Magazinier';
+            
+            // Doar Magazinier sau Chef d'équipe pot valida sau închide cererile Out of Stock
+            let canManageOutOfStock = localUser && (localUser.role === 'Magazinier' || localUser.role === "Chef d'équipe");
 
             let itemsHtml = '';
             if (req.items && Array.isArray(req.items)) {
@@ -1425,10 +1453,12 @@
                     <span style="font-size:13px; color:#fca5a5; font-weight:bold;">⚠️ Rupture stock (Demandeur: ${req.author})</span>
                 </div>
                 <div style="margin:4px 0;">${itemsHtml}</div>
-                <div style="display:flex; gap:6px; margin-top:6px;">
-                    ${isMagazinier ? `<button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Arrivé & Validé</button>` : ``}
-                    <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1; background-color:#7f1d1d;" onclick="closeDemandStock('${req.id}')">🗑️ Clôturer</button>
-                </div>
+                ${canManageOutOfStock ? `
+                    <div style="display:flex; gap:6px; margin-top:6px;">
+                        <button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Arrivé & Validé</button>
+                        <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1; background-color:#7f1d1d;" onclick="closeDemandStock('${req.id}')">🗑️ Clôturer</button>
+                    </div>
+                ` : `<div style="font-size:11px; color:#9ca3af; font-style:italic;">Mode visuel (En attente de réapprovisionnement par le magazinier)</div>`}
             `;
             container.appendChild(div);
         });
