@@ -1,0 +1,1410 @@
+[
+  {
+    "code": "FL 01 Poudre",
+    "palette": "FLAMANT",
+    "hex": "#E8DFD8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 02 Granite",
+    "palette": "FLAMANT",
+    "hex": "#94908D",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 03 Plume",
+    "palette": "FLAMANT",
+    "hex": "#D8D3CD",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 04 Craie",
+    "palette": "FLAMANT",
+    "hex": "#ECE8E1",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 05 Marotte",
+    "palette": "FLAMANT",
+    "hex": "#766E69",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 06 Brume",
+    "palette": "FLAMANT",
+    "hex": "#BDC0BF",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 07 Zinc",
+    "palette": "FLAMANT",
+    "hex": "#626767",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 08 Galet",
+    "palette": "FLAMANT",
+    "hex": "#A29F9A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 09 Ardoise",
+    "palette": "FLAMANT",
+    "hex": "#45484B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 10 Aventurine",
+    "palette": "FLAMANT",
+    "hex": "#31383A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 11 Smoke",
+    "palette": "FLAMANT",
+    "hex": "#6B7274",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 12 Cendre",
+    "palette": "FLAMANT",
+    "hex": "#878C8D",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 13 Bord de Seine",
+    "palette": "FLAMANT",
+    "hex": "#A1A9A9",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 14 Feutre",
+    "palette": "FLAMANT",
+    "hex": "#525455",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 15 Flanelle",
+    "palette": "FLAMANT",
+    "hex": "#8A8D8F",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 16 Taupe",
+    "palette": "FLAMANT",
+    "hex": "#635C57",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 17 Gris Anvers",
+    "palette": "FLAMANT",
+    "hex": "#8F8882",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 18 Terre de Pierre",
+    "palette": "FLAMANT",
+    "hex": "#A89F97",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 19 Corde",
+    "palette": "FLAMANT",
+    "hex": "#BFB6AC",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 20 Sable",
+    "palette": "FLAMANT",
+    "hex": "#D5CBBE",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 21 Lin",
+    "palette": "FLAMANT",
+    "hex": "#E1D8CA",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 22 Kaki",
+    "palette": "FLAMANT",
+    "hex": "#645E4C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 23 Gris Souris",
+    "palette": "FLAMANT",
+    "hex": "#807872",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 24 Relic",
+    "palette": "FLAMANT",
+    "hex": "#4D4743",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 25 Sépia",
+    "palette": "FLAMANT",
+    "hex": "#3D3734",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 26 Gris de Flandre",
+    "palette": "FLAMANT",
+    "hex": "#595B5D",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 27 Atelier",
+    "palette": "FLAMANT",
+    "hex": "#3B3D40",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 28 Castor",
+    "palette": "FLAMANT",
+    "hex": "#4A433E",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 29 Elephant",
+    "palette": "FLAMANT",
+    "hex": "#6E6862",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 30 Mousse",
+    "palette": "FLAMANT",
+    "hex": "#535546",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 31 Old Vert",
+    "palette": "FLAMANT",
+    "hex": "#6C7262",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 32 Salvia",
+    "palette": "FLAMANT",
+    "hex": "#8B9382",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 33 Celadon",
+    "palette": "FLAMANT",
+    "hex": "#9FA898",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 34 Cactus",
+    "palette": "FLAMANT",
+    "hex": "#485346",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 35 Eucalyptus",
+    "palette": "FLAMANT",
+    "hex": "#728178",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 36 Botanique",
+    "palette": "FLAMANT",
+    "hex": "#3B4A43",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 37 Vert de Gris",
+    "palette": "FLAMANT",
+    "hex": "#8A9792",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 38 Sauge",
+    "palette": "FLAMANT",
+    "hex": "#A4B0A9",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 39 Pistache",
+    "palette": "FLAMANT",
+    "hex": "#C5D0C3",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 40 Menthe",
+    "palette": "FLAMANT",
+    "hex": "#B2C5B8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 41 Aqua",
+    "palette": "FLAMANT",
+    "hex": "#89A8A0",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 42 Vert d'Eau",
+    "palette": "FLAMANT",
+    "hex": "#A5C1B8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 43 Lichen",
+    "palette": "FLAMANT",
+    "hex": "#798A7B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 44 Olive",
+    "palette": "FLAMANT",
+    "hex": "#57563E",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 45 Terre d'Ombre",
+    "palette": "FLAMANT",
+    "hex": "#484337",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 46 Marron Glacé",
+    "palette": "FLAMANT",
+    "hex": "#5E5047",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 47 Noisette",
+    "palette": "FLAMANT",
+    "hex": "#7A695C",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 48 Châtaigne",
+    "palette": "FLAMANT",
+    "hex": "#4C3B32",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 49 Pain d'Épice",
+    "palette": "FLAMANT",
+    "hex": "#8C6348",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 50 Terracotta",
+    "palette": "FLAMANT",
+    "hex": "#9E5846",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 51 Brique",
+    "palette": "FLAMANT",
+    "hex": "#8B4235",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 52 Tomette",
+    "palette": "FLAMANT",
+    "hex": "#A25244",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 53 Corail",
+    "palette": "FLAMANT",
+    "hex": "#C86A5A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 54 Rose Ancienne",
+    "palette": "FLAMANT",
+    "hex": "#B88684",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 55 Pivoine",
+    "palette": "FLAMANT",
+    "hex": "#A24B57",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 56 Sienne",
+    "palette": "FLAMANT",
+    "hex": "#8E463B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 57 Roux",
+    "palette": "FLAMANT",
+    "hex": "#A65A3D",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 58 Cognac",
+    "palette": "FLAMANT",
+    "hex": "#8C4E33",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 59 Havane",
+    "palette": "FLAMANT",
+    "hex": "#6E402D",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 60 Caramel",
+    "palette": "FLAMANT",
+    "hex": "#96653E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 61 Ocre Jaune",
+    "palette": "FLAMANT",
+    "hex": "#B88544",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 62 Moutarde",
+    "palette": "FLAMANT",
+    "hex": "#A68038",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 63 Maïs",
+    "palette": "FLAMANT",
+    "hex": "#C8A14B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 64 Paille",
+    "palette": "FLAMANT",
+    "hex": "#DFC26B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 65 Vanille",
+    "palette": "FLAMANT",
+    "hex": "#EFE29D",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 66 Beurre",
+    "palette": "FLAMANT",
+    "hex": "#EDE0A6",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 67 Crème",
+    "palette": "FLAMANT",
+    "hex": "#F0E7C8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 68 Coquille d'Œuf",
+    "palette": "FLAMANT",
+    "hex": "#ECE3CB",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 69 Ivoire",
+    "palette": "FLAMANT",
+    "hex": "#EFE8D3",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 70 Manoir",
+    "palette": "FLAMANT",
+    "hex": "#DED4C5",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 71 Parchemin",
+    "palette": "FLAMANT",
+    "hex": "#E8DFC9",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 72 Pâtisserie",
+    "palette": "FLAMANT",
+    "hex": "#E8CBB3",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 73 Chair",
+    "palette": "FLAMANT",
+    "hex": "#E0B7A6",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 74 Pêche",
+    "palette": "FLAMANT",
+    "hex": "#E8A68C",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 75 Abricot",
+    "palette": "FLAMANT",
+    "hex": "#E08A6C",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 76 Terre Cuite",
+    "palette": "FLAMANT",
+    "hex": "#B56049",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 77 Rouge Rouge",
+    "palette": "FLAMANT",
+    "hex": "#8C2223",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 78 Opéra",
+    "palette": "FLAMANT",
+    "hex": "#6B1D24",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 79 Bordeaux",
+    "palette": "FLAMANT",
+    "hex": "#541920",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 80 Prune",
+    "palette": "FLAMANT",
+    "hex": "#431E29",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 81 Aubergine",
+    "palette": "FLAMANT",
+    "hex": "#361D27",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 82 Figue",
+    "palette": "FLAMANT",
+    "hex": "#4E2B38",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 83 Cassis",
+    "palette": "FLAMANT",
+    "hex": "#382332",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 84 Lilas",
+    "palette": "FLAMANT",
+    "hex": "#9E8B9E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 85 Glycine",
+    "palette": "FLAMANT",
+    "hex": "#827187",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 86 Alysse",
+    "palette": "FLAMANT",
+    "hex": "#BFAEC2",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 87 Hortensia",
+    "palette": "FLAMANT",
+    "hex": "#9E90A3",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 88 Lavande",
+    "palette": "FLAMANT",
+    "hex": "#7E7993",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 89 Bleu de Sèvres",
+    "palette": "FLAMANT",
+    "hex": "#363F56",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 90 Marine",
+    "palette": "FLAMANT",
+    "hex": "#222A3A",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 91 Encre",
+    "palette": "FLAMANT",
+    "hex": "#1C2331",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 92 Nuit",
+    "palette": "FLAMANT",
+    "hex": "#181E2B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 93 Gris Bleu",
+    "palette": "FLAMANT",
+    "hex": "#5E6B7A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 94 Bleu Flandre",
+    "palette": "FLAMANT",
+    "hex": "#485669",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 95 Jean",
+    "palette": "FLAMANT",
+    "hex": "#53687E",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 96 Bleu Gustavien",
+    "palette": "FLAMANT",
+    "hex": "#708496",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 97 Ciel",
+    "palette": "FLAMANT",
+    "hex": "#9CB2C4",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 98 Nuage",
+    "palette": "FLAMANT",
+    "hex": "#B8C9D9",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 99 Bleu Horizon",
+    "palette": "FLAMANT",
+    "hex": "#8DA3B8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 100 Pétrole",
+    "palette": "FLAMANT",
+    "hex": "#22424D",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 101 Canard",
+    "palette": "FLAMANT",
+    "hex": "#1E4B54",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 102 Lagon",
+    "palette": "FLAMANT",
+    "hex": "#3E6F78",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 103 Bleu Céladon",
+    "palette": "FLAMANT",
+    "hex": "#6B929A",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 104 Glace",
+    "palette": "FLAMANT",
+    "hex": "#A8C3C8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 105 Bleu d'Opale",
+    "palette": "FLAMANT",
+    "hex": "#82A4AC",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 106 Outremer",
+    "palette": "FLAMANT",
+    "hex": "#243E63",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 107 Cobalt",
+    "palette": "FLAMANT",
+    "hex": "#2D507B",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 108 Indigo",
+    "palette": "FLAMANT",
+    "hex": "#23334C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 109 Noir de Fumée",
+    "palette": "FLAMANT",
+    "hex": "#1F2124",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 110 Poivre",
+    "palette": "FLAMANT",
+    "hex": "#2B2A29",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 111 Réglisse",
+    "palette": "FLAMANT",
+    "hex": "#212022",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 112 Espace",
+    "palette": "FLAMANT",
+    "hex": "#1A1A1C",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 113 Ombre",
+    "palette": "FLAMANT",
+    "hex": "#383635",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 114 Charbon",
+    "palette": "FLAMANT",
+    "hex": "#2D2E30",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  },
+  {
+    "code": "FL 115 Chalk White",
+    "palette": "FLAMANT",
+    "hex": "#F4F1EA",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 116 Pure White",
+    "palette": "FLAMANT",
+    "hex": "#F9F8F3",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 117 Old White",
+    "palette": "FLAMANT",
+    "hex": "#EAE5D9",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 118 Off White",
+    "palette": "FLAMANT",
+    "hex": "#E7E2D6",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 119 Bone White",
+    "palette": "FLAMANT",
+    "hex": "#DFD8C8",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 120 Stone White",
+    "palette": "FLAMANT",
+    "hex": "#D2CBBA",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 121 Canvas",
+    "palette": "FLAMANT",
+    "hex": "#D9CFBF",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 122 Jute",
+    "palette": "FLAMANT",
+    "hex": "#C5B8A5",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 123 Paille de Seigle",
+    "palette": "FLAMANT",
+    "hex": "#B5A793",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 124 Raphia",
+    "palette": "FLAMANT",
+    "hex": "#C2B29B",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 125 Parchment White",
+    "palette": "FLAMANT",
+    "hex": "#EADECB",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 126 Chiffon",
+    "palette": "FLAMANT",
+    "hex": "#E2D3BE",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 127 Tweed",
+    "palette": "FLAMANT",
+    "hex": "#7D7365",
+    "bases": {
+      "Trimetal": "AW",
+      "Herbol": "DU1",
+      "Sikkens": "W05",
+      "Unikalo": "Blanc"
+    }
+  },
+  {
+    "code": "FL 128 Shetland",
+    "palette": "FLAMANT",
+    "hex": "#6B6256",
+    "bases": {
+      "Trimetal": "AC",
+      "Herbol": "DU3",
+      "Sikkens": "N00",
+      "Unikalo": "D"
+    }
+  }
+]
