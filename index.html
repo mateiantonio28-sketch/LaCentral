@@ -224,7 +224,6 @@
     <div id="adminPanel" class="panel">
         <h3>Panneau d'Administration Master</h3>
 
-        <!-- ACCORDION: Guide des Bases -->
         <button class="collapsible-btn" onclick="toggleCollapse('editGuideForm')">📖 Modifier le Guide des Bases <span>▼</span></button>
         <div id="editGuideForm" class="collapsible-content">
             <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Tons Clairs (Clair) :</p>
@@ -253,7 +252,6 @@
             <button class="btn btn-save" onclick="saveGuideTable()">💾 Enregistrer le Guide</button>
         </div>
 
-        <!-- ACCORDION: Gestion d'une couleur -->
         <button class="collapsible-btn" onclick="toggleCollapse('manageSingleForm')">✏️ Ajouter / Modifier / Supprimer Couleur <span>▼</span></button>
         <div id="manageSingleForm" class="collapsible-content">
             <select id="targetPaletteSelect" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
@@ -266,7 +264,6 @@
             <button class="btn btn-admin" style="width:100%; background-color:#c2410c;" onclick="removeDuplicateColors()">🧹 Supprimer les Doublons</button>
         </div>
         
-        <!-- ACCORDION: Sincronizare, Creare și Editare GIT -->
         <button class="collapsible-btn" onclick="toggleCollapse('syncGitForm')">📂 Sychroniser, Créer & Éditer Nuancier (Git) <span>▼</span></button>
         <div id="syncGitForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
             
@@ -282,14 +279,12 @@
             <button class="btn btn-save" style="background-color:#2563eb;" onclick="uploadAndSyncNewPalette()">🚀 Enregistrer sur GitHub</button>
         </div>
 
-        <!-- ACCORDION: Backup Bază de Date -->
         <button class="collapsible-btn" onclick="toggleCollapse('backupGitForm')">💾 Créer un Backup Complet (Git) <span>▼</span></button>
         <div id="backupGitForm" class="collapsible-content" style="border:1px dashed #10b981;">
             <p style="font-size:12px; margin-top:0;">Sauvegardez l'état actuel de votre base de données en un clic.</p>
             <button class="btn btn-save" style="background-color:#059669; width:100%;" onclick="createSystemBackup()">📦 Sauvegarder la Base de Données</button>
         </div>
 
-        <!-- ACCORDION: Update App -->
         <button class="collapsible-btn" onclick="toggleCollapse('updateAppForm')">🚀 Créer une Mise à jour de l'App <span>▼</span></button>
         <div id="updateAppForm" class="collapsible-content" style="border:2px solid var(--ai-color);">
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
@@ -298,7 +293,7 @@
             <input type="text" id="newVersionInput" value="v0.010">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Dossiers intelligents et abréviations !">
+            <input type="text" id="newChangelogInput" value="Dossiers intelligents, abréviations et Timer !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -324,7 +319,7 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.011</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.010</span>
     </div>
 </div>
 
@@ -386,7 +381,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.011"; 
+    const CURRENT_APP_VERSION = "v0.010"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -518,6 +513,39 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const dateEl = document.getElementById('currentDateDisplay');
             if (dateEl) dateEl.textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+            // NOUA LOGICĂ: CALCUL COUNTDOWN SESIUNE
+            if (document.getElementById('mainContainer').style.display === 'block') {
+                let expiry = isAuthenticated ? localStorage.getItem('admin_session_expiry') : localStorage.getItem('user_session_expiry');
+                if (expiry) {
+                    const remaining = parseInt(expiry, 10) - Date.now();
+                    const timerSpan = document.getElementById('sessionCountdown');
+                    
+                    if (remaining <= 0) {
+                        timerSpan.textContent = "00:00:00";
+                        if (isAuthenticated) {
+                            logoutAdmin();
+                        } else {
+                            document.getElementById('mainContainer').style.display = 'none';
+                            document.getElementById('userLockScreen').style.display = 'flex';
+                            initUserScreen();
+                        }
+                        alert("Sesiunea a expirat ! Aplicația se va redeschide mâine.");
+                    } else {
+                        const h = Math.floor(remaining / 3600000).toString().padStart(2, '0');
+                        const m = Math.floor((remaining % 3600000) / 60000).toString().padStart(2, '0');
+                        const s = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
+                        timerSpan.textContent = `${h}:${m}:${s}`;
+                        
+                        // Modificare vizuală dacă mai e puțin timp
+                        if (remaining < 3600000) { // Mai putin de 1 ora
+                            timerSpan.style.color = '#ef4444'; // Rosu alertă
+                        } else {
+                            timerSpan.style.color = '#f59e0b'; // Portocaliu normal
+                        }
+                    }
+                }
+            }
         }, 1000);
     }
 
@@ -537,6 +565,8 @@
     function checkActiveSession() {
         const adminExpiry = localStorage.getItem('admin_session_expiry');
         const userExpiry = localStorage.getItem('user_session_expiry');
+        const sessionDay = localStorage.getItem('session_start_day');
+        const today = new Date().toLocaleDateString('ro-RO');
         const now = Date.now();
 
         if (adminExpiry && now < parseInt(adminExpiry, 10)) {
@@ -544,7 +574,10 @@
             return;
         }
 
-        if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
+        // Dacă e o zi nouă, ștergem temporar expirarea pentru a putea fi generată una nouă la login
+        if (sessionDay !== today) {
+            localStorage.removeItem('user_session_expiry');
+        } else if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
             document.getElementById('userLockScreen').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
             document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
@@ -576,7 +609,25 @@
         } else {
             if (pin !== localUser.pin) { alert("Code PIN incorrect !"); return; }
         }
-        localStorage.setItem('user_session_expiry', (Date.now() + (10 * 3600 * 1000)).toString());
+        
+        // LIMITARE LA 10 ORE PE ZI APLICATĂ
+        const today = new Date().toLocaleDateString('ro-RO'); 
+        let sessionDay = localStorage.getItem('session_start_day');
+        let expiry = localStorage.getItem('user_session_expiry');
+        
+        if (sessionDay === today && expiry) {
+            // Dacă s-a logat deja azi și a expirat timpul din fundal
+            if (Date.now() > parseInt(expiry, 10)) {
+                alert("Limita ta de 10 ore a expirat ! Aplicația se va redeschide mâine.");
+                return; // Oprește accesul
+            }
+        } else {
+            // Prima conectare din ziua respectivă generează timerul fix
+            localStorage.setItem('session_start_day', today);
+            expiry = (Date.now() + (10 * 3600 * 1000)).toString();
+            localStorage.setItem('user_session_expiry', expiry);
+        }
+
         document.getElementById('userLockScreen').style.display = 'none';
         document.getElementById('mainContainer').style.display = 'block';
         document.getElementById('welcomeUser').textContent = `Utilisateur : ${localUser.name}`;
@@ -584,7 +635,8 @@
     }
 
     function logoutUserSession() {
-        localStorage.removeItem('user_session_expiry');
+        // NU mai ștergem `user_session_expiry` pentru ca limitarea de 10 ore zilnice să se păstreze în fundal
+        isAuthenticated = false;
         localStorage.removeItem('admin_session_expiry');
         document.getElementById('mainContainer').style.display = 'none';
         document.getElementById('userLockScreen').style.display = 'flex';
@@ -902,7 +954,6 @@
             grouped[p]++;
         });
 
-        // 🆕 AICI SE AFIȘEAZĂ NUMĂRUL TOTAL DE CULORI (Toate dosarele adunate)
         const totalColors = customDatabase.length;
         document.getElementById('mainNuancierCount').textContent = `${totalColors} couleurs au total`;
 
