@@ -259,7 +259,10 @@
                 ⋮ <span id="collabBadge" class="collab-badge">0</span>
             </button>
         </div>
-        <div class="version-badge">v0.016</div>
+        <div style="display:flex; gap:6px; align-items:center;">
+            <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
+            <div class="version-badge">v0.017</div>
+        </div>
     </div>
 
     <div class="header" style="margin-top: 0;">
@@ -310,15 +313,30 @@
         </div>
     </div>
 
+    <!-- SECȚIUNEA STOCK: LISTĂ MULTIPLĂ (COȘ) -->
     <div id="sectionStockContent" style="display: none;">
         <div class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
-            <h3 style="color:#4ade80;">📦 Demande de Réapprovisionnement de Stock</h3>
-            <p style="font-size:12px; color:#9ca3af; margin-top:0;">Besoin de seaux / produits sur un rayon ou un chantier ? Envoyez une demande directe au magazinier.</p>
+            <h3 style="color:#4ade80;">📦 Créer une Liste de Stock (Multi-produits)</h3>
+            <p style="font-size:12px; color:#9ca3af; margin-top:0;">Ajoutez les produits un par un à la liste, puis envoyez la commande groupée au magazinier.</p>
             
-            <input type="text" id="stockProduct" placeholder="Nom du produit / Type de seaux (ex: Trimetal Ultramat 10L)">
-            <input type="number" id="stockQuantity" placeholder="Quantité (ex: 4)" min="1" value="1">
+            <input type="text" id="stockProduct" placeholder="Nom du produit (ex: Trimetal Ultramat)">
+            <input type="text" id="stockBase" placeholder="Base (ex: AW / AC / Blanc)">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <input type="text" id="stockBucketSize" placeholder="Capacité (ex: 10L / 4L)">
+                <input type="number" id="stockQuantity" placeholder="Nombre (ex: 3)" min="1" value="1">
+            </div>
             <input type="text" id="stockLocation" placeholder="Adresse / Emplacement (ex: Rayon 3 / Chantier Liège)">
-            <button class="btn btn-save" style="background-color:var(--success);" onclick="sendStockRequest()">📨 Envoyer la Demande au Magazinier</button>
+            
+            <button class="btn btn-save" style="background-color:#374151; margin-bottom: 8px;" onclick="addStockItemToList()">➕ Ajouter à la liste</button>
+        </div>
+
+        <!-- LISTA CURENTĂ ÎN CURS DE COMPUNERE -->
+        <div class="panel" style="display: block; background: #111827; border-color: var(--border); margin-bottom: 16px;">
+            <h4 style="margin:0 0 10px 0; color:#60a5fa; font-size:13px;">📋 Liste des produits à commander :</h4>
+            <div id="currentStockCart" style="display:flex; flex-direction:column; gap:6px; margin-bottom:12px;">
+                <div style="text-align:center; color:#6b7280; font-size:12px; padding:10px;">Aucun produit dans la liste.</div>
+            </div>
+            <button class="btn btn-save" id="sendStockCartBtn" style="background-color:var(--success); display:none;" onclick="sendFinalStockList()">🚀 Envoyer la liste complète au magazinier</button>
         </div>
 
         <div class="section-label">Demandes de stock en cours :</div>
@@ -427,10 +445,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v0.016">
+            <input type="text" id="newVersionInput" value="v0.017">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Alarme sonore et vibrations bilatérales : alertes stock et notification de validation pour les teinteurs !">
+            <input type="text" id="newChangelogInput" value="Commandes de stock multiples (coş), mode silencieux pour les chefs d'équipe et historique intelligent 6h-19h !">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)">
@@ -449,17 +467,32 @@
     </div>
 
     <div class="app-version-footer">
-        La Centrale Peinture — Version <span id="footerVersionText">v0.016</span>
+        La Centrale Peinture — Version <span id="footerVersionText">v0.017</span>
     </div>
 </div>
 
+<!-- MODAL ISTORIC ZILNIC (06:00 - 19:00) -->
+<div id="historyModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📜 Historique du Jour (06:00 - 19:00)</h3>
+            <button class="btn-close-modal" onclick="closeHistoryModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activités et modifications enregistrées aujourd'hui :</p>
+        <div id="historyLogsList" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée pour le moment.</div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NOTIFICĂRI COLABORATIVE -->
 <div id="collabModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
             <h3>👥 Notifications d'Équipe</h3>
             <button class="btn-close-modal" onclick="closeCollabModal()">✕</button>
         </div>
-        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Modifications de bases réalisées par vos collègues :</p>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activité de l'équipe sur le terrain :</p>
         
         <div id="acceptAllContainer" style="display:none; margin-bottom: 10px;">
             <button class="btn btn-save" style="background-color: var(--accent); padding: 8px; font-size: 12px;" onclick="acceptAllCollabUpdates()">⚡ Tout accepter d'un coup</button>
@@ -471,6 +504,7 @@
     </div>
 </div>
 
+<!-- MODAL UPDATE -->
 <div id="changelogModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
         <h3 style="color:#10b981; margin-top:0; font-size:18px;">🎉 L'Application a été mise à jour !</h3>
@@ -482,6 +516,7 @@
     </div>
 </div>
 
+<!-- MODAL TOKEN -->
 <div id="tokenModalOverlay" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <div class="modal-header">
@@ -494,6 +529,7 @@
     </div>
 </div>
 
+<!-- MODAL EDITARE BAZE -->
 <div id="editModalOverlay" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -580,7 +616,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v0.016"; 
+    const CURRENT_APP_VERSION = "v0.017"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -625,7 +661,7 @@
         applyVkState();
     }
 
-    ['searchInput', 'dedicatedSearchInput'].forEach(id => {
+    ['searchInput', 'dedicatedSearchInput', 'stockProduct', 'stockBase', 'stockBucketSize', 'stockQuantity', 'stockLocation'].forEach(id => {
         const el = document.getElementById(id);
         if(el) {
             el.addEventListener('click', function() {
@@ -780,6 +816,9 @@
             const dateEl = document.getElementById('currentDateDisplay');
             if (dateEl) dateEl.textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
+            // Verificare curățare istoric zilnic (la ora 19:00 sau după)
+            checkDailyHistoryReset(now);
+
             if (document.getElementById('mainContainer').style.display === 'block') {
                 let expiry = isAuthenticated ? localStorage.getItem('admin_session_expiry') : localStorage.getItem('user_session_expiry');
                 if (expiry) {
@@ -910,7 +949,7 @@
 
         if (currentAppSection === 'Stock') {
             title.textContent = "Gestion du Stock";
-            subtitle.textContent = "Réapprovisionnement de seaux et produits";
+            subtitle.textContent = "Commandes groupées de seaux et produits";
             basesSec.style.display = 'none';
             stockSec.style.display = 'block';
         } else {
@@ -992,11 +1031,12 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
-    // --- ALARMĂ PERSISTENTĂ BILATERALĂ (V0.016) ---
+    // --- LOGICĂ NOUĂ: COȘ DE PRODUSE, ISTORIC 06:00-19:00 ȘI ROLURI (V0.017) ---
     let pendingCollabUpdates = [];
     let dismissedUpdateIds = JSON.parse(localStorage.getItem('central_dismissed_updates')) || [];
     let stockRequestsList = [];
     let completedStockNotified = JSON.parse(localStorage.getItem('central_completed_notified')) || [];
+    let currentStockCartItems = []; // Coșul de produse în curs de adăugare
 
     function playPersistentAlarm() {
         if ("vibrate" in navigator) {
@@ -1019,13 +1059,56 @@
         } catch(e) {}
     }
 
+    function logDailyHistory(actionText) {
+        let history = JSON.parse(localStorage.getItem('central_daily_history') || '[]');
+        const timeStr = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        history.unshift({ time: timeStr, text: actionText });
+        localStorage.setItem('central_daily_history', JSON.stringify(history));
+    }
+
+    function checkDailyHistoryReset(nowDate) {
+        const hour = nowDate.getHours();
+        const minute = nowDate.getMinutes();
+        const lastResetDate = localStorage.getItem('central_last_history_reset_date');
+        const todayStr = nowDate.toDateString();
+
+        // La ora 06:00 sau după, dacă nu s-a resetat azi, golim istoricul vechi
+        if (hour >= 6 && lastResetDate !== todayStr) {
+            localStorage.setItem('central_daily_history', JSON.stringify([]));
+            localStorage.setItem('central_last_history_reset_date', todayStr);
+        }
+    }
+
+    function openHistoryModal() {
+        const list = document.getElementById('historyLogsList');
+        const history = JSON.parse(localStorage.getItem('central_daily_history') || '[]');
+        list.innerHTML = '';
+
+        if (history.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée depuis 06:00.</div>';
+            document.getElementById('historyModal').style.display = 'flex';
+            return;
+        }
+
+        history.forEach(item => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#111827; border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center; font-size:12px;";
+            div.innerHTML = `<span>${item.text}</span><span style="color:#60a5fa; font-weight:bold;">${item.time}</span>`;
+            list.appendChild(div);
+        });
+
+        document.getElementById('historyModal').style.display = 'flex';
+    }
+
+    function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
+
     function initFirebaseListeners() {
         if (!window.FB_db) {
             setTimeout(initFirebaseListeners, 1000);
             return;
         }
 
-        // Ascultator pentru modificări de baze
+        // Ascultator Baze
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
             const data = snapshot.val();
@@ -1037,14 +1120,17 @@
                 pendingCollabUpdates = updatesList.filter(u => u.author !== myName && !dismissedUpdateIds.includes(u.id));
                 
                 if (pendingCollabUpdates.length > prevCount && prevCount >= 0) {
-                    playPersistentAlarm();
+                    // Dacă suntem Chef d'équipe -> FĂRĂ SUNET
+                    if (!localUser || localUser.role !== "Chef d'équipe") {
+                        playPersistentAlarm();
+                    }
                 }
                 updateCollabBadge();
                 renderCollabNotifications();
             }
         });
 
-        // Ascultator pentru cereri de stoc și validări
+        // Ascultator Stocuri (Cereri și validări)
         const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
         window.FB_onValue(stockRef, (snapshot) => {
             const data = snapshot.val();
@@ -1053,18 +1139,19 @@
                 let previousCount = stockRequestsList.length;
                 stockRequestsList = rawStock.filter(s => s.status === 'pending');
                 
-                // Dacă suntem magazinier și apare o cerere nouă -> Alarmă!
+                // Magazinierul primește alarmă sonoră (dacă nu e chef d'équipe)
                 if (localUser && localUser.role === 'Magazinier' && stockRequestsList.length > previousCount && previousCount >= 0) {
                     playPersistentAlarm();
                 }
 
-                // Verificăm dacă o cerere făcută de TEINTEUR a devenit 'completed' (validată de magazinier)
+                // Verificăm dacă o comandă făcută de cineva a fost finalizată/validată
                 rawStock.forEach(req => {
                     if (req.status === 'completed' && req.author === (localUser ? localUser.name : '') && !completedStockNotified.includes(req.id)) {
                         completedStockNotified.push(req.id);
                         localStorage.setItem('central_completed_notified', JSON.stringify(completedStockNotified));
-                        playPersistentAlarm(); // Sunet și vibrație pentru teinteur!
-                        showAlert(`✅ Marfa a fost pregătită/reumplută pentru: ${req.product} (${req.location}) !`, true);
+                        playPersistentAlarm();
+                        showAlert(`✅ Commande validée par le magazinier !`, true);
+                        logDailyHistory(`✅ Stock réapprovisionné pour ${req.author}`);
                     }
                 });
 
@@ -1085,27 +1172,86 @@
         window.FB_set(newUpdateRef, {
             id: newUpdateRef.key, author: authorName, code: code, palette: palette, bases: newBases, timestamp: Date.now()
         });
+        logDailyHistory(`✏️ ${authorName} a modifié les bases de ${code}`);
     }
 
-    function sendStockRequest() {
+    // --- GESTIUNE COȘ PRODUSE PENTRU STOC ---
+    function addStockItemToList() {
         const prod = document.getElementById('stockProduct').value.trim();
+        const base = document.getElementById('stockBase').value.trim();
+        const bucket = document.getElementById('stockBucketSize').value.trim();
         const qty = document.getElementById('stockQuantity').value.trim();
         const loc = document.getElementById('stockLocation').value.trim();
 
-        if (!prod || !qty || !loc) { alert("Remplissez tous les champs !"); return; }
+        if (!prod || !qty || !loc) { alert("Remplissez au moins le produit, la quantité et l'adresse !"); return; }
+
+        currentStockCartItems.push({
+            product: prod,
+            base: base || "N/A",
+            bucketSize: bucket || "Standard",
+            quantity: qty,
+            location: loc
+        });
+
+        document.getElementById('stockProduct').value = '';
+        document.getElementById('stockBase').value = '';
+        document.getElementById('stockBucketSize').value = '';
+        renderStockCart();
+    }
+
+    function renderStockCart() {
+        const container = document.getElementById('currentStockCart');
+        const sendBtn = document.getElementById('sendStockCartBtn');
+        container.innerHTML = '';
+
+        if (currentStockCartItems.length === 0) {
+            container.innerHTML = '<div style="text-align:center; color:#6b7280; font-size:12px; padding:10px;">Aucun produit dans la liste.</div>';
+            sendBtn.style.display = 'none';
+            return;
+        }
+
+        sendBtn.style.display = 'block';
+
+        currentStockCartItems.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:6px; padding:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;";
+            div.innerHTML = `
+                <div>
+                    <strong>${item.product}</strong> (${item.base}, ${item.bucketSize}) x <b>${item.quantity}</b><br>
+                    <span style="color:#9ca3af; font-size:11px;">📍 ${item.location}</span>
+                </div>
+                <button class="btn btn-danger" style="padding:4px 8px; font-size:11px; min-width:auto;" onclick="removeStockCartItem(${index})">✕</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function removeStockCartItem(index) {
+        currentStockCartItems.splice(index, 1);
+        renderStockCart();
+    }
+
+    function sendFinalStockList() {
+        if (currentStockCartItems.length === 0) return;
         if (!window.FB_db) { alert("Erreur Firebase."); return; }
 
         const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
         const newReqRef = window.FB_push(stockRef);
         
-        window.FB_set(newReqRef, {
-            id: newReqRef.key, author: localUser ? localUser.name : "Inconnu",
-            product: prod, quantity: qty, location: loc, status: 'pending', timestamp: Date.now()
-        });
+        const listData = {
+            id: newReqRef.key,
+            author: localUser ? localUser.name : "Inconnu",
+            items: currentStockCartItems,
+            status: 'pending',
+            timestamp: Date.now()
+        };
 
-        document.getElementById('stockProduct').value = '';
-        document.getElementById('stockLocation').value = '';
-        showAlert("📨 Demande envoyée au magazinier !", true);
+        window.FB_set(newReqRef, listData).then(() => {
+            showAlert("🚀 Liste complète envoyée au magazinier !", true);
+            logDailyHistory(`📦 ${localUser.name} a commandé ${currentStockCartItems.length} article(s) de stock`);
+            currentStockCartItems = [];
+            renderStockCart();
+        });
     }
 
     function renderStockRequests() {
@@ -1123,13 +1269,22 @@
             div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
             let isMagazinier = localUser && localUser.role === 'Magazinier';
 
+            let itemsHtml = '';
+            if (req.items && Array.isArray(req.items)) {
+                req.items.forEach(it => {
+                    itemsHtml += `<div style="font-size:12px; color:#d1d5db; border-left:2px solid var(--accent); padding-left:6px; margin:4px 0;">• <b>${it.product}</b> (Base: ${it.base}, ${it.bucketSize}) - <b>Qté: ${it.quantity}</b><br><span style="font-size:11px; color:#9ca3af;">📍 ${it.location}</span></div>`;
+                });
+            } else {
+                // Compatibilitate cu cererile vechi simple
+                itemsHtml = `<div style="font-size:12px; color:#d1d5db;">• <b>${req.product}</b> - Qté: ${req.quantity}<br>📍 ${req.location}</div>`;
+            }
+
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:13px; color:#60a5fa; font-weight:bold;">📦 ${req.product} (Qté: ${req.quantity})</span>
-                    <span style="font-size:11px; background:#374151; padding:2px 6px; border-radius:4px;">Par ${req.author}</span>
+                    <span style="font-size:13px; color:#60a5fa; font-weight:bold;">📦 Commande de ${req.author}</span>
                 </div>
-                <div style="font-size:12px; color:#d1d5db;">📍 Emplacement : ${req.location}</div>
-                ${isMagazinier ? `<button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; margin-top:4px;" onclick="validateStockRequest('${req.id}')">✅ Valider (Rayon Réapprovisionné)</button>` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation par le magazinier...</div>`}
+                <div style="margin:4px 0;">${itemsHtml}</div>
+                ${isMagazinier ? `<button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; margin-top:6px;" onclick="validateStockRequest('${req.id}')">✅ Valider (Tous les produits en stock)</button>` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation par le magazinier...</div>`}
             `;
             container.appendChild(div);
         });
@@ -1139,7 +1294,8 @@
         if (!window.FB_db) return;
         const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
         window.FB_set(reqRef, 'completed').then(() => {
-            showAlert("✅ Stock validé ! Le teinteur a été notifié.", true);
+            showAlert("✅ Commande validée ! Le demandeur a été notifié.", true);
+            logDailyHistory(`✅ Magazinier a validé la commande de stock`);
             stockRequestsList = stockRequestsList.filter(r => r.id !== reqId);
             renderStockRequests();
         });
@@ -1199,6 +1355,7 @@
         updateCollabBadge();
         renderCollabNotifications();
         showAlert(`✅ Mise à jour appliquée pour ${code} !`, true);
+        logDailyHistory(`📥 ${localUser.name} a accepté la modif de ${code}`);
     }
 
     function acceptAllCollabUpdates() {
@@ -1214,6 +1371,7 @@
         updateCollabBadge();
         renderCollabNotifications();
         showAlert(`⚡ Toutes les modifications ont été appliquées !`, true);
+        logDailyHistory(`⚡ ${localUser.name} a accepté toutes les modifications en bloc`);
         closeCollabModal();
     }
     // ----------------------------------------------------
