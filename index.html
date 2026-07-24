@@ -85,14 +85,20 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
         }
 
+        /* CLASĂ NOUĂ PENTRU EFECTUL DE APĂSARE A TASTELOR */
+        .key-flash {
+            background-color: var(--accent) !important;
+            transform: scale(0.95);
+            transition: all 0.05s ease-in-out;
+        }
+
         .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
         .pin-key {
             background: #334155; color: #fff; border: 1px solid #475569;
             border-radius: 6px; padding: 10px 0; font-size: 16px; font-weight: bold;
             cursor: pointer; text-align: center; user-select: none;
-            transition: background 0.1s;
+            transition: background 0.1s, transform 0.1s;
         }
-        .pin-key:active { background: var(--accent); }
 
         .section-selector-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -250,9 +256,8 @@
             background: #334155; color: #fff; border: 1px solid #475569;
             border-radius: 6px; padding: 12px 0; font-size: 15px; font-weight: bold;
             cursor: pointer; flex: 1; text-align: center; user-select: none;
-            transition: background 0.1s;
+            transition: background 0.1s, transform 0.1s;
         }
-        .vk-key:active { background: var(--accent); }
         .vk-key.vk-space { flex: 4; font-size: 12px; background: #475569; }
         .vk-key.vk-wide { flex: 1.5; font-size: 11px; background: #7f1d1d; }
         .vk-key.vk-shift { flex: 1.5; font-size: 11px; background: #475569; }
@@ -270,18 +275,18 @@
         <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
         
         <div class="login-pin-pad">
-            <div class="pin-key" onclick="loginPinKey('1')">1</div>
-            <div class="pin-key" onclick="loginPinKey('2')">2</div>
-            <div class="pin-key" onclick="loginPinKey('3')">3</div>
-            <div class="pin-key" onclick="loginPinKey('4')">4</div>
-            <div class="pin-key" onclick="loginPinKey('5')">5</div>
-            <div class="pin-key" onclick="loginPinKey('6')">6</div>
-            <div class="pin-key" onclick="loginPinKey('7')">7</div>
-            <div class="pin-key" onclick="loginPinKey('8')">8</div>
-            <div class="pin-key" onclick="loginPinKey('9')">9</div>
-            <div class="pin-key" onclick="loginPinKey('C')" style="background:#7f1d1d;">C</div>
-            <div class="pin-key" onclick="loginPinKey('0')">0</div>
-            <div class="pin-key" onclick="loginPinKey('DEL')" style="background:#475569;">⌫</div>
+            <div class="pin-key" onclick="loginPinKey('1', this)">1</div>
+            <div class="pin-key" onclick="loginPinKey('2', this)">2</div>
+            <div class="pin-key" onclick="loginPinKey('3', this)">3</div>
+            <div class="pin-key" onclick="loginPinKey('4', this)">4</div>
+            <div class="pin-key" onclick="loginPinKey('5', this)">5</div>
+            <div class="pin-key" onclick="loginPinKey('6', this)">6</div>
+            <div class="pin-key" onclick="loginPinKey('7', this)">7</div>
+            <div class="pin-key" onclick="loginPinKey('8', this)">8</div>
+            <div class="pin-key" onclick="loginPinKey('9', this)">9</div>
+            <div class="pin-key" onclick="loginPinKey('C', this)" style="background:#7f1d1d;">C</div>
+            <div class="pin-key" onclick="loginPinKey('0', this)">0</div>
+            <div class="pin-key" onclick="loginPinKey('DEL', this)" style="background:#475569;">⌫</div>
         </div>
 
         <select id="regRole">
@@ -539,10 +544,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v1.1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Mise à jour v1.1 : Améliorations de l'interface et correction des rôles." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newChangelogInput" value="Mise à jour v1.2 : Feedback visuel du clavier et fluidité du panneau Admin." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -657,26 +662,26 @@
 <!-- TASTATURĂ VIRTUALĂ AZERTY STANDARD -->
 <div id="virtualKeyboard" class="virtual-keyboard">
     <div class="vk-row">
-        <div class="vk-key" onclick="vKey('1')">1</div>
-        <div class="vk-key" onclick="vKey('2')">2</div>
-        <div class="vk-key" onclick="vKey('3')">3</div>
-        <div class="vk-key" onclick="vKey('4')">4</div>
-        <div class="vk-key" onclick="vKey('5')">5</div>
-        <div class="vk-key" onclick="vKey('6')">6</div>
-        <div class="vk-key" onclick="vKey('7')">7</div>
-        <div class="vk-key" onclick="vKey('8')">8</div>
-        <div class="vk-key" onclick="vKey('9')">9</div>
-        <div class="vk-key" onclick="vKey('0')">0</div>
+        <div class="vk-key" onclick="vKey('1', this)">1</div>
+        <div class="vk-key" onclick="vKey('2', this)">2</div>
+        <div class="vk-key" onclick="vKey('3', this)">3</div>
+        <div class="vk-key" onclick="vKey('4', this)">4</div>
+        <div class="vk-key" onclick="vKey('5', this)">5</div>
+        <div class="vk-key" onclick="vKey('6', this)">6</div>
+        <div class="vk-key" onclick="vKey('7', this)">7</div>
+        <div class="vk-key" onclick="vKey('8', this)">8</div>
+        <div class="vk-key" onclick="vKey('9', this)">9</div>
+        <div class="vk-key" onclick="vKey('0', this)">0</div>
     </div>
     <div class="vk-row" id="vkRow1"></div>
     <div class="vk-row" id="vkRow2"></div>
     <div class="vk-row" id="vkRow3"></div>
     <div class="vk-row">
         <div class="vk-key vk-shift" id="vkShiftBtn" onclick="toggleShift()">⬆️ SHIFT</div>
-        <div class="vk-key" onclick="vKey('-')">-</div>
-        <div class="vk-key" onclick="vKey('.')">.</div>
-        <div class="vk-key vk-space" onclick="vKey(' ')">ESPACE</div>
-        <div class="vk-key vk-wide" onclick="vDel()">⌫</div>
+        <div class="vk-key" onclick="vKey('-', this)">-</div>
+        <div class="vk-key" onclick="vKey('.', this)">.</div>
+        <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
+        <div class="vk-key vk-wide" onclick="vDel(this)">⌫</div>
         <div class="vk-key vk-close" onclick="vClose()">✕</div>
     </div>
 </div>
@@ -698,6 +703,7 @@
     let activeVirtualInput = null;
     let isShiftActive = false; 
     let previousPendingCount = -1;
+    let cachedAuthUsersData = null; // Cache pour le rendu instantané du panneau d'admin
     
     let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
 
@@ -784,7 +790,15 @@
         activeVirtualInput = e.target;
     }
 
-    window.loginPinKey = function(val) {
+    // Funcție pentru feedback vizual rapid (blink) pe taste
+    window.flashKey = function(el) {
+        if (!el) return;
+        el.classList.add('key-flash');
+        setTimeout(() => el.classList.remove('key-flash'), 150);
+    }
+
+    window.loginPinKey = function(val, el) {
+        if (el) flashKey(el);
         const pinInput = document.getElementById('regPin');
         if (!pinInput) return;
         if (val === 'DEL') {
@@ -817,7 +831,7 @@
             const div = document.createElement('div');
             div.className = 'vk-key';
             div.textContent = char;
-            div.onclick = () => vKey(char);
+            div.onclick = function(e) { vKey(char, e.target); };
             row1.appendChild(div);
         });
 
@@ -826,7 +840,7 @@
             const div = document.createElement('div');
             div.className = 'vk-key';
             div.textContent = char;
-            div.onclick = () => vKey(char);
+            div.onclick = function(e) { vKey(char, e.target); };
             row2.appendChild(div);
         });
 
@@ -835,7 +849,7 @@
             const div = document.createElement('div');
             div.className = 'vk-key';
             div.textContent = char;
-            div.onclick = () => vKey(char);
+            div.onclick = function(e) { vKey(char, e.target); };
             row3.appendChild(div);
         });
     }
@@ -861,13 +875,15 @@
         document.getElementById('virtualKeyboard').style.display = 'block';
     }
 
-    window.vKey = function(char) {
+    window.vKey = function(char, el) {
+        if (el) flashKey(el);
         if (!activeVirtualInput) return;
         activeVirtualInput.value += char;
         activeVirtualInput.dispatchEvent(new Event('input')); 
     }
 
-    window.vDel = function() {
+    window.vDel = function(el) {
+        if (el) flashKey(el);
         if (!activeVirtualInput) return;
         activeVirtualInput.value = activeVirtualInput.value.slice(0, -1);
         activeVirtualInput.dispatchEvent(new Event('input'));
@@ -1281,6 +1297,9 @@
         populateGitFilesDropdown();
         document.getElementById('sourceCodeInput').value = document.documentElement.outerHTML;
 
+        // Afișăm instantaneu lista de utilizatori pe baza datelor aflate deja în cache-ul memoriei!
+        renderAdminUsersList(cachedAuthUsersData);
+
         showAlert("Panneau Admin déverrouillé avec succès.", true);
     }
 
@@ -1300,6 +1319,7 @@
         const usersRef = window.FB_ref(window.FB_db, 'auth_users');
         window.FB_onValue(usersRef, (snapshot) => {
             const data = snapshot.val();
+            cachedAuthUsersData = data; // Memorează datele pentru a le afișa instant la deschiderea panoului
             let pendingCount = 0;
             
             if(data) {
@@ -1335,6 +1355,16 @@
         });
     }
 
+    window.editAdminUserName = function(deviceId, currentName) {
+        const newName = prompt("Saisissez le nouveau nom pour cet utilisateur :", currentName);
+        if (newName && newName.trim() !== "" && newName !== currentName) {
+            if(!window.FB_db) return;
+            window.FB_set(window.FB_ref(window.FB_db, `auth_users/${deviceId}/name`), newName.trim())
+                .then(() => showAlert("Nom d'utilisateur mis à jour avec succès !", true))
+                .catch(() => showAlert("Erreur lors de la mise à jour du nom."));
+        }
+    }
+
     function renderAdminUsersList(data) {
         const list = document.getElementById('adminUsersList');
         if(!list) return;
@@ -1364,11 +1394,12 @@
                         <strong>👤 ${u.name}</strong>
                         <span style="color:${statusColor}; font-weight:bold; text-transform:uppercase;">${statusLabel}</span>
                     </div>
-                    <div style="color:#9ca3af; margin-bottom:8px;">Rôle : <span style="color:#fff;">${u.role}</span> | PIN : ${u.pin}</div>
-                    <div style="display:flex; gap:6px;">
-                        ${u.status !== 'approved' ? `<button class="btn btn-save" style="flex:1; padding:6px; font-size:11px;" onclick="setAdminUserStatus('${deviceId}', 'approved')">✅ Accepter</button>` : ''}
-                        ${u.status !== 'blocked' ? `<button class="btn btn-danger" style="flex:1; padding:6px; font-size:11px; background-color:#c2410c;" onclick="confirmBlockUser('${deviceId}', '${u.name}')">🚫 Bloquer</button>` : ''}
-                        <button class="btn btn-danger" style="flex:1; padding:6px; font-size:11px; background-color:#7f1d1d;" onclick="confirmDeleteUser('${deviceId}', '${u.name}')">🗑️ Supprimer</button>
+                    <div style="color:#9ca3af; margin-bottom:10px;">Rôle : <span style="color:#fff;">${u.role}</span> | PIN : ${u.pin}</div>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        ${u.status !== 'approved' ? `<button class="btn btn-save" style="flex:1; min-width:80px; padding:6px; font-size:11px;" onclick="setAdminUserStatus('${deviceId}', 'approved')">✅ Accepter</button>` : ''}
+                        ${u.status !== 'blocked' ? `<button class="btn btn-danger" style="flex:1; min-width:80px; padding:6px; font-size:11px; background-color:#c2410c;" onclick="confirmBlockUser('${deviceId}', '${u.name}')">🚫 Bloquer</button>` : ''}
+                        <button class="btn btn-save" style="flex:1; min-width:80px; padding:6px; font-size:11px; background-color:#3b82f6;" onclick="editAdminUserName('${deviceId}', '${u.name}')">✏️ Renommer</button>
+                        <button class="btn btn-danger" style="flex:1; min-width:80px; padding:6px; font-size:11px; background-color:#7f1d1d;" onclick="confirmDeleteUser('${deviceId}', '${u.name}')">🗑️ Suppr</button>
                     </div>
                 `;
                 list.appendChild(div);
