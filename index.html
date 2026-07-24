@@ -306,7 +306,7 @@
         .vk-key.vk-shift { flex: 1.5; font-size: 11px; background: #475569; }
         .vk-key.vk-shift.active { background: var(--accent); }
 
-        /* NOUVEAU MODAL MISE A JOUR FORCÉE */
+        /* MODAL MISE A JOUR FORCÉE */
         #forcedUpdateModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
@@ -453,7 +453,7 @@
         </div>
 
         <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
-            <h3 style="color:#4ade80;">⚡ Demande Rapide</h3>
+            <h3 style="color:#4ade80;">⚡ Demande Rapide de Seau / Produit</h3>
             <select id="singleBrand" onchange="updateStockDropdowns('single')" style="background:#1f2937; border-color:var(--border);">
                 <option value="">Sélectionnez la marque</option>
                 <option value="Trimetal">Trimetal</option>
@@ -482,7 +482,7 @@
         </div>
 
         <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
-            <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock</h3>
+            <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock (Rayons)</h3>
             <select id="listBrand" onchange="updateStockDropdowns('list')" style="background:#1f2937; border-color:var(--border);">
                 <option value="">Sélectionnez la marque</option>
                 <option value="Trimetal">Trimetal</option>
@@ -630,15 +630,22 @@
             <button class="btn btn-save" style="background-color:#2563eb;" onclick="uploadAndSyncNewPalette()">🚀 Enregistrer sur GitHub</button>
         </div>
 
+        <button class="collapsible-btn" onclick="toggleCollapse('backupGitForm')">💾 Créer / Restaurer Backup (Git) <span>▼</span></button>
+        <div id="backupGitForm" class="collapsible-content" style="border:1px dashed #10b981;">
+            <p style="font-size:12px; margin-top:0;">Sauvegardez ou restaurez l'état complet de votre base de données.</p>
+            <button class="btn btn-save" style="background-color:#059669; width:100%; margin-bottom:8px;" onclick="createSystemBackup()">📦 Sauvegarder la Base de Données</button>
+            <button class="btn btn-save" style="background-color:#0284c7; width:100%;" onclick="restoreSystemBackup()">📥 Restaurer depuis Backup (GitHub)</button>
+        </div>
+
         <button class="collapsible-btn" onclick="toggleCollapse('updateAppForm')">🚀 Forcer la Mise à jour Générale <span>▼</span></button>
         <div id="updateAppForm" class="collapsible-content" style="border:2px solid var(--ai-color);">
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.8" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.9" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.8 : Sélections intelligentes pour les stocks et apprentissage des adresses !</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.9 : Correction synchronisation et restauration du backup.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -661,7 +668,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.8</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.9</span></div>
     </div>
 </div>
 
@@ -696,7 +703,7 @@
     </div>
 </div>
 
-<!-- NOUVEAU MODAL DE MISE A JOUR FORCEE -->
+<!-- MODAL DE MISE A JOUR FORCÉE -->
 <div id="forcedUpdateModal">
     <div class="modal-content" style="text-align:center; border: 2px solid var(--accent);">
         <h3 style="color:var(--accent); margin-top:0; font-size:18px;">🚀 Mise à jour système disponible !</h3>
@@ -786,7 +793,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.8"; 
+    const CURRENT_APP_VERSION = "v1.9"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -801,7 +808,7 @@
         "Eurotex": { bases: [], sizes: ["22kg"] }
     };
 
-    let filesToSync = JSON.parse(localStorage.getItem('central_synced_files')) || ['ral.json', 'ncs.json', '5051.json', 'flamant.json', 'farrow_ball.json'];
+    let filesToSync = JSON.parse(localStorage.getItem('central_synced_files')) || ['ral.json', 'ncs.json', '5051.json', 'flamant.json', 'farrowball.json'];
 
     document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
 
@@ -813,7 +820,7 @@
     let isShiftActive = false; 
     let previousPendingCount = -1;
     let cachedAuthUsersData = null; 
-    let learnedLocations = {}; // Dictionnaire des adresses
+    let learnedLocations = {}; 
     
     let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
 
@@ -1062,7 +1069,6 @@
         }
     }
 
-    // --- MISE A JOUR DES DROPDOWNS STOCK ---
     window.updateStockDropdowns = function(prefix) {
         const brand = document.getElementById(prefix + 'Brand').value;
         const baseSelect = document.getElementById(prefix + 'Base');
@@ -1105,7 +1111,7 @@
             const key = `${brand}_${prodName}`.replace(/[\.\#\$\[\]]/g, ''); 
             if (learnedLocations[key]) {
                 locInput.value = learnedLocations[key];
-                locInput.style.borderColor = "#10b981"; // Vert pour indiquer que c'est auto-complété
+                locInput.style.borderColor = "#10b981"; 
             } else {
                 locInput.style.borderColor = "var(--border)";
             }
@@ -1269,7 +1275,6 @@
             if (onlineCountEl) onlineCountEl.textContent = count;
         });
 
-        // Apprentissage des adresses
         const locRef = window.FB_ref(window.FB_db, 'product_locations');
         window.FB_onValue(locRef, (snap) => {
             learnedLocations = snap.val() || {};
@@ -1491,25 +1496,18 @@
         document.getElementById('sectionSelectorModal').style.display = 'flex';
         updateMyPresence(); 
 
-        // Génération du Token FCM avec la clé VAPID
         if (window.FB_messaging) {
             Notification.requestPermission().then((permission) => {
                 if (permission === 'granted') {
-                    console.log('Permission de notification accordée !');
-                    
                     const vapidKey = "BFVYWh5z6tb5SArOnCrlD9BD-HaW1FNOkCg3s90eWmT84dedjd3MOoPaY0005g_QBaAGjp2tEEWFTdsF9-ztfr4";
-                    
                     window.FB_getToken(window.FB_messaging, { vapidKey: vapidKey })
                     .then((currentToken) => {
                         if (currentToken) {
-                            console.log("Token FCM obtenu avec succès :", currentToken);
                             const deviceId = getOrCreateDeviceId();
                             const tokenRef = window.FB_ref(window.FB_db, `auth_users/${deviceId}/fcmToken`);
                             window.FB_set(tokenRef, currentToken);
                         }
-                    }).catch((err) => {
-                        console.log('Erreur lors de la récupération du token :', err);
-                    });
+                    }).catch((err) => {});
                 }
             });
         }
@@ -1566,7 +1564,7 @@
         document.getElementById('mainContainer').style.display = 'none';
         document.getElementById('userLockScreen').style.display = 'flex';
         initUserScreen();
-        updateMyPresence(); // Retrait de l'état "en ligne"
+        updateMyPresence(); 
     }
 
     window.validateAuth = function() {
@@ -1596,7 +1594,6 @@
         populateGitFilesDropdown();
         document.getElementById('sourceCodeInput').value = document.documentElement.outerHTML;
 
-        // Affichage instantané depuis le cache
         renderAdminUsersList(cachedAuthUsersData);
 
         showAlert("Panneau Admin déverrouillé avec succès.", true);
@@ -1613,7 +1610,6 @@
         showAlert("Panneau Admin verrouillé.", true);
     }
 
-    // --- FONCTION TEST APPAREIL ---
     window.testUserDevice = function(deviceId, userName) {
         if(!window.FB_db) return;
         window.FB_set(window.FB_ref(window.FB_db, `device_tests/${deviceId}`), {
@@ -1627,7 +1623,6 @@
     function listenToAuthUsersGlobal() {
         if (!window.FB_db) return;
         
-        // Ascultator general de versiune pentru FORTARE UPDATE
         const versionRef = window.FB_ref(window.FB_db, 'system/version');
         window.FB_onValue(versionRef, (snapshot) => {
             const data = snapshot.val();
@@ -1640,7 +1635,7 @@
         const usersRef = window.FB_ref(window.FB_db, 'auth_users');
         window.FB_onValue(usersRef, (snapshot) => {
             const data = snapshot.val();
-            cachedAuthUsersData = data; // Mise en cache des données
+            cachedAuthUsersData = data; 
             let pendingCount = 0;
             
             if(data) {
@@ -1881,12 +1876,10 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         listenToAuthUsersGlobal();
         initPresenceListener(); 
 
-        // Écouteur pour le signal de Test (sur l'appareil actuel)
         const myTestRef = window.FB_ref(window.FB_db, `device_tests/${getOrCreateDeviceId()}`);
         window.FB_onValue(myTestRef, (snapshot) => {
             const data = snapshot.val();
             if (data && data.timestamp) {
-                // Vérification de la récence du test (max 15 sec)
                 if (Date.now() - data.timestamp < 15000) {
                     playPersistentAlarm();
                     showAlert(`🔔 Test sonore déclenché par l'Admin (${data.admin}) !`, false);
@@ -2418,8 +2411,19 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
                 }
             } catch (e) {}
         }
+        
+        // --- LOGIQUE DE FUSION (MERGE) REPARÉE ---
         if (addedCount > 0) {
-            customDatabase = tempDatabase; 
+            let merged = [...customDatabase]; // Păstrăm tot ce era deja în memorie (cele 6000 de culori locale)
+            tempDatabase.forEach(tempItem => {
+                const existingIndex = merged.findIndex(c => c.code === tempItem.code && c.palette === tempItem.palette);
+                if (existingIndex >= 0) {
+                    merged[existingIndex] = tempItem; // Actualizează doar dacă există deja
+                } else {
+                    merged.push(tempItem); // Adaugă noutățile
+                }
+            });
+            customDatabase = merged; 
             saveToStorage(); filterColors(); updateTargetPaletteDropdown();
         }
         renderFoldersOverview();
@@ -2456,6 +2460,255 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         } catch(e) { showAlert(`❌ Erreur réseau.`); }
     }
 
+    window.uploadAndSyncNewPalette = async function() {
+        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
+        let fileName = document.getElementById('syncFileName').value.trim().toLowerCase();
+        let paletteName = document.getElementById('syncFolderPalette').value.trim().toUpperCase();
+        let content = document.getElementById('syncFileContent').value.trim();
+
+        if (!token || !fileName || !paletteName || !content) { showAlert("❌ Remplissez tous les champs !"); return; }
+        if (!fileName.endsWith('.json')) fileName += '.json';
+
+        try {
+            const parsed = JSON.parse(content);
+            parsed.forEach(item => { if (!item.palette) item.palette = paletteName; });
+            content = JSON.stringify(parsed, null, 2);
+        } catch(e) { showAlert("❌ JSON invalide !"); return; }
+
+        localStorage.setItem('central_github_token', token);
+        showAlert("⏳ Sauvegarde sur GitHub...");
+
+        try {
+            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${fileName}`;
+            let fileSha = "";
+            try {
+                const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
+                if (getRes.ok) fileSha = (await getRes.json()).sha;
+            } catch(e) {}
+
+            const putRes = await fetch(getUrl, {
+                method: "PUT",
+                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ message: `Update [${paletteName}]`, content: btoa(unescape(encodeURIComponent(content))), sha: fileSha })
+            });
+
+            if (putRes.ok) {
+                if (!filesToSync.includes(fileName)) {
+                    filesToSync.push(fileName);
+                    localStorage.setItem('central_synced_files', JSON.stringify(filesToSync));
+                    populateGitFilesDropdown(); 
+                }
+                showAlert(`✅ Fichier sauvegardé sur GitHub !`, true);
+                autoSyncPalettes();
+            }
+        } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
+    }
+
+    window.createSystemBackup = async function() {
+        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
+        if (!token) { showAlert("❌ Token GitHub manquant !"); return; }
+        showAlert("⏳ Création Backup...");
+        try {
+            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/backup_database.json`;
+            let fileSha = "";
+            try {
+                const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
+                if (getRes.ok) fileSha = (await getRes.json()).sha;
+            } catch(e) {}
+
+            const putRes = await fetch(getUrl, {
+                method: "PUT",
+                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ message: `Backup`, content: btoa(unescape(encodeURIComponent(JSON.stringify(customDatabase, null, 2)))), sha: fileSha })
+            });
+            if (putRes.ok) showAlert(`✅ Backup réussi sur GitHub !`, true);
+        } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
+    }
+
+    // --- FONCTION RESTAURATION BACKUP ---
+    window.restoreSystemBackup = async function() {
+        if(!confirm("Êtes-vous sûr de vouloir restaurer la base de données depuis le dernier backup ? Cela écrasera les couleurs actuelles.")) return;
+        showAlert("⏳ Restauration en cours...");
+        try {
+            const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/backup_database.json?t=${Date.now()}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    customDatabase = data;
+                    saveToStorage();
+                    filterColors();
+                    renderFoldersOverview();
+                    updateTargetPaletteDropdown();
+                    showAlert(`✅ Base de données restaurée avec succès (${data.length} couleurs) !`, true);
+                } else {
+                    showAlert("❌ Le backup est vide.");
+                }
+            } else {
+                showAlert("❌ Fichier backup introuvable sur GitHub.");
+            }
+        } catch (err) {
+            showAlert(`❌ Erreur réseau lors de la restauration.`);
+        }
+    }
+
+    function renderFoldersOverview() {
+        const listContainer = document.getElementById('foldersOverviewList');
+        if (!listContainer) return;
+        listContainer.innerHTML = '';
+        const grouped = {};
+        customDatabase.forEach(item => {
+            const p = item.palette || "RAL";
+            if (!grouped[p]) grouped[p] = 0;
+            grouped[p]++;
+        });
+        document.getElementById('mainNuancierCount').textContent = `${customDatabase.length} couleurs`;
+
+        Object.keys(grouped).sort().forEach(pName => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'folder-overview-item';
+            itemDiv.innerHTML = `<span style="font-weight:600; color:var(--primary);">📁 Nuancier : ${pName}</span><span class="palette-count">${grouped[pName]} teintes</span>`;
+            itemDiv.onclick = () => openDedicatedSearch(pName);
+            listContainer.appendChild(itemDiv);
+        });
+    }
+
+    let activePaletteFocus = null;
+    window.openDedicatedSearch = function(pName) {
+        activePaletteFocus = pName;
+        document.getElementById('mainNuancierContent').style.display = 'none';
+        document.getElementById('dedicatedSearchPanel').style.display = 'block';
+        document.getElementById('dedicatedSearchTitle').textContent = `Recherche dans : ${pName}`;
+        document.getElementById('dedicatedSearchInput').value = '';
+        filterDedicatedPalette();
+        document.getElementById('dedicatedSearchPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    window.closeDedicatedSearch = function() {
+        activePaletteFocus = null;
+        document.getElementById('dedicatedSearchPanel').style.display = 'none';
+        document.getElementById('mainNuancierContent').style.display = 'block';
+        if (activeVirtualInput) vClose();
+    }
+
+    window.filterDedicatedPalette = function() {
+        if (!activePaletteFocus) return;
+        const query = document.getElementById('dedicatedSearchInput').value.trim().toLowerCase();
+        const container = document.getElementById('dedicatedSearchResults');
+        container.innerHTML = '';
+
+        const filtered = customDatabase.filter(item => {
+            if ((item.palette || "RAL").toUpperCase() !== activePaletteFocus.toUpperCase()) return false;
+            if (!query) return true;
+            return item.code.toLowerCase().includes(query);
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
+            return;
+        }
+
+        filtered.forEach(item => {
+            const gIndex = customDatabase.indexOf(item);
+            const card = document.createElement('div');
+            card.className = 'card';
+            let brandsHtml = '';
+            if (item.bases) {
+                Object.keys(item.bases).forEach(bName => {
+                    brandsHtml += `<div class="brand-badge">${bName}: <span>${item.bases[bName]}</span></div>`;
+                });
+            }
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-title-zone">
+                        <div class="color-swatch-btn" style="background-color: ${item.hex || '#cbd5e1'};"></div>
+                        <div class="color-code">${item.code}</div>
+                    </div>
+                    <button class="btn-edit" onclick="openFullEdit(${gIndex})">✏️ Bases</button>
+                </div>
+                <div class="brands-grid">${brandsHtml}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    let searchTimeout = null;
+    window.debouncedFilterColors = function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => filterColors(), 150);
+    }
+
+    function filterColors() {
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const container = document.getElementById('resultsList');
+        const label = document.getElementById('resultsLabel');
+        container.innerHTML = '';
+
+        const queryTokens = query.split(/\s+/).filter(t => t);
+        if (queryTokens.length === 0) { label.style.display = 'none'; container.style.display = 'none'; return; }
+
+        label.style.display = 'block'; container.style.display = 'block';
+
+        const filtered = customDatabase.filter(item => {
+            const code = item.code.toLowerCase();
+            const pal = (item.palette || "RAL").toLowerCase();
+            return queryTokens.every(token => code.includes(token) || pal.includes(token));
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
+            return;
+        }
+
+        const grouped = {};
+        filtered.forEach(item => {
+            const p = item.palette || "RAL";
+            if (!grouped[p]) grouped[p] = [];
+            grouped[p].push(item);
+        });
+
+        let renderedCount = 0;
+        const maxDisplay = 50; 
+
+        Object.keys(grouped).sort().forEach(pName => {
+            if (renderedCount >= maxDisplay) return;
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'palette-group';
+            const header = document.createElement('div');
+            header.className = 'palette-header';
+            header.innerHTML = `<span>📁 Nuancier : ${pName}</span><span class="palette-count">${grouped[pName].length} teintes</span>`;
+            
+            const content = document.createElement('div');
+            content.className = 'palette-content';
+            content.style.display = 'block';
+
+            grouped[pName].forEach(item => {
+                if (renderedCount >= maxDisplay) return;
+                renderedCount++;
+                const gIndex = customDatabase.indexOf(item);
+                const card = document.createElement('div');
+                card.className = 'card';
+                let brandsHtml = '';
+                if (item.bases) {
+                    Object.keys(item.bases).forEach(bName => {
+                        brandsHtml += `<div class="brand-badge">${bName}: <span>${item.bases[bName]}</span></div>`;
+                    });
+                }
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-title-zone">
+                            <div class="color-swatch-btn" style="background-color: ${item.hex || '#cbd5e1'};"></div>
+                            <div class="color-code">${item.code}</div>
+                        </div>
+                        <button class="btn-edit" onclick="openFullEdit(${gIndex})">✏️ Bases</button>
+                    </div>
+                    <div class="brands-grid">${brandsHtml}</div>
+                `;
+                content.appendChild(card);
+            });
+            groupDiv.appendChild(header); groupDiv.appendChild(content); container.appendChild(groupDiv);
+        });
+    }
+
     window.publishToGithub = async function() {
         let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
         let newCode = document.getElementById('sourceCodeInput').value.trim();
@@ -2484,7 +2737,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
             });
 
             if (putRes.ok) {
-                // Notificam in baza de date versiunea noua pentru a forta celelalte dispozitive sa se actualizeze
                 window.FB_set(window.FB_ref(window.FB_db, 'system/version'), {
                     version: newVer,
                     changelog: newChangelog,
