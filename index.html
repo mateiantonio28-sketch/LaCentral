@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- SISTEM ANTI-CACHE FORȚAT -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -56,8 +56,14 @@
             --warning: #f59e0b;
         }
 
-        /* Eliminare tap-highlight pentru a evita flash-urile / barele albastre pe mobile */
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
+        /* Eliminare tap-highlight pentru a evita flash-urile / barele albastre pe mobile + Blocare zoom nativ */
+        * { 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+            touch-action: manipulation; 
+        }
         
         body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
         .container { max-width: 720px; margin: 0 auto; display: none; }
@@ -286,7 +292,14 @@
             <div class="pin-key" onclick="loginPinKey('9', this)">9</div>
             <div class="pin-key" onclick="loginPinKey('C', this)" style="background:#7f1d1d;">C</div>
             <div class="pin-key" onclick="loginPinKey('0', this)">0</div>
-            <div class="pin-key" onclick="loginPinKey('DEL', this)" style="background:#475569;">⌫</div>
+            <div class="pin-key" 
+                 onmousedown="startPinDel(this, event)" 
+                 onmouseup="stopPinDel(event)" 
+                 onmouseleave="stopPinDel(event)" 
+                 ontouchstart="startPinDel(this, event)" 
+                 ontouchend="stopPinDel(event)" 
+                 ontouchcancel="stopPinDel(event)" 
+                 style="background:#475569;">⌫</div>
         </div>
 
         <select id="regRole">
@@ -544,10 +557,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v1.2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.3" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Mise à jour v1.2 : Feedback visuel du clavier et fluidité du panneau Admin." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newChangelogInput" value="Mise à jour v1.3 : Hold-to-delete et blocare pinch-zoom nativ." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -570,7 +583,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale Peinture — Version <span id="footerVersionText">v1.1</span></div>
+        <div>La Centrale Peinture — Version <span id="footerVersionText">v1.2</span></div>
     </div>
 </div>
 
@@ -681,13 +694,19 @@
         <div class="vk-key" onclick="vKey('-', this)">-</div>
         <div class="vk-key" onclick="vKey('.', this)">.</div>
         <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
-        <div class="vk-key vk-wide" onclick="vDel(this)">⌫</div>
+        <div class="vk-key vk-wide" 
+             onmousedown="startVDel(this, event)" 
+             onmouseup="stopVDel(event)" 
+             onmouseleave="stopVDel(event)" 
+             ontouchstart="startVDel(this, event)" 
+             ontouchend="stopVDel(event)" 
+             ontouchcancel="stopVDel(event)">⌫</div>
         <div class="vk-key vk-close" onclick="vClose()">✕</div>
     </div>
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.1"; 
+    const CURRENT_APP_VERSION = "v1.2"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -812,6 +831,35 @@
         }
     }
 
+    // --- LOGICA PENTRU ȘTERGERE CONTINUĂ (HOLD-TO-DELETE) PIN PAD ---
+    let pinDelInterval = null;
+    let pinDelTimeout = null;
+    let isPinDeleting = false;
+
+    window.startPinDel = function(el, e) {
+        if(e && e.cancelable) e.preventDefault();
+        if(isPinDeleting) return;
+        isPinDeleting = true;
+        loginPinKey('DEL', el); // șterge prima literă
+        
+        pinDelTimeout = setTimeout(() => {
+            pinDelInterval = setInterval(() => {
+                const pinInput = document.getElementById('regPin');
+                if (pinInput && pinInput.value.length > 0) {
+                    loginPinKey('DEL', el);
+                } else {
+                    stopPinDel(); // Oprește dacă nu mai e nimic de șters
+                }
+            }, 70); // Viteză rapidă de ștergere continuă
+        }, 350); // După 350ms de ținut apăsat
+    }
+
+    window.stopPinDel = function(e) {
+        clearTimeout(pinDelTimeout);
+        clearInterval(pinDelInterval);
+        isPinDeleting = false;
+    }
+
     function renderVkRows() {
         const row1 = document.getElementById('vkRow1');
         const row2 = document.getElementById('vkRow2');
@@ -880,6 +928,34 @@
         if (!activeVirtualInput) return;
         activeVirtualInput.value += char;
         activeVirtualInput.dispatchEvent(new Event('input')); 
+    }
+
+    // --- LOGICA PENTRU ȘTERGERE CONTINUĂ (HOLD-TO-DELETE) TASTATURĂ VIRTUALĂ ---
+    let delInterval = null;
+    let delTimeout = null;
+    let isDeleting = false;
+
+    window.startVDel = function(el, e) {
+        if(e && e.cancelable) e.preventDefault(); 
+        if(isDeleting) return;
+        isDeleting = true;
+        vDel(el); // șterge prima literă
+        
+        delTimeout = setTimeout(() => {
+            delInterval = setInterval(() => {
+                if (activeVirtualInput && activeVirtualInput.value.length > 0) {
+                    vDel(el);
+                } else {
+                    stopVDel(); // Oprește automat dacă s-a golit
+                }
+            }, 70); 
+        }, 350); 
+    }
+
+    window.stopVDel = function(e) {
+        clearTimeout(delTimeout);
+        clearInterval(delInterval);
+        isDeleting = false;
     }
 
     window.vDel = function(el) {
