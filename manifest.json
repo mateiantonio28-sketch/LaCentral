@@ -1,6 +1,6 @@
 {
   "short_name": "La Centrale",
-  "name": "La Centrale - Recherche Couleur & Base",
+  "name": "La Centrale",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/2919/2919740.png",
@@ -13,5 +13,6 @@
   "background_color": "#111827",
   "theme_color": "#111827",
   "display": "standalone",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "gcm_sender_id": "103953800507"
 }
