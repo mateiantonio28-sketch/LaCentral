@@ -577,10 +577,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version :</label>
-            <input type="text" id="newVersionInput" value="v1.4" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.5" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés :</label>
-            <input type="text" id="newChangelogInput" value="Mise à jour v1.4 : Système de présence (Utilisateurs en ligne)." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newChangelogInput" value="Mise à jour v1.5 : Ajout du bouton de test d'appareil." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -603,7 +603,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale Peinture — Version <span id="footerVersionText">v1.3</span></div>
+        <div>La Centrale Peinture — Version <span id="footerVersionText">v1.4</span></div>
     </div>
 </div>
 
@@ -726,7 +726,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.3"; 
+    const CURRENT_APP_VERSION = "v1.4"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -1109,15 +1109,13 @@
         const deviceId = getOrCreateDeviceId();
         const presenceRef = window.FB_ref(window.FB_db, `presence/${deviceId}`);
         
-        // Dacă utilizatorul este conectat și e pe ecranul principal (în aplicație)
         if (document.getElementById('mainContainer').style.display === 'block') {
             window.FB_set(presenceRef, { name: localUser.name, role: localUser.role, timestamp: Date.now() });
             if (!isPresenceTracking) {
-                window.FB_onDisconnect(presenceRef).remove(); // Șterge din baza de date când pierde netul/închide
+                window.FB_onDisconnect(presenceRef).remove(); 
                 isPresenceTracking = true;
             }
         } else {
-            // Dacă se află pe ecranul de logare sau a dat Déconnexion
             window.FB_remove(presenceRef);
             isPresenceTracking = false;
         }
@@ -1129,11 +1127,10 @@
         const connectedRef = window.FB_ref(window.FB_db, '.info/connected');
         window.FB_onValue(connectedRef, (snap) => {
             if (snap.val() === true) {
-                updateMyPresence(); // Reface prezența dacă i-a picat netul și și-a revenit
+                updateMyPresence(); 
             }
         });
 
-        // Ascultă mereu câți utilizatori sunt în nodul `presence`
         const allPresenceRef = window.FB_ref(window.FB_db, 'presence');
         window.FB_onValue(allPresenceRef, (snap) => {
             const data = snap.val();
@@ -1173,7 +1170,7 @@
                         document.getElementById('mainContainer').style.display = 'none';
                         document.getElementById('userLockScreen').style.display = 'flex';
                         initUserScreen();
-                        updateMyPresence(); // Scoate-l din lista de "online"
+                        updateMyPresence(); 
                         alert("La session a expiré !");
                     } else {
                         const h = Math.floor(remaining / 3600000).toString().padStart(2, '0');
@@ -1353,7 +1350,7 @@
         
         updateAlarmButtonVisibility();
         document.getElementById('sectionSelectorModal').style.display = 'flex';
-        updateMyPresence(); // Înregistrează utilizatorul ca online
+        updateMyPresence(); 
     }
 
     window.showSectionSelector = function() {
@@ -1407,7 +1404,7 @@
         document.getElementById('mainContainer').style.display = 'none';
         document.getElementById('userLockScreen').style.display = 'flex';
         initUserScreen();
-        updateMyPresence(); // Îl scoate din starea "online"
+        updateMyPresence(); 
     }
 
     window.validateAuth = function() {
@@ -1451,6 +1448,17 @@
         localStorage.removeItem('admin_session_expiry');
         document.getElementById('adminPanel').style.display = 'none';
         showAlert("Panneau Admin verrouillé.", true);
+    }
+
+    // --- FUNCTIE TESTARE DISPOZITIV ---
+    window.testUserDevice = function(deviceId, userName) {
+        if(!window.FB_db) return;
+        window.FB_set(window.FB_ref(window.FB_db, `device_tests/${deviceId}`), {
+            timestamp: Date.now(),
+            admin: localUser.name
+        }).then(() => {
+            showAlert(`Signal de test envoyé à l'appareil de ${userName} !`, true);
+        });
     }
 
     function listenToAuthUsersGlobal() {
@@ -1538,6 +1546,7 @@
                         ${u.status !== 'approved' ? `<button class="btn btn-save" style="flex:1; min-width:80px; padding:6px; font-size:11px;" onclick="setAdminUserStatus('${deviceId}', 'approved')">✅ Accepter</button>` : ''}
                         ${u.status !== 'blocked' ? `<button class="btn btn-danger" style="flex:1; min-width:80px; padding:6px; font-size:11px; background-color:#c2410c;" onclick="confirmBlockUser('${deviceId}', '${u.name}')">🚫 Bloquer</button>` : ''}
                         <button class="btn btn-save" style="flex:1; min-width:80px; padding:6px; font-size:11px; background-color:#3b82f6;" onclick="editAdminUserName('${deviceId}', '${u.name}')">✏️ Renommer</button>
+                        <button class="btn btn-save" style="flex:1; min-width:80px; padding:6px; font-size:11px; background-color:#8b5cf6;" onclick="testUserDevice('${deviceId}', '${u.name}')">🔔 Test</button>
                         <button class="btn btn-danger" style="flex:1; min-width:80px; padding:6px; font-size:11px; background-color:#7f1d1d;" onclick="confirmDeleteUser('${deviceId}', '${u.name}')">🗑️ Suppr</button>
                     </div>
                 `;
@@ -1696,7 +1705,20 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         }
 
         listenToAuthUsersGlobal();
-        initPresenceListener(); // Inițiază radarul pentru online users
+        initPresenceListener(); 
+
+        // Ascultător pentru semnalul de Test (pe propriul device)
+        const myTestRef = window.FB_ref(window.FB_db, `device_tests/${getOrCreateDeviceId()}`);
+        window.FB_onValue(myTestRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.timestamp) {
+                // Verificăm să fie un test recent (max 15 secunde), ca să nu sune aiurea când doar deschide aplicația a doua zi
+                if (Date.now() - data.timestamp < 15000) {
+                    playPersistentAlarm();
+                    showAlert(`🔔 Test sonore déclenché par l'Admin (${data.admin}) !`, false);
+                }
+            }
+        });
 
         if (localUser && localUser.role !== 'Master Admin') { 
             const deviceId = getOrCreateDeviceId();
