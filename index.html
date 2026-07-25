@@ -825,6 +825,13 @@
         <button class="collapsible-btn" onclick="toggleCollapse('backupGitForm')">💾 Créer / Restaurer Backup (Git) <span>▼</span></button>
         <div id="backupGitForm" class="collapsible-content" style="border:1px dashed #10b981;">
             <p style="font-size:12px; margin-top:0;">Sauvegardez l'état actuel ou restaurez une version antérieure.</p>
+            
+            <label style="font-size:11px; color:#9ca3af; margin-top:8px;">🔑 Token Access GitHub (ghp_...) :</label>
+            <div style="display:flex; gap:6px; margin-bottom:12px;">
+                <input type="password" id="ghTokenInput" placeholder="Collez votre Token ici..." style="flex:1;" inputmode="none" onfocus="this.blur();">
+                <button class="btn btn-guide" style="width:auto; padding:0 12px; margin:0;" onclick="openTokenModal()">Manager</button>
+            </div>
+
             <button class="btn btn-save" style="background-color:#059669; width:100%; margin-bottom:12px;" onclick="createSystemBackup()">📦 Créer un Backup (Version Actuelle)</button>
             
             <div style="background:#111827; padding:10px; border-radius:6px; border:1px solid var(--border);">
@@ -838,25 +845,6 @@
                 <button class="btn btn-save" style="background-color:#0284c7; width:100%; padding:10px; font-size:12px;" onclick="restoreSystemBackup()">⚠️ Restaurer le Backup Sélectionné</button>
             </div>
             <div id="backupAdminStatus" style="margin-top:10px; font-size:12px; font-weight:bold; display:none;"></div>
-        </div>
-
-        <button class="collapsible-btn" onclick="toggleCollapse('updateAppForm')">🚀 Forcer la Mise à jour Générale <span>▼</span></button>
-        <div id="updateAppForm" class="collapsible-content" style="border:2px solid var(--ai-color);">
-            <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
-
-            <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.18" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-
-            <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.18 : Système Teinteur avec Timer, réparation catalogues et bouton mode PC au démarrage.</textarea>
-
-            <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
-            <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
-
-            <label style="font-size:11px; color:#9ca3af;">Code Source HTML Complet :</label>
-            <textarea id="sourceCodeInput" rows="4" placeholder="Collez le code complet ici..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
-            
-            <button class="btn btn-save" style="background-color:var(--ai-color); margin-top:8px;" onclick="publishToGithub()">🚀 Publier & Forcer le redémarrage</button>
         </div>
 
         <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="lockAdminPanel()">🔒 Verrouiller le Panneau Admin</button>
