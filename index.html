@@ -1189,48 +1189,7 @@
         isPinDeleting = false;
     }
 
-    function renderVkRows() {
-        const row1 = document.getElementById('vkRow1');
-        const row2 = document.getElementById('vkRow2');
-        const row3 = document.getElementById('vkRow3');
-        if(!row1 || !row2 || !row3) return;
-
-        row1.innerHTML = ''; row2.innerHTML = ''; row3.innerHTML = '';
-        const r1 = ["A","Z","E","R","T","Y","U","I","O","P"];
-        const r2 = ["Q","S","D","F","G","H","J","K","L","M"];
-        const r3 = ["W","X","C","V","B","N"];
-
-        r1.forEach(l => {
-            const char = isShiftActive ? l : l.toLowerCase();
-            const div = document.createElement('div');
-            div.className = 'vk-key'; div.textContent = char;
-            div.onclick = function(e) { vKey(char, e.target); };
-            row1.appendChild(div);
-        });
-        r2.forEach(l => {
-            const char = isShiftActive ? l : l.toLowerCase();
-            const div = document.createElement('div');
-            div.className = 'vk-key'; div.textContent = char;
-            div.onclick = function(e) { vKey(char, e.target); };
-            row2.appendChild(div);
-        });
-        r3.forEach(l => {
-            const char = isShiftActive ? l : l.toLowerCase();
-            const div = document.createElement('div');
-            div.className = 'vk-key'; div.textContent = char;
-            div.onclick = function(e) { vKey(char, e.target); };
-            row3.appendChild(div);
-        });
-    }
-
-    window.toggleShift = function() {
-        isShiftActive = !isShiftActive;
-        const shiftBtn = document.getElementById('vkShiftBtn');
-        if (isShiftActive) shiftBtn.classList.add('active');
-        else shiftBtn.classList.remove('active');
-        renderVkRows();
-    }
-    renderVkRows();
+    // Clavier virtuel géré en HTML statique (Majuscules par défaut)
 
     // FUNCTIONALITATE NOUĂ: Închidere tastatură inteligentă (Swipe & Click outside)
     document.addEventListener('click', function(e) {
