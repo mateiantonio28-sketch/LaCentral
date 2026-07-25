@@ -187,8 +187,8 @@
         }
 
         .search-box {
-            width: 100%; padding: 14px; font-size: 17px; font-weight: 600;
-            border: 2px solid var(--border); border-radius: 10px; outline: none;
+            width: 100%; padding: 12px; font-size: 15px; font-weight: 600;
+            border: 2px solid var(--border); border-radius: 8px; outline: none;
             background: #1f2937; color: #fff; transition: border-color 0.2s;
         }
         .search-box:focus { border-color: var(--accent); }
@@ -245,12 +245,12 @@
         }
         .modal-content {
             background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
-            width: 100%; max-width: 480px; padding: 22px; box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            width: 100%; max-width: 440px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.7);
             max-height: 90vh; overflow-y: auto;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .modal-header h3 { margin: 0; font-size: 16px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
-        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 20px; font-weight: bold; cursor: pointer; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .modal-header h3 { margin: 0; font-size: 15px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 18px; font-weight: bold; cursor: pointer; }
 
         .palette-group { margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: var(--panel-bg); border: 1px solid var(--border); }
         .palette-header { padding: 10px 14px; background-color: #374151; color: var(--primary); font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -286,6 +286,16 @@
         .stock-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
         .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
         .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* Style Calendar Mini */
+        .mini-calendar { background: #111827; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 12px; }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: var(--primary); margin-bottom: 8px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 11px; }
+        .cal-day-name { color: #9ca3af; font-weight: bold; padding-bottom: 4px; }
+        .cal-cell { padding: 6px 0; background: #1f2937; border-radius: 4px; color: #d1d5db; cursor: pointer; }
+        .cal-cell:hover { background: #374151; }
+        .cal-cell.has-error { background: #7f1d1d; color: #fca5a5; font-weight: bold; border: 1px solid #ef4444; }
+        .cal-cell.selected { border: 2px solid var(--accent); }
 
         /* CLAVIER VIRTUEL AZERTY STANDARD */
         .virtual-keyboard {
@@ -530,7 +540,7 @@
         </div>
     </div>
 
-    <!-- SECTION TEINTES REVENDABLES (MUTÉE EN HAUT) -->
+    <!-- SECTION TEINTES REVENDABLES (HAUT) -->
     <div id="sectionRevendablesContent" style="display: none;">
         <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
@@ -547,20 +557,27 @@
         </div>
     </div>
 
-    <!-- SECTION ERREURS DE TEINTE (MUTÉE EN BAS) -->
+    <!-- SECTION ERREURS DE TEINTE (BAS) AVEC CALENDRIER -->
     <div id="sectionErreursContent" style="display: none;">
         <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
                 <h3 style="margin:0; color:#ef4444; font-size:16px;">⚠️ Registre des Erreurs de Teinte</h3>
-                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Suivi transparent et analyse des rebuts de fabrication.</p>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Suivi transparent et calendrier des rebuts de fabrication.</p>
             </div>
-            <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#ef4444;" onclick="openErrorModal()">➕ Déclarer une Erreur</button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 14px; background-color:#ef4444;" onclick="openErrorModal()">➕ Déclarer</button>
+                <button id="btnPurgeErrors" class="btn btn-danger" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:#7f1d1d;" onclick="purgeAllErrors()">🗑️ Vider tout</button>
+            </div>
         </div>
 
-        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom de collègue (ex: Antonio)..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
+        <!-- CALENDRIER INTERACTIF -->
+        <div class="mini-calendar" id="errorMiniCalendar"></div>
+
+        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
         
-        <div id="errorStatsBox" style="background:var(--panel-bg); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#9ca3af; border:1px solid var(--border);">
-            Total erreurs enregistrées : <b id="totalErrorsCount" style="color:#fff;">0</b> | Total volume raté : <b id="totalErrorLitres" style="color:#ef4444;">0 L / KG</b>
+        <div id="errorStatsBox" style="background:var(--panel-bg); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#9ca3af; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <span>Total erreurs : <b id="totalErrorsCount" style="color:#fff;">0</b> | Volume raté : <b id="totalErrorLitres" style="color:#ef4444;">0 L / KG</b></span>
+            <button id="clearDateFilterBtn" style="display:none; background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; font-weight:bold;" onclick="resetDateFilter()">🔄 Afficher tout</button>
         </div>
 
         <div id="errorRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
@@ -679,10 +696,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.12" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.13" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.12 : Refonte esthétique des modales (style demand simple), inversion des sections Re-vendables et Erreurs.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.13 : Design modales unifié, mini-calendar interactif pour erreurs et purge globale sécurisée.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -705,7 +722,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.12</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.13</span></div>
     </div>
 </div>
 
@@ -753,9 +770,9 @@
     </div>
 </div>
 
-<!-- MODAL DÉCLARATION ERREUR DE TEINTE (ESTHÉTIQUE DEMANDE SIMPLE) -->
+<!-- MODAL DÉCLARATION ERREUR DE TEINTE (ESTHÉTIQUE UNIFIÉE) -->
 <div id="errorModal" class="modal-overlay">
-    <div class="modal-content" style="border: 2px solid #ef4444;">
+    <div class="modal-content" style="border-color: #ef4444;">
         <div class="modal-header">
             <h3 style="color:#ef4444;">⚠️ Déclarer une Erreur de Teinte</h3>
             <button class="btn-close-modal" onclick="closeErrorModal()">✕</button>
@@ -787,9 +804,9 @@
     </div>
 </div>
 
-<!-- MODAL AJOUT TEINTE RE-VENDABLE (ESTHÉTIQUE DEMANDE SIMPLE) -->
+<!-- MODAL AJOUT TEINTE RE-VENDABLE (ESTHÉTIQUE UNIFIÉE) -->
 <div id="resaleModal" class="modal-overlay">
-    <div class="modal-content" style="border: 2px solid #10b981;">
+    <div class="modal-content" style="border-color: #10b981;">
         <div class="modal-header">
             <h3 style="color:#10b981;">🔄 Ajouter une Teinte Re-vendable</h3>
             <button class="btn-close-modal" onclick="closeResaleModal()">✕</button>
@@ -909,7 +926,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.12"; 
+    const CURRENT_APP_VERSION = "v1.13"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -942,6 +959,7 @@
     let onlineUsersMap = {};
     let errorRecordsList = [];
     let resaleRecordsList = [];
+    let selectedErrorDateFilter = null; // Filtru data din calendar
 
     let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
 
@@ -989,7 +1007,7 @@
         isComputerMode = !isComputerMode;
         localStorage.setItem('central_computer_mode', isComputerMode);
         applyComputerMode();
-        showAlert(isComputerMode ? "💻 Mode Ordinateur activé ! (Clavier physique ON)" : "📱 Mode Tactile activé ! (Clavier virtuel ON)", true);
+        showAlert(isComputerMode ? "💻 Mode Ordinateur activé !" : "📱 Mode Tactile activé !", true);
     }
 
     function applyComputerMode() {
@@ -1016,7 +1034,6 @@
                 el.removeEventListener('focus', handleNormalFocus);
             }
         });
-
         if (isComputerMode) vClose();
     }
 
@@ -1036,22 +1053,13 @@
         if (el) flashKey(el);
         const pinInput = document.getElementById('regPin');
         if (!pinInput) return;
-        if (val === 'DEL') {
-            pinInput.value = pinInput.value.slice(0, -1);
-        } else if (val === 'C') {
-            pinInput.value = '';
-        } else {
-            if (pinInput.value.length < 20) {
-                pinInput.value += val;
-            }
-        }
+        if (val === 'DEL') pinInput.value = pinInput.value.slice(0, -1);
+        else if (val === 'C') pinInput.value = '';
+        else if (pinInput.value.length < 20) pinInput.value += val;
     }
 
     window.checkLoginEnter = function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleUserAuth();
-        }
+        if (e.key === 'Enter') { e.preventDefault(); handleUserAuth(); }
     }
 
     let pinDelInterval = null;
@@ -1063,15 +1071,11 @@
         if(isPinDeleting) return;
         isPinDeleting = true;
         loginPinKey('DEL', el); 
-        
         pinDelTimeout = setTimeout(() => {
             pinDelInterval = setInterval(() => {
                 const pinInput = document.getElementById('regPin');
-                if (pinInput && pinInput.value.length > 0) {
-                    loginPinKey('DEL', el);
-                } else {
-                    stopPinDel(); 
-                }
+                if (pinInput && pinInput.value.length > 0) loginPinKey('DEL', el);
+                else stopPinDel(); 
             }, 70); 
         }, 350); 
     }
@@ -1088,10 +1092,7 @@
         const row3 = document.getElementById('vkRow3');
         if(!row1 || !row2 || !row3) return;
 
-        row1.innerHTML = '';
-        row2.innerHTML = '';
-        row3.innerHTML = '';
-
+        row1.innerHTML = ''; row2.innerHTML = ''; row3.innerHTML = '';
         const r1 = ["A","Z","E","R","T","Y","U","I","O","P"];
         const r2 = ["Q","S","D","F","G","H","J","K","L","M"];
         const r3 = ["W","X","C","V","B","N"];
@@ -1099,26 +1100,21 @@
         r1.forEach(l => {
             const char = isShiftActive ? l : l.toLowerCase();
             const div = document.createElement('div');
-            div.className = 'vk-key';
-            div.textContent = char;
+            div.className = 'vk-key'; div.textContent = char;
             div.onclick = function(e) { vKey(char, e.target); };
             row1.appendChild(div);
         });
-
         r2.forEach(l => {
             const char = isShiftActive ? l : l.toLowerCase();
             const div = document.createElement('div');
-            div.className = 'vk-key';
-            div.textContent = char;
+            div.className = 'vk-key'; div.textContent = char;
             div.onclick = function(e) { vKey(char, e.target); };
             row2.appendChild(div);
         });
-
         r3.forEach(l => {
             const char = isShiftActive ? l : l.toLowerCase();
             const div = document.createElement('div');
-            div.className = 'vk-key';
-            div.textContent = char;
+            div.className = 'vk-key'; div.textContent = char;
             div.onclick = function(e) { vKey(char, e.target); };
             row3.appendChild(div);
         });
@@ -1131,7 +1127,6 @@
         else shiftBtn.classList.remove('active');
         renderVkRows();
     }
-
     renderVkRows();
 
     window.openVirtualKeyboard = function(inputEl) {
@@ -1158,14 +1153,10 @@
         if(isDeleting) return;
         isDeleting = true;
         vDel(el); 
-        
         delTimeout = setTimeout(() => {
             delInterval = setInterval(() => {
-                if (activeVirtualInput && activeVirtualInput.value.length > 0) {
-                    vDel(el);
-                } else {
-                    stopVDel(); 
-                }
+                if (activeVirtualInput && activeVirtualInput.value.length > 0) vDel(el);
+                else stopVDel(); 
             }, 70); 
         }, 350); 
     }
@@ -1186,27 +1177,18 @@
     window.vClose = function() {
         document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
         document.getElementById('virtualKeyboard').style.display = 'none';
-        if (activeVirtualInput) {
-            activeVirtualInput.blur();
-            activeVirtualInput = null;
-        }
+        if (activeVirtualInput) { activeVirtualInput.blur(); activeVirtualInput = null; }
     }
 
     window.updateStockDropdowns = function(prefix) {
         const brand = document.getElementById(prefix + 'Brand').value;
         const baseSelect = document.getElementById(prefix + 'Base');
         const sizeSelect = document.getElementById(prefix + 'BucketSize');
-        
         baseSelect.innerHTML = '<option value="">Base (Optionnel)</option>';
         sizeSelect.innerHTML = '<option value="">Capacité</option>';
-        
         if (BRANDS_DATA[brand]) {
-            BRANDS_DATA[brand].bases.forEach(b => {
-                baseSelect.innerHTML += `<option value="${b}">${b}</option>`;
-            });
-            BRANDS_DATA[brand].sizes.forEach(s => {
-                sizeSelect.innerHTML += `<option value="${s}">${s}</option>`;
-            });
+            BRANDS_DATA[brand].bases.forEach(b => baseSelect.innerHTML += `<option value="${b}">${b}</option>`);
+            BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
         }
         checkLearnedLocation(prefix);
     }
@@ -1215,17 +1197,11 @@
         const brand = document.getElementById('errBrand').value;
         const baseSelect = document.getElementById('errBase');
         const sizeSelect = document.getElementById('errBucketSize');
-        
         baseSelect.innerHTML = '<option value="">Base (Optionnel)</option>';
         sizeSelect.innerHTML = '<option value="">Capacité (L / KG)</option>';
-        
         if (BRANDS_DATA[brand]) {
-            BRANDS_DATA[brand].bases.forEach(b => {
-                baseSelect.innerHTML += `<option value="${b}">${b}</option>`;
-            });
-            BRANDS_DATA[brand].sizes.forEach(s => {
-                sizeSelect.innerHTML += `<option value="${s}">${s}</option>`;
-            });
+            BRANDS_DATA[brand].bases.forEach(b => baseSelect.innerHTML += `<option value="${b}">${b}</option>`);
+            BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
         }
     }
 
@@ -1233,50 +1209,30 @@
         const brand = document.getElementById('resBrand').value;
         const baseSelect = document.getElementById('resBase');
         const sizeSelect = document.getElementById('resBucketSize');
-        
         baseSelect.innerHTML = '<option value="">Base (Optionnel)</option>';
         sizeSelect.innerHTML = '<option value="">Capacité (L / KG)</option>';
-        
         if (BRANDS_DATA[brand]) {
-            BRANDS_DATA[brand].bases.forEach(b => {
-                baseSelect.innerHTML += `<option value="${b}">${b}</option>`;
-            });
-            BRANDS_DATA[brand].sizes.forEach(s => {
-                sizeSelect.innerHTML += `<option value="${s}">${s}</option>`;
-            });
+            BRANDS_DATA[brand].bases.forEach(b => baseSelect.innerHTML += `<option value="${b}">${b}</option>`);
+            BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
         }
     }
 
     window.toggleQuantityInput = function(prefix) {
         const isPallet = document.getElementById(prefix + 'Pallet').checked;
         const qtyInput = document.getElementById(prefix + 'Quantity');
-        if (isPallet) {
-            qtyInput.value = '';
-            qtyInput.disabled = true;
-            qtyInput.style.opacity = '0.5';
-        } else {
-            qtyInput.disabled = false;
-            qtyInput.style.opacity = '1';
-            qtyInput.value = '1';
-        }
+        if (isPallet) { qtyInput.value = ''; qtyInput.disabled = true; qtyInput.style.opacity = '0.5'; }
+        else { qtyInput.disabled = false; qtyInput.style.opacity = '1'; qtyInput.value = '1'; }
     }
 
     window.checkLearnedLocation = function(prefix) {
         const brand = document.getElementById(prefix + 'Brand').value;
         const prodName = document.getElementById(prefix + 'ProductName').value.trim().toUpperCase();
         const locInput = document.getElementById(prefix + 'Location');
-        
         if (brand && prodName) {
             const key = `${brand}_${prodName}`.replace(/[\.\#\$\[\]]/g, ''); 
-            if (learnedLocations[key]) {
-                locInput.value = learnedLocations[key];
-                locInput.style.borderColor = "#10b981"; 
-            } else {
-                locInput.style.borderColor = "var(--border)";
-            }
-        } else {
-            locInput.style.borderColor = "var(--border)";
-        }
+            if (learnedLocations[key]) { locInput.value = learnedLocations[key]; locInput.style.borderColor = "#10b981"; }
+            else locInput.style.borderColor = "var(--border)";
+        } else locInput.style.borderColor = "var(--border)";
     }
 
     function saveLearnedLocation(brand, prodName, location) {
@@ -1391,7 +1347,7 @@
             document.getElementById('ghTokenInput').value = t;
             closeTokenModal();
             showAlert("Token GitHub API sauvegardé avec succès !", true);
-        } else { alert("Token invalide !"); }
+        } else alert("Token invalide !");
     }
 
     let isPresenceTracking = false;
@@ -1400,52 +1356,35 @@
         if (!window.FB_db || !localUser) return;
         const deviceId = getOrCreateDeviceId();
         const presenceRef = window.FB_ref(window.FB_db, `presence/${deviceId}`);
-        
         if (document.getElementById('mainContainer').style.display === 'block') {
-            window.FB_set(presenceRef, { 
-                name: localUser.name, 
-                role: localUser.role, 
-                deviceId: deviceId,
-                timestamp: Date.now() 
-            });
-            if (!isPresenceTracking) {
-                window.FB_onDisconnect(presenceRef).remove(); 
-                isPresenceTracking = true;
-            }
-        } else {
-            window.FB_remove(presenceRef);
-            isPresenceTracking = false;
-        }
+            window.FB_set(presenceRef, { name: localUser.name, role: localUser.role, deviceId: deviceId, timestamp: Date.now() });
+            if (!isPresenceTracking) { window.FB_onDisconnect(presenceRef).remove(); isPresenceTracking = true; }
+        } else { window.FB_remove(presenceRef); isPresenceTracking = false; }
     }
 
     function initPresenceListener() {
         if (!window.FB_db) return;
-        
         const connectedRef = window.FB_ref(window.FB_db, '.info/connected');
-        window.FB_onValue(connectedRef, (snap) => {
-            if (snap.val() === true) updateMyPresence();
-        });
+        window.FB_onValue(connectedRef, (snap) => { if (snap.val() === true) updateMyPresence(); });
 
         const allPresenceRef = window.FB_ref(window.FB_db, 'presence');
         window.FB_onValue(allPresenceRef, (snap) => {
             const data = snap.val() || {};
             onlineUsersMap = data;
             const count = Object.keys(data).length;
-            
             const onlineCountEl = document.getElementById('onlineUsersCount');
             if (onlineCountEl) onlineCountEl.textContent = count;
         });
 
         const locRef = window.FB_ref(window.FB_db, 'product_locations');
-        window.FB_onValue(locRef, (snap) => {
-            learnedLocations = snap.val() || {};
-        });
+        window.FB_onValue(locRef, (snap) => { learnedLocations = snap.val() || {}; });
 
         const errRef = window.FB_ref(window.FB_db, 'tint_errors');
         window.FB_onValue(errRef, (snap) => {
             const data = snap.val();
             errorRecordsList = data ? Object.values(data) : [];
             renderErrorRecords();
+            renderMiniCalendar();
         });
 
         const resaleRef = window.FB_ref(window.FB_db, 'tint_resales');
@@ -1460,10 +1399,8 @@
         const list = document.getElementById('onlineUsersModalList');
         list.innerHTML = '';
         const keys = Object.keys(onlineUsersMap);
-
-        if (keys.length === 0) {
-            list.innerHTML = '<div style="text-align:center; padding:15px; color:#9ca3af;">Aucun utilisateur en ligne.</div>';
-        } else {
+        if (keys.length === 0) list.innerHTML = '<div style="text-align:center; padding:15px; color:#9ca3af;">Aucun utilisateur en ligne.</div>';
+        else {
             keys.forEach(id => {
                 const u = onlineUsersMap[id];
                 const div = document.createElement('div');
@@ -1494,7 +1431,6 @@
                 if (expiry) {
                     const remaining = parseInt(expiry, 10) - Date.now();
                     const timerSpan = document.getElementById('sessionCountdown');
-                    
                     if (remaining <= 0) {
                         timerSpan.textContent = "00:00:00";
                         localStorage.removeItem('user_session_expiry');
@@ -1529,18 +1465,13 @@
         document.getElementById('changelogModal').style.display = 'none';
     }
 
-    window.applyForcedUpdate = function() {
-        logoutUserSession(); 
-        forceCleanReload();
-    }
+    window.applyForcedUpdate = function() { logoutUserSession(); forceCleanReload(); }
 
     function updateAlarmButtonVisibility() {
         const alarmBtn = document.getElementById('btnTeinteurAlarm');
         if (localUser && (localUser.role === 'Vendeur' || localUser.role === 'Responsable' || localUser.role === 'Master Admin')) {
             alarmBtn.style.display = 'block';
-        } else {
-            alarmBtn.style.display = 'none';
-        }
+        } else alarmBtn.style.display = 'none';
     }
 
     function checkActiveSession() {
@@ -1564,15 +1495,12 @@
             if (!currentAppSection) {
                 updateAlarmButtonVisibility();
                 document.getElementById('sectionSelectorModal').style.display = 'flex';
-            } else {
-                applySectionView();
-            }
+            } else applySectionView();
             document.getElementById('welcomeUser').textContent = `${localUser.name} (${localUser.role})`;
             checkAndShowChangelog();
             initFirebaseListeners();
             return;
         }
-        
         initUserScreen();
         initFirebaseListeners();
     }
@@ -1614,7 +1542,7 @@
         }
 
         if (!window.FB_db || !window.FB_get) {
-            alert("Connexion au serveur en cours... Réessayez dans un instant.");
+            alert("Connexion au serveur en cours...");
             return;
         }
 
@@ -1624,21 +1552,11 @@
         try {
             const snapshot = await window.FB_get(userRef);
             const userData = snapshot.val();
-
             if (userData) {
-                if (userData.status === 'blocked') {
-                    alert("🚫 Accès refusé. Cet appareil a été bloqué par l'administrateur.");
-                    return;
-                }
-                if (userData.status === 'pending') {
-                    alert("⏳ Compte en attente. Veuillez patienter jusqu'à l'approbation de l'administrateur.");
-                    return;
-                }
+                if (userData.status === 'blocked') { alert("🚫 Accès refusé."); return; }
+                if (userData.status === 'pending') { alert("⏳ Compte en attente."); return; }
                 if (userData.status === 'approved') {
-                    if (pin !== userData.pin || name !== userData.name) {
-                        alert("❌ Identifiants incorrects ou code PIN erroné !");
-                        return;
-                    }
+                    if (pin !== userData.pin || name !== userData.name) { alert("❌ Identifiants incorrects !"); return; }
                     localUser = { name: userData.name, pin: userData.pin, role: userData.role };
                     localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
                     proceedToApp();
@@ -1648,13 +1566,10 @@
                 await window.FB_set(userRef, newUser);
                 localUser = { name: name, pin: pin, role: role };
                 localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
-                alert("✅ Demande envoyée ! Veuillez attendre l'approbation de l'administrateur.");
+                alert("✅ Demande envoyée !");
                 initUserScreen(); 
             }
-        } catch(e) {
-            console.error(e);
-            alert("Erreur réseau / Firebase.");
-        }
+        } catch(e) { alert("Erreur réseau / Firebase."); }
     }
 
     function proceedToApp() {
@@ -1725,6 +1640,7 @@
             title.textContent = "Erreurs de Teinte";
             subtitle.textContent = "Registre de transparence et analyse des rebuts";
             erreursSec.style.display = 'block';
+            renderMiniCalendar();
         } else {
             title.textContent = "Vérifie les Bases";
             subtitle.textContent = "Système de Recherche de Couleurs & Bases";
@@ -1794,7 +1710,6 @@
 
     function listenToAuthUsersGlobal() {
         if (!window.FB_db) return;
-        
         const versionRef = window.FB_ref(window.FB_db, 'system/version');
         window.FB_onValue(versionRef, (snapshot) => {
             const data = snapshot.val();
@@ -1810,19 +1725,15 @@
             cachedAuthUsersData = data; 
             let pendingCount = 0;
             if(data) {
-                Object.keys(data).forEach(id => {
-                    if(data[id].status === 'pending') pendingCount++;
-                });
+                Object.keys(data).forEach(id => { if(data[id].status === 'pending') pendingCount++; });
             }
 
             const badgePanel = document.getElementById('adminPendingBadgePanel');
             const badgeBtn = document.getElementById('btnAdminBadge');
             [badgePanel, badgeBtn].forEach(badge => {
                 if(badge) {
-                    if(pendingCount > 0) {
-                        badge.style.display = 'inline-block';
-                        badge.textContent = pendingCount;
-                    } else badge.style.display = 'none';
+                    if(pendingCount > 0) { badge.style.display = 'inline-block'; badge.textContent = pendingCount; }
+                    else badge.style.display = 'none';
                 }
             });
 
@@ -1841,7 +1752,7 @@
         if (newName && newName.trim() !== "" && newName !== currentName) {
             if(!window.FB_db) return;
             window.FB_set(window.FB_ref(window.FB_db, `auth_users/${deviceId}/name`), newName.trim())
-                .then(() => showAlert("Nom d'utilisateur mis à jour avec succès !", true));
+                .then(() => showAlert("Nom d'utilisateur mis à jour !", true));
         }
     }
 
@@ -1849,24 +1760,16 @@
         const list = document.getElementById('adminUsersList');
         if(!list) return;
         list.innerHTML = '';
-
         if(data && Object.keys(data).length > 0) {
-            const keys = Object.keys(data).sort((a,b) => {
-                const statA = data[a].status === 'pending' ? 0 : 1;
-                const statB = data[b].status === 'pending' ? 0 : 1;
-                return statA - statB;
-            });
-
+            const keys = Object.keys(data).sort((a,b) => (data[a].status === 'pending' ? 0 : 1) - (data[b].status === 'pending' ? 0 : 1));
             keys.forEach(deviceId => {
                 const u = data[deviceId];
                 const div = document.createElement('div');
                 let isPending = u.status === 'pending';
                 let bgBorder = isPending ? "background:#2e2203; border:1px solid #b45309;" : "background:#1f2937; border:1px solid var(--border);";
                 div.style.cssText = `${bgBorder} padding:10px; border-radius:6px; font-size:12px; margin-bottom:4px;`;
-                
                 let statusColor = u.status === 'approved' ? '#4ade80' : (u.status === 'blocked' ? '#fca5a5' : '#f59e0b');
                 let statusLabel = u.status === 'approved' ? 'Approuvé' : (u.status === 'blocked' ? 'Bloqué' : 'En attente');
-                
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                         <strong>👤 ${u.name}</strong>
@@ -1883,16 +1786,12 @@
                 `;
                 list.appendChild(div);
             });
-        } else {
-            list.innerHTML = '<div style="text-align:center; color:#9ca3af; font-size:12px;">Aucun utilisateur enregistré.</div>';
-        }
+        } else list.innerHTML = '<div style="text-align:center; color:#9ca3af; font-size:12px;">Aucun utilisateur enregistré.</div>';
     }
 
-    window.confirmBlockUser = function(deviceId, name) {
-        if(confirm(`Voulez-vous bloquer l'accès pour ${name} ?`)) setAdminUserStatus(deviceId, 'blocked');
-    }
+    window.confirmBlockUser = function(deviceId, name) { if(confirm(`Bloquer ${name} ?`)) setAdminUserStatus(deviceId, 'blocked'); }
     window.confirmDeleteUser = function(deviceId, name) {
-        if(confirm(`Voulez-vous supprimer le compte de ${name} ?`)) {
+        if(confirm(`Supprimer ${name} ?`)) {
             if(!window.FB_db) return;
             window.FB_remove(window.FB_ref(window.FB_db, `auth_users/${deviceId}`));
             showAlert(`Compte supprimé !`, true);
@@ -1901,7 +1800,7 @@
     window.setAdminUserStatus = function(deviceId, status) {
         if(!window.FB_db) return;
         window.FB_set(window.FB_ref(window.FB_db, `auth_users/${deviceId}/status`), status);
-        showAlert(`Statut mis à jour en : ${status}`, true);
+        showAlert(`Statut mis à jour : ${status}`, true);
     }
 
     const defaultDatabase = [
@@ -1920,10 +1819,7 @@
     function playPersistentAlarm() {
         if (localUser && localUser.role === "Responsable") return;
         if (appVolume === 0) return; 
-
-        if ("vibrate" in navigator) {
-            try { navigator.vibrate([400, 200, 400, 200, 600, 200, 600]); } catch(e) {}
-        }
+        if ("vibrate" in navigator) { try { navigator.vibrate([400, 200, 400, 200, 600, 200, 600]); } catch(e) {} }
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             for (let i = 0; i < 5; i++) {
@@ -1933,10 +1829,8 @@
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(660 + (i * 100), startTime);
                 gain.gain.setValueAtTime(0.4 * appVolume, startTime); 
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(startTime);
-                osc.stop(startTime + 0.2);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(startTime); osc.stop(startTime + 0.2);
             }
         } catch(e) {}
     }
@@ -1995,17 +1889,12 @@
         const btnList = document.getElementById('tabBtnList');
         const panelSingle = document.getElementById('stockSinglePanel');
         const panelList = document.getElementById('stockListPanel');
-
         if (mode === 'single') {
-            btnSingle.className = "stock-tab-btn active";
-            btnList.className = "stock-tab-btn";
-            panelSingle.style.display = "block";
-            panelList.style.display = "none";
+            btnSingle.className = "stock-tab-btn active"; btnList.className = "stock-tab-btn";
+            panelSingle.style.display = "block"; panelList.style.display = "none";
         } else {
-            btnSingle.className = "stock-tab-btn";
-            btnList.className = "stock-tab-btn active";
-            panelSingle.style.display = "none";
-            panelList.style.display = "block";
+            btnSingle.className = "stock-tab-btn"; btnList.className = "stock-tab-btn active";
+            panelSingle.style.display = "none"; panelList.style.display = "block";
         }
     }
 
@@ -2013,11 +1902,7 @@
     let initialLoadAlarm = true;
 
     function initFirebaseListeners() {
-        if (!window.FB_db) {
-            setTimeout(initFirebaseListeners, 1000);
-            return;
-        }
-
+        if (!window.FB_db) { setTimeout(initFirebaseListeners, 1000); return; }
         listenToAuthUsersGlobal();
         initPresenceListener(); 
 
@@ -2036,40 +1921,10 @@
             window.FB_onValue(myStatusRef, (snapshot) => {
                 const status = snapshot.val();
                 const isInApp = document.getElementById('mainContainer').style.display === 'block';
-                if (status === 'blocked' && isInApp) {
-                    alert("🚫 Cet appareil a été bloqué par l'administrateur !");
-                    logoutUserSession();
-                } else if (status === null && localUser && isInApp) {
-                    alert("🗑️ Votre compte a été supprimé du système.");
-                    localStorage.removeItem('central_app_user_account');
-                    localUser = null;
-                    logoutUserSession();
-                }
+                if (status === 'blocked' && isInApp) { alert("🚫 Appareil bloqué !"); logoutUserSession(); }
+                else if (status === null && localUser && isInApp) { alert("🗑️ Compte supprimé."); logoutUserSession(); }
             });
         }
-
-        const teinteurAlarmsRef = window.FB_ref(window.FB_db, 'teinteur_alarms');
-        window.FB_onValue(teinteurAlarmsRef, (snapshot) => {
-            const data = snapshot.val();
-            if(!data) return;
-            const keys = Object.keys(data);
-            const latestKey = keys[keys.length - 1];
-            const latestAlarm = data[latestKey];
-
-            if(initialLoadAlarm) {
-                lastProcessedAlarmId = latestKey;
-                initialLoadAlarm = false;
-                return;
-            }
-
-            if (latestKey !== lastProcessedAlarmId) {
-                lastProcessedAlarmId = latestKey;
-                if (localUser && localUser.role === 'Teinteur' && (Date.now() - latestAlarm.timestamp < 30000)) {
-                    playPersistentAlarm();
-                    showAlert(`❗ ALARME MAGASIN : ${latestAlarm.sender} a une commande !`, false);
-                }
-            }
-        });
 
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
@@ -2093,44 +1948,25 @@
                 let previousCount = stockRequestsList.length;
                 stockRequestsList = rawStock.filter(s => s.status === 'pending');
                 outOfStockList = rawStock.filter(s => s.status === 'out_of_stock');
-                
-                if (localUser && localUser.role === 'Magasinier' && stockRequestsList.length > previousCount && previousCount >= 0) {
-                    playPersistentAlarm();
-                }
-
-                rawStock.forEach(req => {
-                    if (req.status === 'completed' && req.author === (localUser ? localUser.name : '') && !completedStockNotified.includes(req.id)) {
-                        completedStockNotified.push(req.id);
-                        localStorage.setItem('central_completed_notified', JSON.stringify(completedStockNotified));
-                        playPersistentAlarm();
-                        showAlert(`✅ Commande validée par le magasinier !`, true);
-                        logDailyHistory(`✅ Stock réapprovisionné pour ${req.author}`);
-                    }
-                });
+                if (localUser && localUser.role === 'Magasinier' && stockRequestsList.length > previousCount && previousCount >= 0) playPersistentAlarm();
                 renderStockRequests();
                 renderOutOfStockRequests();
-            } else {
-                stockRequestsList = [];
-                outOfStockList = [];
-                renderStockRequests();
-                renderOutOfStockRequests();
-            }
+            } else { stockRequestsList = []; outOfStockList = []; renderStockRequests(); renderOutOfStockRequests(); }
         });
     }
 
+    // --- MODULE ERREURS DE TEINTE ---
     window.openErrorModal = function() {
         document.getElementById('errBrand').value = "";
         document.getElementById('errProductName').value = "";
         document.getElementById('errBase').innerHTML = '<option value="">Base</option>';
         document.getElementById('errBucketSize').innerHTML = '<option value="">Capacité (L / KG)</option>';
         document.getElementById('errQuantity').value = "1";
-        const todayStr = new Date().toISOString().split('T')[0];
-        document.getElementById('errDate').value = todayStr;
+        document.getElementById('errDate').value = new Date().toISOString().split('T')[0];
         document.getElementById('errReason').value = "";
         document.getElementById('errSignature').value = localUser ? localUser.name : "";
         document.getElementById('errorModal').style.display = 'flex';
     }
-
     window.closeErrorModal = function() { document.getElementById('errorModal').style.display = 'none'; }
 
     window.saveErrorRecord = function() {
@@ -2143,83 +1979,129 @@
         const reason = document.getElementById('errReason').value.trim();
         const signature = document.getElementById('errSignature').value.trim();
 
-        if (!brand || !bucket || !reason || !signature) {
-            alert("❌ Veuillez remplir la marque, la capacité, le motif et la signature !");
-            return;
-        }
-
-        if (!window.FB_db) { alert("Erreur Firebase."); return; }
+        if (!brand || !bucket || !reason || !signature) { alert("❌ Remplissez tous les champs obligatoires !"); return; }
+        if (!window.FB_db) return;
 
         const errsRef = window.FB_ref(window.FB_db, 'tint_errors');
         const newRef = window.FB_push(errsRef);
-
         const record = {
-            id: newRef.key,
-            brand: brand,
-            productName: prodName,
-            base: base,
-            bucketSize: bucket,
-            quantity: qty,
-            date: dateVal,
-            reason: reason,
-            signature: signature,
-            creatorDevice: getOrCreateDeviceId(),
-            creatorUser: localUser ? localUser.name : "Inconnu",
-            timestamp: Date.now()
+            id: newRef.key, brand, productName: prodName, base, bucketSize: bucket,
+            quantity: qty, date: dateVal, reason, signature,
+            creatorUser: localUser ? localUser.name : "Inconnu", timestamp: Date.now()
         };
 
         window.FB_set(newRef, record).then(() => {
-            showAlert("⚠️ Erreur de teinte enregistrée avec transparence !", true);
-            logDailyHistory(`⚠️ ${localUser.name} a déclaré une erreur de teinte (${brand} ${bucket})`);
+            showAlert("⚠️ Erreur enregistrée !", true);
+            logDailyHistory(`⚠️ ${localUser.name} a déclaré une erreur de teinte`);
             closeErrorModal();
         });
+    }
+
+    function renderMiniCalendar() {
+        const calContainer = document.getElementById('errorMiniCalendar');
+        if (!calContainer) return;
+        calContainer.innerHTML = '';
+
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+
+        // Set date map
+        let errorDatesMap = {};
+        errorRecordsList.forEach(item => { if (item.date) errorDatesMap[item.date] = true; });
+
+        let html = `
+            <div class="cal-header">
+                <span>📅 ${monthNames[month]} ${year}</span>
+                ${selectedErrorDateFilter ? `<span style="color:var(--accent); cursor:pointer;" onclick="resetDateFilter()">Effacer filtre</span>` : ''}
+            </div>
+            <div class="cal-grid">
+                <div class="cal-day-name">Lu</div><div class="cal-day-name">Ma</div><div class="cal-day-name">Me</div>
+                <div class="cal-day-name">Je</div><div class="cal-day-name">Ve</div><div class="cal-day-name">Sa</div><div class="cal-day-name">Di</div>
+        `;
+
+        let startDay = firstDay === 0 ? 6 : firstDay - 1; // Ajustement Lundi
+        for (let i = 0; i < startDay; i++) html += `<div></div>`;
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            let dStr = String(d).padStart(2, '0');
+            let mStr = String(month + 1).padStart(2, '0');
+            let fullDate = `${year}-${mStr}-${dStr}`;
+            let hasErr = errorDatesMap[fullDate] ? 'has-error' : '';
+            let isSel = selectedErrorDateFilter === fullDate ? 'selected' : '';
+
+            html += `<div class="cal-cell ${hasErr} ${isSel}" onclick="selectDateFilter('${fullDate}')">${d}</div>`;
+        }
+        html += `</div>`;
+        calContainer.innerHTML = html;
+    }
+
+    window.selectDateFilter = function(dateStr) {
+        selectedErrorDateFilter = selectedErrorDateFilter === dateStr ? null : dateStr;
+        renderMiniCalendar();
+        renderErrorRecords();
+    }
+
+    window.resetDateFilter = function() {
+        selectedErrorDateFilter = null;
+        renderMiniCalendar();
+        renderErrorRecords();
     }
 
     function renderErrorRecords() {
         const list = document.getElementById('errorRecordsList');
         const totalCountEl = document.getElementById('totalErrorsCount');
         const totalLitresEl = document.getElementById('totalErrorLitres');
+        const clearBtn = document.getElementById('clearDateFilterBtn');
+        const purgeBtn = document.getElementById('btnPurgeErrors');
         if (!list) return;
         list.innerHTML = '';
 
         const query = document.getElementById('errorSearchInput') ? document.getElementById('errorSearchInput').value.trim().toLowerCase() : '';
 
         const filtered = errorRecordsList.filter(item => {
+            if (selectedErrorDateFilter && item.date !== selectedErrorDateFilter) return false;
             if (!query) return true;
-            return item.signature.toLowerCase().includes(query) || item.creatorUser.toLowerCase().includes(query) || item.brand.toLowerCase().includes(query) || (item.productName && item.productName.toLowerCase().includes(query));
+            return item.signature.toLowerCase().includes(query) || item.creatorUser.toLowerCase().includes(query) || item.brand.toLowerCase().includes(query) || (item.productName && item.productName.toLowerCase().includes(query)) || item.date.includes(query);
         });
 
         totalCountEl.textContent = filtered.length;
         let totalVol = 0;
-        filtered.forEach(item => {
-            let numVal = parseFloat(item.bucketSize) || 1;
-            totalVol += (numVal * (item.quantity || 1));
-        });
+        errorRecordsList.forEach(item => { totalVol += (parseFloat(item.bucketSize) || 1) * (item.quantity || 1); });
         totalLitresEl.textContent = `${totalVol.toFixed(1)} L / KG`;
 
+        if (selectedErrorDateFilter || query) clearBtn.style.display = 'inline-block';
+        else clearBtn.style.display = 'none';
+
+        if (localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable') && errorRecordsList.length > 0) {
+            purgeBtn.style.display = 'inline-block';
+        } else purgeBtn.style.display = 'none';
+
         if (filtered.length === 0) {
-            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucun enregistrement d\'erreur trouvé.</div>';
+            list.innerHTML = '<div style="text-align:center; padding:15px; color:#9ca3af; font-size:12px;">Aucun enregistrement trouvé.</div>';
             return;
         }
 
         filtered.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
             const div = document.createElement('div');
-            div.style.cssText = "background:#1f2937; border:1px solid #7f1d1d; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
-            
-            let canDelete = localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable');
+            div.style.cssText = "background:#1a2234; border:1px solid #7f1d1d; border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px;";
             let dispBase = item.base ? `Base: ${item.base}, ` : '';
 
             div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="color:#fca5a5; font-weight:bold; font-size:13px;">⚠️ ${item.brand} ${item.productName ? '- ' + item.productName : ''}</span>
-                    <span style="color:#9ca3af; font-size:11px;">📅 ${item.date}</span>
+                <div style="flex:1;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                        <b style="color:#fca5a5;">⚠️ ${item.brand} ${item.productName ? '- ' + item.productName : ''}</b>
+                        <span style="color:#9ca3af; font-size:11px;">📅 ${item.date}</span>
+                    </div>
+                    <div style="color:#d1d5db; font-size:11px;">
+                        • ${dispBase}Capacité: <b>${item.bucketSize}</b> | Qté: <b>${item.quantity}</b><br>
+                        • <b>Motif :</b> ${item.reason} | <b>Auteur :</b> <span style="color:#60a5fa;">${item.signature}</span>
+                    </div>
                 </div>
-                <div style="font-size:12px; color:#d1d5db;">
-                    • ${dispBase}Capacité: <b>${item.bucketSize}</b> | Qté: <b>${item.quantity}</b><br>
-                    • <b>Motif :</b> ${item.reason}<br>
-                    • <b>Auteur (Signataire) :</b> <span style="color:#60a5fa;">${item.signature}</span> <span style="font-size:10px; color:#9ca3af;">(Créé par: ${item.creatorUser})</span>
-                </div>
-                ${canDelete ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:10px; align-self:flex-end; margin-top:4px; background-color:#7f1d1d;" onclick="deleteErrorRecord('${item.id}')">🗑️ Supprimer l'erreur (Bilan annuel)</button>` : ''}
+                ${localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable') ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:10px; min-width:auto; background-color:#7f1d1d;" onclick="deleteErrorRecord('${item.id}')">🗑️</button>` : ''}
             `;
             list.appendChild(div);
         });
@@ -2228,14 +2110,22 @@
     window.filterErrorRecords = function() { renderErrorRecords(); }
 
     window.deleteErrorRecord = function(id) {
-        if (confirm("Voulez-vous supprimer définitivement cet enregistrement d'erreur ?")) {
+        if (confirm("Supprimer cette erreur ?")) {
             if (!window.FB_db) return;
-            window.FB_remove(window.FB_ref(window.FB_db, `tint_errors/${id}`)).then(() => {
-                showAlert("🗑️ Enregistrement supprimé.", true);
+            window.FB_remove(window.FB_ref(window.FB_db, `tint_errors/${id}`)).then(() => showAlert("Supprimé !", true));
+        }
+    }
+
+    window.purgeAllErrors = function() {
+        if (confirm("⚠️ ATTENTION : Voulez-vous vraiment vider tout le stock et l'historique des erreurs de teinte ? Cette action est irréversible !")) {
+            if (!window.FB_db) return;
+            window.FB_remove(window.FB_ref(window.FB_db, 'tint_errors')).then(() => {
+                showAlert("🗑️ Le registre des erreurs a été entièrement vidé !", true);
             });
         }
     }
 
+    // --- MODULE TEINTES REVENDABLES ---
     window.openResaleModal = function() {
         document.getElementById('resBrand').value = "";
         document.getElementById('resProductName').value = "";
@@ -2245,7 +2135,6 @@
         document.getElementById('resQuantity').value = "1";
         document.getElementById('resaleModal').style.display = 'flex';
     }
-
     window.closeResaleModal = function() { document.getElementById('resaleModal').style.display = 'none'; }
 
     window.saveResaleRecord = function() {
@@ -2256,30 +2145,18 @@
         const bucket = document.getElementById('resBucketSize').value;
         const qty = parseInt(document.getElementById('resQuantity').value) || 1;
 
-        if (!brand || !colorCode || !bucket) {
-            alert("❌ Veuillez renseigner la marque, le code couleur et la capacité !");
-            return;
-        }
-
-        if (!window.FB_db) { alert("Erreur Firebase."); return; }
+        if (!brand || !colorCode || !bucket) { alert("❌ Renseignez la marque, le code et la capacité !"); return; }
+        if (!window.FB_db) return;
 
         const resaleRef = window.FB_ref(window.FB_db, 'tint_resales');
         const newRef = window.FB_push(resaleRef);
-
         const record = {
-            id: newRef.key,
-            brand: brand,
-            productName: prodName,
-            colorCode: colorCode,
-            base: base,
-            bucketSize: bucket,
-            quantity: qty,
-            addedBy: localUser ? localUser.name : "Inconnu",
-            timestamp: Date.now()
+            id: newRef.key, brand, productName: prodName, colorCode, base,
+            bucketSize: bucket, quantity: qty, addedBy: localUser ? localUser.name : "Inconnu", timestamp: Date.now()
         };
 
         window.FB_set(newRef, record).then(() => {
-            showAlert("✅ Teinte ajoutée au stock re-vendable !", true);
+            showAlert("✅ Ajouté au stock re-vendable !", true);
             logDailyHistory(`🔄 ${localUser.name} a ajouté une teinte re-vendable (${colorCode})`);
             closeResaleModal();
         });
@@ -2289,7 +2166,6 @@
         const list = document.getElementById('resaleRecordsList');
         if (!list) return;
         list.innerHTML = '';
-
         const query = document.getElementById('resaleSearchInput') ? document.getElementById('resaleSearchInput').value.trim().toLowerCase() : '';
 
         const filtered = resaleRecordsList.filter(item => {
@@ -2305,9 +2181,7 @@
         filtered.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
             const div = document.createElement('div');
             div.style.cssText = "background:#1f2937; border:1px solid #10b981; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
-            
             let dispBase = item.base ? `Base: ${item.base}, ` : '';
-
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="color:#34d399; font-weight:bold; font-size:14px;">🎨 Code : ${item.colorCode}</span>
@@ -2325,13 +2199,10 @@
     }
 
     window.filterResaleRecords = function() { renderResaleRecords(); }
-
     window.deleteResaleRecord = function(id) {
-        if (confirm("Voulez-vous supprimer cette teinte ?")) {
+        if (confirm("Supprimer cette teinte ?")) {
             if (!window.FB_db) return;
-            window.FB_remove(window.FB_ref(window.FB_db, `tint_resales/${id}`)).then(() => {
-                showAlert("🗑️ Retiré des teintes re-vendables.", true);
-            });
+            window.FB_remove(window.FB_ref(window.FB_db, `tint_resales/${id}`)).then(() => showAlert("Supprimé !", true));
         }
     }
 
@@ -2340,10 +2211,8 @@
 
     function updateCollabBadge() {
         const badge = document.getElementById('collabBadge');
-        if (pendingCollabUpdates.length > 0) {
-            badge.style.display = 'inline-block';
-            badge.textContent = pendingCollabUpdates.length;
-        } else badge.style.display = 'none';
+        if (pendingCollabUpdates.length > 0) { badge.style.display = 'inline-block'; badge.textContent = pendingCollabUpdates.length; }
+        else badge.style.display = 'none';
     }
 
     function renderCollabNotifications() {
@@ -2351,14 +2220,12 @@
         const acceptAllDiv = document.getElementById('acceptAllContainer');
         if (!list) return;
         list.innerHTML = '';
-
         if (pendingCollabUpdates.length === 0) {
             acceptAllDiv.style.display = 'none';
             list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>';
             return;
         }
         acceptAllDiv.style.display = 'block';
-
         pendingCollabUpdates.forEach(upd => {
             const div = document.createElement('div');
             div.style.cssText = "background:#111827; border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;";
@@ -2366,7 +2233,7 @@
             div.innerHTML = `
                 <div style="font-size:12px; color:#60a5fa; font-weight:bold;">👤 ${upd.author} a modifié ${upd.code} (${upd.palette})</div>
                 <div style="font-size:11px; color:#d1d5db;">Nouvelles bases : ${basesStr}</div>
-                <button class="btn btn-save" style="padding:6px; font-size:11px; margin-top:4px;" onclick="applySingleCollabUpdate('${upd.id}', '${upd.code}', '${upd.palette}', '${encodeURIComponent(JSON.stringify(upd.bases))}')">📥 Mettre à jour sur mon appareil</button>
+                <button class="btn btn-save" style="padding:6px; font-size:11px; margin-top:4px;" onclick="applySingleCollabUpdate('${upd.id}', '${upd.code}', '${upd.palette}', '${encodeURIComponent(JSON.stringify(upd.bases))}')">📥 Mettre à jour</button>
             `;
             list.appendChild(div);
         });
@@ -2375,10 +2242,7 @@
     window.applySingleCollabUpdate = function(updateId, code, palette, encodedBases) {
         const newBases = JSON.parse(decodeURIComponent(encodedBases));
         const itemIndex = customDatabase.findIndex(c => c.code === code && c.palette === palette);
-        if (itemIndex >= 0) {
-            customDatabase[itemIndex].bases = newBases;
-            saveToStorage(); filterColors(); filterDedicatedPalette();
-        }
+        if (itemIndex >= 0) { customDatabase[itemIndex].bases = newBases; saveToStorage(); filterColors(); filterDedicatedPalette(); }
         dismissedUpdateIds.push(updateId);
         localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
         pendingCollabUpdates = pendingCollabUpdates.filter(u => u.id !== updateId);
@@ -2399,7 +2263,7 @@
         pendingCollabUpdates = [];
         updateCollabBadge();
         renderCollabNotifications();
-        showAlert(`⚡ Toutes les modifications ont été appliquées !`, true);
+        showAlert(`⚡ Toutes les modifications appliquées !`, true);
         closeCollabModal();
     }
 
@@ -2415,7 +2279,6 @@
         document.getElementById('editBaseUnikalo').value = b.Unikalo || "";
         document.getElementById('editModalOverlay').style.display = 'flex';
     }
-
     window.closeEditModal = function() { document.getElementById('editModalOverlay').style.display = 'none'; }
 
     window.saveFullEdit = function() {
@@ -2430,7 +2293,7 @@
             customDatabase[index].bases = updatedBases;
             saveToStorage(); filterColors(); filterDedicatedPalette(); closeEditModal();
             broadcastBaseUpdate(customDatabase[index].code, customDatabase[index].palette, updatedBases);
-            showAlert(`Bases mises à jour et partagées !`, true);
+            showAlert(`Bases mises à jour !`, true);
         }
     }
 
@@ -2442,371 +2305,13 @@
         window.FB_set(newUpdateRef, { id: newUpdateRef.key, author: authorName, code: code, palette: palette, bases: newBases, timestamp: Date.now() });
     }
 
-    function updateTargetPaletteDropdown() {
-        const select = document.getElementById('targetPaletteSelect');
-        select.innerHTML = '';
-        const palettes = [...new Set(customDatabase.map(item => item.palette))];
-        if (palettes.length === 0) palettes.push("RAL", "5051", "NCS", "FLAMANT");
-        palettes.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p; opt.textContent = `Nuancier: ${p}`;
-            select.appendChild(opt);
-        });
-    }
-
-    window.saveSingleColorToFolder = function() {
-        const palette = (document.getElementById('targetPaletteSelect').value || "RAL").toUpperCase();
-        const code = document.getElementById('manageCode').value.trim().toUpperCase();
-        const hex = document.getElementById('manageHex').value.trim() || "#cbd5e1";
-        if (!code) { alert("Saisissez un code couleur !"); return; }
-        const existingIndex = customDatabase.findIndex(c => c.code === code && c.palette === palette);
-        const isDark = ["7016", "9005", "7021", "3020", "5010"].some(d => code.includes(d));
-        const defaultBases = isDark ? guideBasesData.fonce : guideBasesData.clair;
-        if (existingIndex >= 0) {
-            customDatabase[existingIndex].hex = hex;
-            showAlert(`Couleur ${code} mise à jour !`, true);
-        } else {
-            customDatabase.unshift({ code, palette, hex, bases: defaultBases });
-            showAlert(`Couleur ${code} ajoutée !`, true);
-        }
-        saveToStorage(); filterColors(); renderFoldersOverview(); filterDedicatedPalette(); document.getElementById('manageCode').value = '';
-    }
-
-    window.deleteSingleColorFromFolder = function() {
-        const palette = (document.getElementById('targetPaletteSelect').value || "RAL").toUpperCase();
-        const code = document.getElementById('manageCode').value.trim().toUpperCase();
-        if (!code) return;
-        const initialLength = customDatabase.length;
-        customDatabase = customDatabase.filter(c => !(c.code === code && c.palette === palette));
-        if (customDatabase.length < initialLength) {
-            saveToStorage(); filterColors(); renderFoldersOverview(); filterDedicatedPalette();
-            showAlert(`Couleur supprimée !`, true); document.getElementById('manageCode').value = '';
-        } else alert("Couleur non trouvée !");
-    }
-
-    window.removeDuplicateColors = function() {
-        const initialCount = customDatabase.length;
-        const uniqueMap = new Map();
-        customDatabase.forEach(item => {
-            const key = `${(item.palette || 'RAL').toUpperCase()}_${item.code.toUpperCase()}`;
-            if (!uniqueMap.has(key)) uniqueMap.set(key, item);
-        });
-        customDatabase = Array.from(uniqueMap.values());
-        const removed = initialCount - customDatabase.length;
-        saveToStorage(); filterColors(); renderFoldersOverview(); filterDedicatedPalette();
-        showAlert(`🧹 ${removed} doublons supprimés !`, true);
-    }
-
-    async function autoSyncPalettes() {
-        let addedCount = 0;
-        let tempDatabase = [];
-        for (let file of filesToSync) {
-            try {
-                const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${file}?v=${CURRENT_APP_VERSION}&t=${Date.now()}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    data.forEach(item => {
-                        if (item.code) {
-                            const exists = tempDatabase.some(c => c.code === item.code && c.palette === item.palette);
-                            if (!exists) { tempDatabase.push(item); addedCount++; }
-                        }
-                    });
-                }
-            } catch (e) {}
-        }
-        if (addedCount > 0) {
-            let merged = [...customDatabase]; 
-            tempDatabase.forEach(tempItem => {
-                const existingIndex = merged.findIndex(c => c.code === tempItem.code && c.palette === tempItem.palette);
-                if (existingIndex >= 0) merged[existingIndex] = tempItem; 
-                else merged.push(tempItem); 
-            });
-            customDatabase = merged; 
-            saveToStorage(); filterColors(); updateTargetPaletteDropdown();
-        }
-        renderFoldersOverview();
-    }
-
-    function populateGitFilesDropdown() {
-        const select = document.getElementById('gitExistingFilesSelect');
-        select.innerHTML = '<option value="NEW">-- 📝 Créer un Nouveau Fichier --</option>';
-        filesToSync.forEach(file => {
-            const opt = document.createElement('option');
-            opt.value = file; opt.textContent = `📁 Éditer: ${file}`;
-            select.appendChild(opt);
-        });
-    }
-
-    window.loadSelectedGitFile = async function() {
-        const fileName = document.getElementById('gitExistingFilesSelect').value;
-        if (fileName === "NEW") {
-            document.getElementById('syncFileName').value = '';
-            document.getElementById('syncFolderPalette').value = '';
-            document.getElementById('syncFileContent').value = '';
-            return;
-        }
-        showAlert(`⏳ Chargement de ${fileName}...`);
-        try {
-            const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${fileName}?t=${Date.now()}`);
-            if (res.ok) {
-                const data = await res.json();
-                document.getElementById('syncFileName').value = fileName;
-                document.getElementById('syncFolderPalette').value = data[0]?.palette || fileName.replace('.json','').toUpperCase();
-                document.getElementById('syncFileContent').value = JSON.stringify(data, null, 2);
-                showAlert(`✅ Fichier ${fileName} chargé.`, true);
-            }
-        } catch(e) { showAlert(`❌ Erreur réseau.`); }
-    }
-
-    window.uploadAndSyncNewPalette = async function() {
-        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
-        let fileName = document.getElementById('syncFileName').value.trim().toLowerCase();
-        let paletteName = document.getElementById('syncFolderPalette').value.trim().toUpperCase();
-        let content = document.getElementById('syncFileContent').value.trim();
-
-        if (!token || !fileName || !paletteName || !content) { showAlert("❌ Remplissez tous les champs !"); return; }
-        if (!fileName.endsWith('.json')) fileName += '.json';
-
-        try {
-            const parsed = JSON.parse(content);
-            parsed.forEach(item => { if (!item.palette) item.palette = paletteName; });
-            content = JSON.stringify(parsed, null, 2);
-        } catch(e) { showAlert("❌ JSON invalide !"); return; }
-
-        localStorage.setItem('central_github_token', token);
-        showAlert("⏳ Sauvegarde sur GitHub...");
-
-        try {
-            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${fileName}`;
-            let fileSha = "";
-            try {
-                const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
-                if (getRes.ok) fileSha = (await getRes.json()).sha;
-            } catch(e) {}
-
-            const putRes = await fetch(getUrl, {
-                method: "PUT",
-                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify({ message: `Update [${paletteName}]`, content: btoa(unescape(encodeURIComponent(content))), sha: fileSha })
-            });
-
-            if (putRes.ok) {
-                if (!filesToSync.includes(fileName)) {
-                    filesToSync.push(fileName);
-                    localStorage.setItem('central_synced_files', JSON.stringify(filesToSync));
-                    populateGitFilesDropdown(); 
-                }
-                showAlert(`✅ Fichier sauvegardé sur GitHub !`, true);
-                autoSyncPalettes();
-            }
-        } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
-    }
-
-    window.createSystemBackup = async function() {
-        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
-        if (!token) { showAlert("❌ Token GitHub manquant !"); return; }
-        showAlert("⏳ Création Backup...");
-        try {
-            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/backup_database.json`;
-            let fileSha = "";
-            try {
-                const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
-                if (getRes.ok) fileSha = (await getRes.json()).sha;
-            } catch(e) {}
-
-            const putRes = await fetch(getUrl, {
-                method: "PUT",
-                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify({ message: `Backup`, content: btoa(unescape(encodeURIComponent(JSON.stringify(customDatabase, null, 2)))), sha: fileSha })
-            });
-            if (putRes.ok) showAlert(`✅ Backup réussi sur GitHub !`, true);
-        } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
-    }
-
-    window.restoreSystemBackup = async function() {
-        if(!confirm("Êtes-vous sûr de vouloir restaurer la base de données ?")) return;
-        showAlert("⏳ Restauration en cours...");
-        try {
-            const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/backup_database.json?t=${Date.now()}`);
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.length > 0) {
-                    customDatabase = data;
-                    saveToStorage();
-                    filterColors();
-                    renderFoldersOverview();
-                    updateTargetPaletteDropdown();
-                    showAlert(`✅ Base de données restaurée avec succès (${data.length} couleurs) !`, true);
-                } else showAlert("❌ Le backup est vide.");
-            } else showAlert("❌ Fichier backup introuvable sur GitHub.");
-        } catch (err) { showAlert(`❌ Erreur réseau.`); }
-    }
-
-    function renderFoldersOverview() {
-        const listContainer = document.getElementById('foldersOverviewList');
-        if (!listContainer) return;
-        listContainer.innerHTML = '';
-        const grouped = {};
-        customDatabase.forEach(item => {
-            const p = item.palette || "RAL";
-            if (!grouped[p]) grouped[p] = 0;
-            grouped[p]++;
-        });
-        document.getElementById('mainNuancierCount').textContent = `${customDatabase.length} couleurs`;
-
-        Object.keys(grouped).sort().forEach(pName => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'folder-overview-item';
-            itemDiv.innerHTML = `<span style="font-weight:600; color:var(--primary);">📁 Nuancier : ${pName}</span><span class="palette-count">${grouped[pName]} teintes</span>`;
-            itemDiv.onclick = () => openDedicatedSearch(pName);
-            listContainer.appendChild(itemDiv);
-        });
-    }
-
-    let activePaletteFocus = null;
-    window.openDedicatedSearch = function(pName) {
-        activePaletteFocus = pName;
-        document.getElementById('mainNuancierContent').style.display = 'none';
-        document.getElementById('dedicatedSearchPanel').style.display = 'block';
-        document.getElementById('dedicatedSearchTitle').textContent = `Recherche dans : ${pName}`;
-        document.getElementById('dedicatedSearchInput').value = '';
-        filterDedicatedPalette();
-        document.getElementById('dedicatedSearchPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    window.closeDedicatedSearch = function() {
-        activePaletteFocus = null;
-        document.getElementById('dedicatedSearchPanel').style.display = 'none';
-        document.getElementById('mainNuancierContent').style.display = 'block';
-        if (activeVirtualInput) vClose();
-    }
-
-    window.filterDedicatedPalette = function() {
-        if (!activePaletteFocus) return;
-        const query = document.getElementById('dedicatedSearchInput').value.trim().toLowerCase();
-        const container = document.getElementById('dedicatedSearchResults');
-        container.innerHTML = '';
-
-        const filtered = customDatabase.filter(item => {
-            if ((item.palette || "RAL").toUpperCase() !== activePaletteFocus.toUpperCase()) return false;
-            if (!query) return true;
-            return item.code.toLowerCase().includes(query);
-        });
-
-        if (filtered.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
-            return;
-        }
-
-        filtered.forEach(item => {
-            const gIndex = customDatabase.indexOf(item);
-            const card = document.createElement('div');
-            card.className = 'card';
-            let brandsHtml = '';
-            if (item.bases) {
-                Object.keys(item.bases).forEach(bName => {
-                    brandsHtml += `<div class="brand-badge">${bName}: <span>${item.bases[bName]}</span></div>`;
-                });
-            }
-            card.innerHTML = `
-                <div class="card-header">
-                    <div class="card-title-zone">
-                        <div class="color-swatch-btn" style="background-color: ${item.hex || '#cbd5e1'};"></div>
-                        <div class="color-code">${item.code}</div>
-                    </div>
-                    <button class="btn-edit" onclick="openFullEdit(${gIndex})">✏️ Bases</button>
-                </div>
-                <div class="brands-grid">${brandsHtml}</div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    let searchTimeout = null;
-    window.debouncedFilterColors = function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => filterColors(), 150);
-    }
-
-    function filterColors() {
-        const query = document.getElementById('searchInput').value.trim().toLowerCase();
-        const container = document.getElementById('resultsList');
-        const label = document.getElementById('resultsLabel');
-        container.innerHTML = '';
-
-        const queryTokens = query.split(/\s+/).filter(t => t);
-        if (queryTokens.length === 0) { label.style.display = 'none'; container.style.display = 'none'; return; }
-
-        label.style.display = 'block'; container.style.display = 'block';
-
-        const filtered = customDatabase.filter(item => {
-            const code = item.code.toLowerCase();
-            const pal = (item.palette || "RAL").toLowerCase();
-            return queryTokens.every(token => code.includes(token) || pal.includes(token));
-        });
-
-        if (filtered.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af;">Aucune couleur trouvée.</div>';
-            return;
-        }
-
-        const grouped = {};
-        filtered.forEach(item => {
-            const p = item.palette || "RAL";
-            if (!grouped[p]) grouped[p] = [];
-            grouped[p].push(item);
-        });
-
-        let renderedCount = 0;
-        const maxDisplay = 50; 
-
-        Object.keys(grouped).sort().forEach(pName => {
-            if (renderedCount >= maxDisplay) return;
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'palette-group';
-            const header = document.createElement('div');
-            header.className = 'palette-header';
-            header.innerHTML = `<span>📁 Nuancier : ${pName}</span><span class="palette-count">${grouped[pName].length} teintes</span>`;
-            
-            const content = document.createElement('div');
-            content.className = 'palette-content';
-            content.style.display = 'block';
-
-            grouped[pName].forEach(item => {
-                if (renderedCount >= maxDisplay) return;
-                renderedCount++;
-                const gIndex = customDatabase.indexOf(item);
-                const card = document.createElement('div');
-                card.className = 'card';
-                let brandsHtml = '';
-                if (item.bases) {
-                    Object.keys(item.bases).forEach(bName => {
-                        brandsHtml += `<div class="brand-badge">${bName}: <span>${item.bases[bName]}</span></div>`;
-                    });
-                }
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-title-zone">
-                            <div class="color-swatch-btn" style="background-color: ${item.hex || '#cbd5e1'};"></div>
-                            <div class="color-code">${item.code}</div>
-                        </div>
-                        <button class="btn-edit" onclick="openFullEdit(${gIndex})">✏️ Bases</button>
-                    </div>
-                    <div class="brands-grid">${brandsHtml}</div>
-                `;
-                content.appendChild(card);
-            });
-            groupDiv.appendChild(header); groupDiv.appendChild(content); container.appendChild(groupDiv);
-        });
-    }
-
     window.publishToGithub = async function() {
         let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
         let newCode = document.getElementById('sourceCodeInput').value.trim();
         const newVer = document.getElementById('newVersionInput').value.trim();
         const newChangelog = document.getElementById('newChangelogInput').value.trim();
 
-        if (!token || !newCode) { showAlert("❌ Remplissez le Token et le code source !"); return; }
+        if (!token || !newCode) { showAlert("❌ Remplissez le Token !"); return; }
         localStorage.setItem('central_github_token', token);
         showAlert("⏳ Publication...");
 
@@ -2828,11 +2333,7 @@
             });
 
             if (putRes.ok) {
-                window.FB_set(window.FB_ref(window.FB_db, 'system/version'), {
-                    version: newVer,
-                    changelog: newChangelog,
-                    timestamp: Date.now()
-                });
+                window.FB_set(window.FB_ref(window.FB_db, 'system/version'), { version: newVer, changelog: newChangelog, timestamp: Date.now() });
                 showAlert("✅ Mise à jour publiée !", true);
                 localStorage.setItem('pending_update_notification', newChangelog);
                 setTimeout(() => forceCleanReload(), 2000);
@@ -2841,9 +2342,7 @@
     }
 
     window.clearSystemCache = function() {
-        if(confirm("Voulez-vous vider le cache et rafraîchir ?")) {
-            localStorage.clear(); sessionStorage.clear(); window.location.reload(true);
-        }
+        if(confirm("Vider le cache ?")) { localStorage.clear(); sessionStorage.clear(); window.location.reload(true); }
     }
 
     function showAlert(msg, isSuccess = false) {
