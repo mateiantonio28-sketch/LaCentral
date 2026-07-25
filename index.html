@@ -1727,6 +1727,18 @@
     window.showSectionSelector = function() {
         if(document.activeElement) document.activeElement.blur(); 
         updateAlarmButtonVisibility();
+        
+        if (localUser) {
+            const role = localUser.role;
+            const bStock = document.getElementById('btnSecStock');
+            
+            if (bStock) {
+                bStock.style.display = 'block'; 
+                if (role === 'Vendeur' || role === 'Teinteur') {
+                    bStock.style.display = 'none';
+                }
+            }
+        }
         document.getElementById('sectionSelectorModal').style.display = 'flex';
     }
 
