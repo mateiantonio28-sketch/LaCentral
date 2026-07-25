@@ -326,12 +326,6 @@
         .vk-key.vk-shift { flex: 1.5; font-size: 11px; background: #475569; }
         .vk-key.vk-shift.active { background: var(--accent); }
 
-        #forcedUpdateModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
-            z-index: 9999999; align-items: center; justify-content: center; padding: 16px;
-        }
-
         /* Style Fișe Teinteur */
         .job-card {
             background: #1f2937; border: 1px solid var(--border); border-left: 5px solid var(--warning); 
@@ -340,12 +334,22 @@
         .job-card.in_progress { border-left-color: var(--accent); background: #1a2234; }
         .job-card.completed { border-left-color: var(--success); opacity: 0.8; }
         .job-timer { font-family: monospace; font-size: 16px; font-weight: bold; color: var(--accent); background: #111827; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+
+        /* Style Live Tracker Box */
+        .live-tracker-item {
+            background: #1f2937; border: 1px solid var(--border); border-radius: 8px; 
+            padding: 12px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .live-tracker-item.pending { border-left: 5px solid #f59e0b; }
+        .live-tracker-item.progress { border-left: 5px solid var(--accent); background: #1a2234; }
+        .live-tracker-item.done { border-left: 5px solid var(--success); background: #064e3b; }
     </style>
 </head>
 <body>
 
 <div id="userLockScreen" class="lock-screen">
-    <!-- NOU: Buton PC/Tactile direct pe ecranul de logare -->
+    <!-- Buton PC/Tactile direct pe ecranul de logare -->
     <div style="position: absolute; top: 20px; right: 20px; z-index: 1000000;">
         <button onclick="toggleComputerMode()" id="loginBtnComputerMode" style="background:#1f2937; border:1px solid var(--border); color:#fff; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:bold; cursor:pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">📱 Tactile</button>
     </div>
@@ -434,7 +438,7 @@
         </div>
     </div>
 
-    <div class="header" style="margin-top: 0;">
+    <div class="header" style="margin-top: 0; padding-bottom: 10px; margin-bottom: 12px; border-bottom: none;">
         <h1 id="appHeaderTitle">Vérifie les Bases</h1>
         <p id="appHeaderSubtitle">Système de Recherche de Couleurs & Bases Techniques</p>
         
@@ -456,6 +460,10 @@
                 <button class="btn-logout" onclick="confirmLogout()">Déconnexion</button>
             </div>
         </div>
+    </div>
+
+    <!-- TRACKER COMMANDES EN DIRECT -->
+    <div id="liveJobsContainer" style="display:none; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border);">
     </div>
 
     <!-- SECTION BASES -->
@@ -583,7 +591,7 @@
         </div>
     </div>
 
-    <!-- SECTION TEINTES REVENDABLES (HAUT) -->
+    <!-- SECTION TEINTES REVENDABLES -->
     <div id="sectionRevendablesContent" style="display: none;">
         <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
@@ -593,7 +601,6 @@
             <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#10b981;" onclick="toggleResaleForm()">➕ Ajouter une Teinte</button>
         </div>
 
-        <!-- FORMULAIRE INTÉGRÉ RE-VENDABLE -->
         <div id="resaleFormPanel" class="panel" style="border-color: #10b981; display: none;">
             <h3 style="color:#10b981; margin-bottom:14px;">➕ Ajouter une Teinte Re-vendable</h3>
             
@@ -646,7 +653,7 @@
         </div>
     </div>
 
-    <!-- SECTION ERREURS DE TEINTE (BAS) AVEC CALENDRIER ET BOUTON EXPORT -->
+    <!-- SECTION ERREURS DE TEINTE -->
     <div id="sectionErreursContent" style="display: none;">
         <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
@@ -660,7 +667,6 @@
             </div>
         </div>
 
-        <!-- FORMULAIRE INTÉGRÉ ERREUR DE TEINTE -->
         <div id="errorFormPanel" class="panel" style="border-color: #ef4444; display: none;">
             <h3 style="color:#ef4444; margin-bottom:14px;">⚠️ Déclarer une Erreur de Teinte</h3>
             
@@ -712,7 +718,6 @@
             </div>
         </div>
 
-        <!-- CALENDRIER INTERACTIF -->
         <div class="mini-calendar" id="errorMiniCalendar"></div>
 
         <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
@@ -838,10 +843,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.18" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.19" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.18 : Système Teinteur avec Timer, réparation catalogues et bouton mode PC au démarrage.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.19 : Tracker de Commandes en Direct (Kanban) avec auto-nettoyage à 5 minutes.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -864,7 +869,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.18</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.19</span></div>
     </div>
 </div>
 
@@ -1015,7 +1020,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.18"; 
+    const CURRENT_APP_VERSION = "v1.19"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -1049,7 +1054,8 @@
     let errorRecordsList = [];
     let resaleRecordsList = [];
     let selectedErrorDateFilter = null;
-    let activeTeinteurJobs = []; // NOU
+    let activeTeinteurJobs = []; 
+    let notifiedTeinteurJobs = JSON.parse(localStorage.getItem('central_notified_teinteur_jobs')) || [];
 
     let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
 
@@ -1222,7 +1228,6 @@
     }
     renderVkRows();
 
-    // FUNCTIONALITATE NOUĂ: Închidere tastatură inteligentă (Swipe & Click outside)
     document.addEventListener('click', function(e) {
         if (!isComputerMode && activeVirtualInput) {
             const vk = document.getElementById('virtualKeyboard');
@@ -1239,7 +1244,7 @@
     
     document.getElementById('virtualKeyboard').addEventListener('touchmove', e => {
         let touchEndY = e.touches[0].clientY;
-        if (touchEndY - vkTouchStartY > 40) vClose(); // Detectare glisare în jos
+        if (touchEndY - vkTouchStartY > 40) vClose(); 
     }, {passive: true});
 
     window.openVirtualKeyboard = function(inputEl) {
@@ -1543,7 +1548,8 @@
 
     function startRealTimeClock() {
         setInterval(() => {
-            const now = new Date();
+            const nowTime = Date.now();
+            const now = new Date(nowTime);
             const day = String(now.getDate()).padStart(2, '0');
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const year = now.getFullYear();
@@ -1554,12 +1560,26 @@
             if (dateEl) dateEl.textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
             checkDailyHistoryReset(now);
-            updateTeinteurJobTimers(now.getTime()); // Update noul timer de la Teinteur
+            updateTeinteurJobTimers(nowTime); 
+
+            // Auto-clean completate din baza de date dupa 5 min
+            if (activeTeinteurJobs.length > 0 && window.FB_db) {
+                activeTeinteurJobs.forEach(job => {
+                    if (job.status === 'completed' && job.endTime) {
+                        if (nowTime - job.endTime >= 300000) { 
+                            if (localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable' || localUser.name === job.teinteur)) {
+                                window.FB_remove(window.FB_ref(window.FB_db, `teinteur_jobs/${job.id}`));
+                            }
+                        }
+                    }
+                });
+                renderLiveJobsTracker(); 
+            }
 
             if (document.getElementById('mainContainer').style.display === 'block') {
                 let expiry = localStorage.getItem('user_session_expiry');
                 if (expiry) {
-                    const remaining = parseInt(expiry, 10) - Date.now();
+                    const remaining = parseInt(expiry, 10) - nowTime;
                     const timerSpan = document.getElementById('sessionCountdown');
                     if (remaining <= 0) {
                         timerSpan.textContent = "00:00:00";
@@ -1592,6 +1612,55 @@
                 el.textContent = `${m}:${s}`;
             }
         });
+    }
+
+    // NOU: RENDER LIVE TRACKER COMMANDES
+    window.renderLiveJobsTracker = function() {
+        const container = document.getElementById('liveJobsContainer');
+        if (!container) return;
+
+        if (!localUser || !['Vendeur', 'Responsable', 'Master Admin'].includes(localUser.role)) {
+            container.style.display = 'none';
+            return;
+        }
+
+        let html = '';
+        let hasVisibleJobs = false;
+
+        activeTeinteurJobs.sort((a,b) => b.timestamp - a.timestamp).forEach(job => {
+            // Dacă e mai veche de 5 minute finalizată, e ascunsă deja așteptând să fie ștearsă
+            if (job.status === 'completed' && job.endTime && (Date.now() - job.endTime >= 300000)) return;
+
+            hasVisibleJobs = true;
+            let timeStr = new Date(job.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let itemClass = '';
+            let statusHtml = '';
+
+            if (job.status === 'pending') {
+                itemClass = 'pending';
+                statusHtml = `⏳ Commande de <b>${job.sender}</b> - En attente`;
+            } else if (job.status === 'in_progress') {
+                itemClass = 'progress';
+                statusHtml = `🔵 Commande de <b>${job.sender}</b> - En préparation par <b>${job.teinteur}</b>`;
+            } else if (job.status === 'completed') {
+                itemClass = 'done';
+                statusHtml = `✅ Commande de <b>${job.sender}</b> finalisée par <b>${job.teinteur}</b> !`;
+            }
+
+            html += `
+                <div class="live-tracker-item ${itemClass}">
+                    <div>${statusHtml}</div>
+                    <div style="font-size:10px; color:#9ca3af;">${timeStr}</div>
+                </div>
+            `;
+        });
+
+        if (hasVisibleJobs) {
+            container.innerHTML = `<h4 style="margin:0 0 10px 0; color:#60a5fa; font-size:12px; text-transform:uppercase;">📡 Tracker de Commandes en Direct</h4>` + html;
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
     }
 
     function checkAndShowChangelog() {
@@ -1991,7 +2060,6 @@
     }
     window.playPersistentAlarm = playPersistentAlarm;
 
-    // NOU: FUNCTIE ALARMA TEINTEUR REVIZUITĂ
     window.triggerTeinteurAlarm = function() {
         if (!window.FB_db) return;
         const ref = window.FB_ref(window.FB_db, 'teinteur_jobs');
@@ -2084,7 +2152,6 @@
             });
         }
 
-        // NOU: ASCULTĂTOR FIȘE TEINTEUR
         const tJobsRef = window.FB_ref(window.FB_db, 'teinteur_jobs');
         window.FB_onValue(tJobsRef, (snapshot) => {
             const data = snapshot.val();
@@ -2097,8 +2164,6 @@
                     pendingCount++;
                     if (!latestPending || job.timestamp > latestPending.timestamp) latestPending = job;
                 }
-                
-                // Dacă sunt Vendeur și comanda mea a fost finalizată:
                 if (job.status === 'completed' && job.sender === (localUser ? localUser.name : '') && !notifiedTeinteurJobs.includes(job.id)) {
                     notifiedTeinteurJobs.push(job.id);
                     localStorage.setItem('central_notified_teinteur_jobs', JSON.stringify(notifiedTeinteurJobs));
@@ -2113,7 +2178,6 @@
                 else badge.style.display = 'none';
             }
 
-            // Alarma doar pentru Teinteur la comenzi noi
             if (localUser && (localUser.role === 'Teinteur' || localUser.role === 'Responsable')) {
                 if (latestPending && latestPending.id !== lastProcessedPendingJobId && (Date.now() - latestPending.timestamp < 30000)) {
                     lastProcessedPendingJobId = latestPending.id;
@@ -2121,8 +2185,8 @@
                     showAlert(`🚨 ${latestPending.sender} a envoyé une fiche !`, false);
                 }
             }
-
             renderTeinteurJobs();
+            renderLiveJobsTracker();
         });
 
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
@@ -2154,7 +2218,6 @@
         });
     }
 
-    // --- LOGICĂ FICHES TEINTEUR ---
     window.openTeinteurJobsModal = function() {
         document.getElementById('teinteurJobsModal').style.display = 'flex';
         renderTeinteurJobs();
@@ -2221,9 +2284,56 @@
     window.finishTeinteurJob = function(jobId) {
         if (!window.FB_db) return;
         window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/status`), 'completed');
+        window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/endTime`), Date.now());
     }
 
-    // --- ENVOI COMMANDES ---
+    window.renderLiveJobsTracker = function() {
+        const container = document.getElementById('liveJobsContainer');
+        if (!container) return;
+
+        if (!localUser || !['Vendeur', 'Responsable', 'Master Admin'].includes(localUser.role)) {
+            container.style.display = 'none';
+            return;
+        }
+
+        let html = '';
+        let hasVisibleJobs = false;
+
+        activeTeinteurJobs.sort((a,b) => b.timestamp - a.timestamp).forEach(job => {
+            if (job.status === 'completed' && job.endTime && (Date.now() - job.endTime >= 300000)) return;
+
+            hasVisibleJobs = true;
+            let timeStr = new Date(job.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let itemClass = '';
+            let statusHtml = '';
+
+            if (job.status === 'pending') {
+                itemClass = 'pending';
+                statusHtml = `⏳ Commande de <b>${job.sender}</b> - En attente`;
+            } else if (job.status === 'in_progress') {
+                itemClass = 'progress';
+                statusHtml = `🔵 Commande de <b>${job.sender}</b> - En préparation par <b>${job.teinteur}</b>`;
+            } else if (job.status === 'completed') {
+                itemClass = 'done';
+                statusHtml = `✅ Commande de <b>${job.sender}</b> finalisée par <b>${job.teinteur}</b> !`;
+            }
+
+            html += `
+                <div class="live-tracker-item ${itemClass}">
+                    <div>${statusHtml}</div>
+                    <div style="font-size:10px; color:#9ca3af;">${timeStr}</div>
+                </div>
+            `;
+        });
+
+        if (hasVisibleJobs) {
+            container.innerHTML = `<h4 style="margin:0 0 10px 0; color:#60a5fa; font-size:12px; text-transform:uppercase;">📡 Tracker de Commandes en Direct</h4>` + html;
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
     window.sendSingleStockRequest = function() {
         const brand = document.getElementById('singleBrand').value;
         const prodName = document.getElementById('singleProductName').value.trim();
@@ -2412,7 +2522,6 @@
         window.FB_set(window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`), 'completed').then(() => showAlert("✅ Stock validé !", true));
     }
 
-    // --- FORMULAIRES INTÉGRÉS DIRECTS (REMPLACANT LES POP-UPS) ---
     window.toggleErrorForm = function() {
         const panel = document.getElementById('errorFormPanel');
         if (panel.style.display === 'block') {
@@ -2867,7 +2976,7 @@
         
         for (let file of filesToSync) {
             try {
-                // Fetch forté sans cache
+                // Fetch forțat fără cache pentru a descărca cele 6000 de culori noi
                 const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${file}?v=${CURRENT_APP_VERSION}&t=${Date.now()}`, { cache: "no-store" });
                 if (res.ok) {
                     const data = await res.json();
@@ -2886,7 +2995,7 @@
             tempDatabase.forEach(tempItem => {
                 const existingIndex = merged.findIndex(c => c.code.toUpperCase() === tempItem.code.toUpperCase() && c.palette.toUpperCase() === tempItem.palette.toUpperCase());
                 if (existingIndex >= 0) {
-                    // Actualizăm doar culoarea HEX, NU suprascriem bazele setate manual de utilizatori!
+                    // Actualizăm culoarea HEX și numele, dar protejăm manual bazele dacă au fost modificate
                     merged[existingIndex].hex = tempItem.hex || merged[existingIndex].hex;
                 } else merged.push(tempItem); 
             });
@@ -2941,10 +3050,10 @@
     renderGuideTable();
     startRealTimeClock();
     checkActiveSession();
-    renderFoldersOverview(); // Fortare randare rapida a bazei locale de 6000 de culori
+    renderFoldersOverview(); 
     filterColors();
     applyComputerMode();
-    autoSyncPalettes(); // Cauta actualizari din sursa externa in fundal
+    autoSyncPalettes(); 
 </script>
 
 </body>
