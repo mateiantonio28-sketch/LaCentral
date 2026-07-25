@@ -2227,15 +2227,15 @@
             }
 
             let statusHtml = isPending 
-                ? `<span style="color:#f59e0b; font-weight:bold;">En attente</span>` 
+                ? `<span style="color:#f59e0b; font-weight:bold; text-align:right;">En attente<br><span class="teinteur-job-timer" data-start-time="${job.timestamp}" style="font-size:11px; color:#9ca3af; font-weight:normal;">00:00</span></span>` 
                 : `<span style="color:var(--accent); font-weight:bold;">Prise en charge</span>`;
                 
             let timerHtml = isPending 
-                ? '' 
+                ? '<div></div>' 
                 : `<div class="job-timer teinteur-job-timer" data-start-time="${job.startTime}">00:00</div>`;
 
             div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <span style="font-size:14px; font-weight:bold; color:#fff;">Fiche de: <span style="color:#60a5fa;">${job.sender}</span></span>
                     ${statusHtml}
                 </div>
