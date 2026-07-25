@@ -987,7 +987,7 @@
     </div>
 </div>
 
-<!-- CLAVIER VIRTUEL AZERTY STANDARD -->
+<!-- CLAVIER VIRTUEL AZERTY ALL-CAPS FIXE -->
 <div class="virtual-keyboard" id="virtualKeyboard">
     <div class="vk-row">
         <div class="vk-key" onclick="vKey('1', this)">1</div>
@@ -1001,22 +1001,25 @@
         <div class="vk-key" onclick="vKey('9', this)">9</div>
         <div class="vk-key" onclick="vKey('0', this)">0</div>
     </div>
-    <div class="vk-row" id="vkRow1"></div>
-    <div class="vk-row" id="vkRow2"></div>
-    <div class="vk-row" id="vkRow3"></div>
     <div class="vk-row">
-        <div class="vk-key vk-shift" id="vkShiftBtn" onclick="toggleShift()">CAPS</div>
-        <div class="vk-key" onclick="vKey('-', this)">-</div>
-        <div class="vk-key" onclick="vKey('.', this)">.</div>
-        <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
+        <div class="vk-key" onclick="vKey('A', this)">A</div><div class="vk-key" onclick="vKey('Z', this)">Z</div><div class="vk-key" onclick="vKey('E', this)">E</div><div class="vk-key" onclick="vKey('R', this)">R</div><div class="vk-key" onclick="vKey('T', this)">T</div><div class="vk-key" onclick="vKey('Y', this)">Y</div><div class="vk-key" onclick="vKey('U', this)">U</div><div class="vk-key" onclick="vKey('I', this)">I</div><div class="vk-key" onclick="vKey('O', this)">O</div><div class="vk-key" onclick="vKey('P', this)">P</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('Q', this)">Q</div><div class="vk-key" onclick="vKey('S', this)">S</div><div class="vk-key" onclick="vKey('D', this)">D</div><div class="vk-key" onclick="vKey('F', this)">F</div><div class="vk-key" onclick="vKey('G', this)">G</div><div class="vk-key" onclick="vKey('H', this)">H</div><div class="vk-key" onclick="vKey('J', this)">J</div><div class="vk-key" onclick="vKey('K', this)">K</div><div class="vk-key" onclick="vKey('L', this)">L</div><div class="vk-key" onclick="vKey('M', this)">M</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" style="visibility:hidden; flex:1;"></div>
+        <div class="vk-key" onclick="vKey('W', this)">W</div><div class="vk-key" onclick="vKey('X', this)">X</div><div class="vk-key" onclick="vKey('C', this)">C</div><div class="vk-key" onclick="vKey('V', this)">V</div><div class="vk-key" onclick="vKey('B', this)">B</div><div class="vk-key" onclick="vKey('N', this)">N</div><div class="vk-key" onclick="vKey('\'', this)">'</div>
         <div class="vk-key vk-wide" 
-             onmousedown="startVDel(this, event)" 
-             onmouseup="stopVDel(event)" 
-             onmouseleave="stopVDel(event)" 
-             ontouchstart="startVDel(this, event)" 
-             ontouchend="stopVDel(event)" 
-             ontouchcancel="stopVDel(event)">⌫</div>
-        <div class="vk-key vk-close" onclick="vClose()">✕</div>
+             onmousedown="startVDel(this, event)" onmouseup="stopVDel(event)" onmouseleave="stopVDel(event)" 
+             ontouchstart="startVDel(this, event)" ontouchend="stopVDel(event)" ontouchcancel="stopVDel(event)">⌫</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" style="visibility:hidden; flex:1.5;"></div>
+        <div class="vk-key" onclick="vKey(',', this)">,</div>
+        <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
+        <div class="vk-key" onclick="vKey('.', this)">.</div>
+        <div class="vk-key vk-close" onclick="vClose()" style="flex:1.5; background:#10b981;">↵</div>
     </div>
 </div>
 
