@@ -2821,41 +2821,7 @@
         window.FB_set(newUpdateRef, { id: newUpdateRef.key, author: authorName, code: code, palette: palette, bases: newBases, timestamp: Date.now() });
     }
 
-    window.publishToGithub = async function() {
-        let token = document.getElementById('ghTokenInput').value.trim() || getSavedToken();
-        let newCode = document.getElementById('sourceCodeInput').value.trim();
-        const newVer = document.getElementById('newVersionInput').value.trim();
-        const newChangelog = document.getElementById('newChangelogInput').value.trim();
-
-        if (!token || !newCode) { showAlert("❌ Remplissez le Token !"); return; }
-        localStorage.setItem('central_github_token', token);
-        showAlert("⏳ Publication...");
-
-        try {
-            const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
-            const getRes = await fetch(getUrl, { headers: { "Authorization": `token ${token}` } });
-            if (!getRes.ok) throw new Error("Accès refusé.");
-            const getData = await getRes.json();
-            
-            if (newVer) {
-                newCode = newCode.replace(/const CURRENT_APP_VERSION = ".*?"/, `const CURRENT_APP_VERSION = "${newVer}"`);
-                newCode = newCode.replace(/Version <span id="footerVersionText">.*?<\/span>/, `Version <span id="footerVersionText">${newVer}</span>`);
-            }
-
-            const putRes = await fetch(getUrl, {
-                method: "PUT",
-                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify({ message: `Update ${newVer}`, content: btoa(unescape(encodeURIComponent(newCode))), sha: getData.sha })
-            });
-
-            if (putRes.ok) {
-                window.FB_set(window.FB_ref(window.FB_db, 'system/version'), { version: newVer, changelog: newChangelog, timestamp: Date.now() });
-                showAlert("✅ Mise à jour publiée !", true);
-                localStorage.setItem('pending_update_notification', newChangelog);
-                setTimeout(() => forceCleanReload(), 2000);
-            }
-        } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
-    }
+    
 
     async function autoSyncPalettes() {
         let addedCount = 0;
