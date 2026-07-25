@@ -217,7 +217,7 @@
             width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border);
             border-radius: 6px; font-size: 13px; background: #111827; color: #fff;
         }
-        .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 12px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; text-align: center; display: block; margin-top: 12px; }
 
         #authPanel {
             position: fixed; top: 15vh; left: 50%; transform: translateX(-50%);
@@ -245,12 +245,12 @@
         }
         .modal-content {
             background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
-            width: 100%; max-width: 480px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%; max-width: 480px; padding: 22px; box-shadow: 0 15px 35px rgba(0,0,0,0.7);
             max-height: 90vh; overflow-y: auto;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-        .modal-header h3 { margin: 0; font-size: 15px; color: var(--primary); text-transform: uppercase; }
-        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .modal-header h3 { margin: 0; font-size: 16px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 20px; font-weight: bold; cursor: pointer; }
 
         .palette-group { margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: var(--panel-bg); border: 1px solid var(--border); }
         .palette-header { padding: 10px 14px; background-color: #374151; color: var(--primary); font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -320,7 +320,6 @@
         <h2>La Centrale ProShop</h2>
         <p id="lockSubtitle">Connexion Utilisateur</p>
         
-        <!-- Câmpurile corectate pentru a afișa normal tastatura nativă -->
         <input type="text" id="regUser" placeholder="Nom d'utilisateur" onkeydown="checkLoginEnter(event)">
         <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" onkeydown="checkLoginEnter(event)">
         
@@ -364,8 +363,8 @@
         <p style="font-size:13px; color:#9ca3af; margin-bottom:16px;">Sélectionnez l'activité pour cette session :</p>
         <button class="section-btn" onclick="selectAppSection('Bases')">🎨 Consulter les bases</button>
         <button class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Passer commande interne</button>
-        <button class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:#b91c1c;">⚠️ Erreurs de Teinte</button>
         <button class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:#059669;">🔄 Teintes Re-vendables</button>
+        <button class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:#b91c1c;">⚠️ Erreurs de Teinte</button>
         
         <button id="btnTeinteurAlarm" class="section-btn" style="background-color: var(--danger); display: none; margin-top: 10px; border: 2px solid #7f1d1d;" onclick="triggerTeinteurAlarm()">❗ ALARME TEINTEUR</button>
     </div>
@@ -531,11 +530,31 @@
         </div>
     </div>
 
-    <!-- SECTION ERREURS DE TEINTE -->
+    <!-- SECTION TEINTES REVENDABLES (MUTÉE EN HAUT) -->
+    <div id="sectionRevendablesContent" style="display: none;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin:0; color:#10b981; font-size:16px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Gérez et consultez les seaux préparés en plus disponibles à la vente.</p>
+            </div>
+            <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#10b981;" onclick="openResaleModal()">➕ Ajouter une Teinte</button>
+        </div>
+
+        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:12px;">
+
+        <div id="resaleRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune teinte re-vendable en stock.</div>
+        </div>
+    </div>
+
+    <!-- SECTION ERREURS DE TEINTE (MUTÉE EN BAS) -->
     <div id="sectionErreursContent" style="display: none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <h3 style="margin:0; color:#ef4444; font-size:16px;">⚠️ Registre des Erreurs de Teinte</h3>
-            <button class="btn btn-save" style="width:auto; padding:8px 12px; background-color:#ef4444;" onclick="openErrorModal()">➕ Déclarer une Erreur</button>
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin:0; color:#ef4444; font-size:16px;">⚠️ Registre des Erreurs de Teinte</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Suivi transparent et analyse des rebuts de fabrication.</p>
+            </div>
+            <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#ef4444;" onclick="openErrorModal()">➕ Déclarer une Erreur</button>
         </div>
 
         <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom de collègue (ex: Antonio)..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
@@ -546,20 +565,6 @@
 
         <div id="errorRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
             <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune erreur enregistrée.</div>
-        </div>
-    </div>
-
-    <!-- SECTION TEINTES REVENDABLES -->
-    <div id="sectionRevendablesContent" style="display: none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <h3 style="margin:0; color:#10b981; font-size:16px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
-            <button class="btn btn-save" style="width:auto; padding:8px 12px; background-color:#10b981;" onclick="openResaleModal()">➕ Ajouter une Teinte</button>
-        </div>
-
-        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:12px;">
-
-        <div id="resaleRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
-            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune teinte re-vendable en stock.</div>
         </div>
     </div>
 
@@ -674,10 +679,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.11" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.12" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.11 : Correction affichage clavier sur l'écran de connexion et validation par Entrée.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.12 : Refonte esthétique des modales (style demand simple), inversion des sections Re-vendables et Erreurs.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -700,7 +705,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.11</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.12</span></div>
     </div>
 </div>
 
@@ -736,7 +741,6 @@
     </div>
 </div>
 
-<!-- MODAL UTILISATEURS EN LIGNE -->
 <div id="onlineUsersModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -749,14 +753,14 @@
     </div>
 </div>
 
-<!-- MODAL DÉCLARATION ERREUR DE TEINTE -->
+<!-- MODAL DÉCLARATION ERREUR DE TEINTE (ESTHÉTIQUE DEMANDE SIMPLE) -->
 <div id="errorModal" class="modal-overlay">
     <div class="modal-content" style="border: 2px solid #ef4444;">
         <div class="modal-header">
             <h3 style="color:#ef4444;">⚠️ Déclarer une Erreur de Teinte</h3>
             <button class="btn-close-modal" onclick="closeErrorModal()">✕</button>
         </div>
-        <select id="errBrand" onchange="updateErrorDropdowns()" style="background:#1f2937; border-color:var(--border);">
+        <select id="errBrand" onchange="updateErrorDropdowns()" style="background:#111827; border-color:var(--border);">
             <option value="">Sélectionnez la marque</option>
             <option value="Trimetal">Trimetal</option>
             <option value="Herbol">Herbol</option>
@@ -779,18 +783,18 @@
         <textarea id="errReason" rows="2" placeholder="Motif de l'erreur (ex: mauvaise base, erreur de code...)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
         <input type="text" id="errSignature" placeholder="Signature (Nom de la personne responsable de l'erreur)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
         
-        <button class="btn btn-save" style="background-color:#ef4444; margin-top:6px;" onclick="saveErrorRecord()">💾 Enregistrer l'Erreur</button>
+        <button class="btn btn-save" style="background-color:#ef4444;" onclick="saveErrorRecord()">💾 Enregistrer l'Erreur</button>
     </div>
 </div>
 
-<!-- MODAL AJOUT TEINTE RE-VENDABLE -->
+<!-- MODAL AJOUT TEINTE RE-VENDABLE (ESTHÉTIQUE DEMANDE SIMPLE) -->
 <div id="resaleModal" class="modal-overlay">
     <div class="modal-content" style="border: 2px solid #10b981;">
         <div class="modal-header">
             <h3 style="color:#10b981;">🔄 Ajouter une Teinte Re-vendable</h3>
             <button class="btn-close-modal" onclick="closeResaleModal()">✕</button>
         </div>
-        <select id="resBrand" onchange="updateResaleDropdowns()" style="background:#1f2937; border-color:var(--border);">
+        <select id="resBrand" onchange="updateResaleDropdowns()" style="background:#111827; border-color:var(--border);">
             <option value="">Sélectionnez la marque</option>
             <option value="Trimetal">Trimetal</option>
             <option value="Herbol">Herbol</option>
@@ -811,7 +815,7 @@
         </div>
         <input type="number" id="resQuantity" placeholder="Quantité en stock" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
         
-        <button class="btn btn-save" style="background-color:#10b981; margin-top:6px;" onclick="saveResaleRecord()">💾 Ajouter au Stock Re-vendable</button>
+        <button class="btn btn-save" style="background-color:#10b981;" onclick="saveResaleRecord()">💾 Ajouter au Stock Re-vendable</button>
     </div>
 </div>
 
@@ -905,7 +909,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.11"; 
+    const CURRENT_APP_VERSION = "v1.12"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -1713,14 +1717,14 @@
             title.textContent = "Gestion du Stock";
             subtitle.textContent = "Commandes de seaux et produits pour rayons";
             stockSec.style.display = 'block';
-        } else if (currentAppSection === 'Erreurs') {
-            title.textContent = "Erreurs de Teinte";
-            subtitle.textContent = "Registre de transparence et analyse des rebuts";
-            erreursSec.style.display = 'block';
         } else if (currentAppSection === 'Revendables') {
             title.textContent = "Teintes Re-vendables";
             subtitle.textContent = "Maximisation de la vente des seaux préparés en plus";
             revendablesSec.style.display = 'block';
+        } else if (currentAppSection === 'Erreurs') {
+            title.textContent = "Erreurs de Teinte";
+            subtitle.textContent = "Registre de transparence et analyse des rebuts";
+            erreursSec.style.display = 'block';
         } else {
             title.textContent = "Vérifie les Bases";
             subtitle.textContent = "Système de Recherche de Couleurs & Bases";
