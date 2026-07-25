@@ -393,9 +393,9 @@
 </div>
 
 <div id="sectionSelectorModal" class="section-selector-overlay">
-    <div class="section-selector-card" style="position:relative;">
-        <button class="btn-logout" style="position:absolute; top:15px; right:15px; margin:0;" onclick="confirmLogout()">Déconnexion</button>
-        <h2 style="color:var(--primary); margin-top:0; padding-right:80px;">Choisissez la Section</h2>
+    <button class="btn-logout" style="position:absolute; top:20px; right:20px; margin:0; z-index:99999; padding:10px 16px; font-size:12px; box-shadow:0 4px 10px rgba(0,0,0,0.5);" onclick="confirmLogout()">Déconnexion</button>
+    <div class="section-selector-card">
+        <h2 style="color:var(--primary); margin-top:0;">Choisissez la Section</h2>
         <p style="font-size:13px; color:#9ca3af; margin-bottom:16px;">Sélectionnez l'activité pour cette session :</p>
         
         <button id="btnSecBases" class="section-btn" onclick="selectAppSection('Bases')">🎨 Consulter les bases</button>
