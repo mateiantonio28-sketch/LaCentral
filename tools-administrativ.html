@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- CONFIGURARE PWA PENTRU MOBIL -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
     <meta name="theme-color" content="#111827">
 
-    <title>Tools Administrativ - Patcher</title>
+    <title>Tools Administrativ - Patcher Inteligent</title>
     
     <style>
         :root {
@@ -26,16 +25,10 @@
             --danger: #ef4444;
         }
 
-        * { 
-            box-sizing: border-box; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-        
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
         .container { max-width: 600px; margin: 0 auto; display: none; }
 
-        /* ECRAN DE LOGIN / LOCK */
         .lock-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 99999; display: flex;
@@ -80,7 +73,7 @@
 
         .status { 
             padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; 
-            text-align: center; display: none; margin-bottom: 12px; 
+            text-align: center; display: none; margin-bottom: 12px; white-space: pre-wrap; word-break: break-word;
         }
         .status.success { background-color: #14532d; color: #dcfce7; border: 1px solid #15803d; display: block; }
         .status.error { background-color: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; display: block; }
@@ -91,74 +84,54 @@
 </head>
 <body>
 
-<!-- ECRAN DE LOGARE ADMIN -->
 <div id="adminLockScreen" class="lock-screen">
     <div class="lock-card">
         <h2>Tools Administrativ</h2>
         <p>Introduceți datele de acces</p>
-        
         <input type="text" id="adminUser" placeholder="Utilizator (ADMIN)">
         <input type="password" id="adminPass" placeholder="Parolă (Olimpus)">
-        
-        <button class="btn btn-save" onclick="validateAdminLogin()">Se autentifica</button>
+        <button class="btn btn-save" onclick="validateAdminLogin()">Se autentifică</button>
     </div>
 </div>
 
-<!-- INTERFAȚA PRINCIPALĂ ADMIN -->
 <div class="container" id="adminMainContainer">
     <div class="header">
         <h1>Tools Administrativ</h1>
-        <p>Patcher Parțial Cod Sursă — Direct pe Git</p>
+        <p>Patcher Inteligent — Lipește doar codul generat</p>
         <button class="btn-logout" onclick="logoutAdmin()">🔒 Blocare / Deconectare</button>
     </div>
 
     <div id="statusBox" class="status"></div>
 
     <div class="panel" style="border-color: var(--ai-color);">
-        <h3 style="color: var(--ai-color);">1. Configurare GitHub</h3>
-        
+        <h3 style="color: var(--ai-color);">1. Conexiune GitHub</h3>
         <a href="https://github.com/settings/tokens/new?description=Tools-Administrativ&scopes=repo" target="_blank" class="btn-token">
-            🔗 1. Generează Token GitHub (Dacă nu ai unul)
+            🔗 Generează Token GitHub
         </a>
-
-        <label>🔑 Token Access GitHub (ghp_...):</label>
-        <input type="password" id="ghToken" placeholder="Lipește token-ul aici">
-        
+        <input type="password" id="ghToken" placeholder="Lipește Token Access (ghp_...) aici" style="margin-bottom:10px;">
         <div class="two-cols">
-            <div>
-                <label>📂 Repository:</label>
-                <input type="text" id="ghRepo" value="mateiantonio28-sketch/LaCentral">
-            </div>
-            <div>
-                <label>📄 Fișier țintă:</label>
-                <input type="text" id="ghFile" value="index.html">
-            </div>
+            <input type="text" id="ghRepo" value="mateiantonio28-sketch/LaCentral" placeholder="Repository">
+            <input type="text" id="ghFile" value="index.html" placeholder="Fișier țintă">
         </div>
     </div>
 
-    <div class="panel">
-        <h3 style="color: var(--accent);">2. Update Parțial (Fără rescriere totală)</h3>
+    <div class="panel" style="border-color: var(--accent);">
+        <h3 style="color: var(--accent);">2. Asistent Update Parțial</h3>
+        <p style="font-size:11px; color:#9ca3af; margin-top:0;">Lipește aici blocul complet generat de asistent (trebuie să conțină [CAUTĂ] și [ÎNLOCUIEȘTE]). Aplicația se va ocupa de restul.</p>
         
-        <label>🔍 Caută exact linia de cod veche:</label>
-        <textarea id="searchCode" rows="3" placeholder='ex: const CURRENT_APP_VERSION = "v1.18";'></textarea>
+        <textarea id="aiInputCode" rows="8" placeholder="[CAUTĂ]&#10;codul_vechi_aici&#10;[ÎNLOCUIEȘTE]&#10;codul_nou_aici"></textarea>
 
-        <label>✍️ Noul cod (Cu ce o înlocuiești):</label>
-        <textarea id="replaceCode" rows="3" placeholder='ex: const CURRENT_APP_VERSION = "v1.19";'></textarea>
+        <label>📝 Mesaj Commit (Opțional):</label>
+        <input type="text" id="commitMessage" value="Update inteligent din Tools Administrativ">
 
-        <label>📝 Mesaj Commit:</label>
-        <input type="text" id="commitMessage" value="Update parțial din Tools Administrativ">
-
-        <button class="btn btn-save" onclick="applyGithubPatch()" id="btnApply">🚀 Trimite Modificarea în Git</button>
+        <button class="btn btn-save" onclick="processAndPatch()" id="btnApply">🚀 Execută Update-ul Automat</button>
     </div>
 </div>
 
 <script>
-    // Verificăm sesiunea la pornire
     document.addEventListener("DOMContentLoaded", () => {
         const isAuth = localStorage.getItem('admin_tools_auth');
-        if (isAuth === 'true') {
-            openAdminPanel();
-        }
+        if (isAuth === 'true') openAdminPanel();
         const savedToken = localStorage.getItem('admin_tools_github_token');
         if (savedToken) document.getElementById('ghToken').value = savedToken;
     });
@@ -166,12 +139,11 @@
     function validateAdminLogin() {
         const u = document.getElementById('adminUser').value.trim();
         const p = document.getElementById('adminPass').value.trim();
-
         if (u === "ADMIN" && p === "Olimpus") {
             localStorage.setItem('admin_tools_auth', 'true');
             openAdminPanel();
         } else {
-            alert("❌ Utilizator sau parolă incorectă! Folosiți ADMIN și Olimpus.");
+            alert("❌ Utilizator sau parolă incorectă!");
         }
     }
 
@@ -188,70 +160,67 @@
         document.getElementById('adminPass').value = '';
     }
 
-    async function applyGithubPatch() {
+    async function processAndPatch() {
         const token = document.getElementById('ghToken').value.trim();
         const repo = document.getElementById('ghRepo').value.trim();
         const filePath = document.getElementById('ghFile').value.trim();
-        const searchStr = document.getElementById('searchCode').value;
-        const replaceStr = document.getElementById('replaceCode').value;
+        const rawAiCode = document.getElementById('aiInputCode').value;
         const commitMsg = document.getElementById('commitMessage').value.trim();
 
-        if (!token || !repo || !filePath || !searchStr) {
-            showStatus('Eroare: Toate câmpurile (în afară de codul nou) sunt obligatorii!', 'error');
-            return;
+        if (!token) return showStatus('❌ Lipsește Token-ul GitHub!', 'error');
+        if (!rawAiCode.includes('[CAUTĂ]') || !rawAiCode.includes('[ÎNLOCUIEȘTE]')) {
+            return showStatus('❌ Format invalid! Lipește tot blocul care conține [CAUTĂ] și [ÎNLOCUIEȘTE].', 'error');
         }
 
-        localStorage.setItem('admin_tools_github_token', token);
+        // Extragerea automată a codului din structura generată de AI
+        const parts = rawAiCode.split('[ÎNLOCUIEȘTE]');
+        let searchStr = parts[0].replace('[CAUTĂ]', '').trim();
+        let replaceStr = parts[1].trim();
 
+        // Normalizare delimitatori de linie pentru a asigura potrivirea perfectă
+        searchStr = searchStr.replace(/\r\n/g, '\n');
+        replaceStr = replaceStr.replace(/\r\n/g, '\n');
+
+        localStorage.setItem('admin_tools_github_token', token);
         const btn = document.getElementById('btnApply');
         btn.disabled = true;
-        showStatus('⏳ 1/3 Se descarcă fișierul curent de pe GitHub...', 'loading');
+        showStatus('⏳ 1/3 Citesc fișierul complet din GitHub...', 'loading');
 
         try {
             const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+            const getRes = await fetch(apiUrl, { headers: { "Authorization": `token ${token}` } });
             
-            const getRes = await fetch(apiUrl, {
-                headers: { "Authorization": `token ${token}` }
-            });
-
-            if (!getRes.ok) throw new Error("Nu s-a putut accesa fișierul. Verifică Token-ul și repository-ul.");
+            if (!getRes.ok) throw new Error("Conexiune refuzată. Verifică Token-ul.");
             
             const fileData = await getRes.json();
-            const currentContentDecoded = decodeURIComponent(escape(atob(fileData.content)));
+            let currentContentDecoded = decodeURIComponent(escape(atob(fileData.content)));
+            currentContentDecoded = currentContentDecoded.replace(/\r\n/g, '\n');
 
             if (!currentContentDecoded.includes(searchStr)) {
-                throw new Error("Codul căutat nu a fost găsit în fișier. Verifică spațiile și formatarea!");
+                throw new Error("Codul specificat la secțiunea [CAUTĂ] nu se potrivește exact cu nimic din fișierul descărcat. Asigură-te că ai copiat corect blocul.");
             }
 
-            showStatus('⚙️ 2/3 Se aplică modificarea parțială...', 'loading');
+            showStatus('⚙️ 2/3 Se aplică codul nou...', 'loading');
 
             const newContentStr = currentContentDecoded.replace(searchStr, replaceStr);
             const newContentBase64 = btoa(unescape(encodeURIComponent(newContentStr)));
 
-            showStatus('🚀 3/3 Se trimite update-ul către GitHub...', 'loading');
+            showStatus('🚀 3/3 Se suprascrie doar porțiunea modificată pe GitHub...', 'loading');
 
             const putRes = await fetch(apiUrl, {
                 method: "PUT",
-                headers: { 
-                    "Authorization": `token ${token}`,
-                    "Content-Type": "application/json" 
-                },
-                body: JSON.stringify({
-                    message: commitMsg,
-                    content: newContentBase64,
-                    sha: fileData.sha
-                })
+                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ message: commitMsg, content: newContentBase64, sha: fileData.sha })
             });
 
             if (!putRes.ok) throw new Error("Eroare la salvarea pe GitHub.");
 
-            showStatus('✅ Update realizat cu succes! Codul a fost modificat parțial în Git.', 'success');
-            document.getElementById('searchCode').value = '';
-            document.getElementById('replaceCode').value = '';
+            showStatus('✅ Succes! Codul a fost modificat parțial și trimis automat în Git.', 'success');
+            document.getElementById('aiInputCode').value = ''; // Curățăm ecranul pentru următoarea sarcină
 
         } catch (error) {
             console.error(error);
-            showStatus(`❌ ${error.message}`, 'error');
+            showStatus(`❌ Eroare: ${error.message}`, 'error');
         } finally {
             btn.disabled = false;
         }
