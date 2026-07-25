@@ -1619,11 +1619,14 @@
             document.getElementById('mainContainer').style.display = 'none';
             currentAppSection = null;
             localStorage.removeItem('central_app_section');
-            updateAlarmButtonVisibility();
-            document.getElementById('sectionSelectorModal').style.display = 'flex';
             document.getElementById('welcomeUser').textContent = `${localUser.name} (${localUser.role})`;
             checkAndShowChangelog();
             initFirebaseListeners();
+            if (localUser.role === 'Magasinier' || localUser.role === 'Préparateur de commande') {
+                selectAppSection('Stock');
+            } else {
+                showSectionSelector();
+            }
             return;
         }
         initUserScreen();
