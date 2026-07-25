@@ -1615,10 +1615,11 @@
 
         if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
             document.getElementById('userLockScreen').style.display = 'none';
-            if (!currentAppSection) {
-                updateAlarmButtonVisibility();
-                document.getElementById('sectionSelectorModal').style.display = 'flex';
-            } else applySectionView();
+            document.getElementById('mainContainer').style.display = 'none';
+            currentAppSection = null;
+            localStorage.removeItem('central_app_section');
+            updateAlarmButtonVisibility();
+            document.getElementById('sectionSelectorModal').style.display = 'flex';
             document.getElementById('welcomeUser').textContent = `${localUser.name} (${localUser.role})`;
             checkAndShowChangelog();
             initFirebaseListeners();
