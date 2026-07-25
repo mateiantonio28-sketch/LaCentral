@@ -99,13 +99,13 @@
         }
         .lock-card {
             background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
-            padding: 20px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            padding: 24px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             position: relative;
         }
         .lock-card h2 { margin: 0 0 4px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
-        .lock-card p { margin: 0 0 12px 0; font-size: 11px; color: #9ca3af; line-height: 1.4; }
+        .lock-card p { margin: 0 0 16px 0; font-size: 11px; color: #9ca3af; line-height: 1.4; }
         .lock-card input, .lock-card select {
-            width: 100%; padding: 10px; margin-bottom: 8px;
+            width: 100%; padding: 12px; margin-bottom: 10px;
             border: 1px solid var(--border); border-radius: 8px;
             background: #111827; color: #fff; font-size: 14px; text-align: center;
         }
@@ -134,10 +134,10 @@
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
         .pin-key {
             background: #334155; color: #fff; border: 1px solid #475569;
-            border-radius: 6px; padding: 10px 0; font-size: 16px; font-weight: bold;
+            border-radius: 6px; padding: 12px 0; font-size: 16px; font-weight: bold;
             cursor: pointer; text-align: center; user-select: none;
             transition: background 0.1s, transform 0.1s;
         }
@@ -155,9 +155,10 @@
         .section-btn {
             background: #374151; color: white; border: 1px solid var(--border);
             padding: 14px; border-radius: 8px; font-size: 14px; font-weight: bold;
-            cursor: pointer; width: 100%; margin-bottom: 10px; transition: background 0.2s;
+            cursor: pointer; width: 100%; margin-bottom: 10px; transition: background 0.2s; position: relative;
         }
         .section-btn:hover { background: var(--accent); }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 12px; padding: 3px 8px; font-size: 11px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
         .top-left-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
@@ -298,7 +299,7 @@
         .cal-cell.has-error { background: #7f1d1d; color: #fca5a5; font-weight: bold; border: 1px solid #ef4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
         .cal-cell.selected { border: 2px solid var(--accent); }
 
-        /* CLAVIER VIRTUEL FLUIDE (V1.17) */
+        /* CLAVIER VIRTUEL FLUIDE */
         .virtual-keyboard {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: #1e293b; padding: 10px 4px 20px 4px; z-index: 100000;
@@ -330,16 +331,29 @@
             background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
             z-index: 9999999; align-items: center; justify-content: center; padding: 16px;
         }
+
+        /* Style Fișe Teinteur */
+        .job-card {
+            background: #1f2937; border: 1px solid var(--border); border-left: 5px solid var(--warning); 
+            border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;
+        }
+        .job-card.in_progress { border-left-color: var(--accent); background: #1a2234; }
+        .job-card.completed { border-left-color: var(--success); opacity: 0.8; }
+        .job-timer { font-family: monospace; font-size: 16px; font-weight: bold; color: var(--accent); background: #111827; padding: 4px 8px; border-radius: 4px; display: inline-block; }
     </style>
 </head>
 <body>
 
 <div id="userLockScreen" class="lock-screen">
+    <!-- NOU: Buton PC/Tactile direct pe ecranul de logare -->
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000000;">
+        <button onclick="toggleComputerMode()" id="loginBtnComputerMode" style="background:#1f2937; border:1px solid var(--border); color:#fff; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:bold; cursor:pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">📱 Tactile</button>
+    </div>
+
     <div class="lock-card">
         <h2>La Centrale ProShop</h2>
         <p id="lockSubtitle">Connexion Utilisateur</p>
         
-        <!-- Restaurat functionalitatea tastaturii virtuale + enter -->
         <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
         <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
         
@@ -381,12 +395,19 @@
     <div class="section-selector-card">
         <h2 style="color:var(--primary); margin-top:0;">Choisissez la Section</h2>
         <p style="font-size:13px; color:#9ca3af; margin-bottom:16px;">Sélectionnez l'activité pour cette session :</p>
+        
         <button class="section-btn" onclick="selectAppSection('Bases')">🎨 Consulter les bases</button>
         <button class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Passer commande interne</button>
         <button class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:#059669;">🔄 Teintes Re-vendables</button>
         <button class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:#b91c1c;">⚠️ Erreurs de Teinte</button>
         
-        <button id="btnTeinteurAlarm" class="section-btn" style="background-color: var(--danger); display: none; margin-top: 10px; border: 2px solid #7f1d1d;" onclick="triggerTeinteurAlarm()">❗ ALARME TEINTEUR</button>
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border);">
+            <button id="btnTeinteurAlarm" class="section-btn" style="background-color: transparent; color: var(--danger); border: 2px solid var(--danger);" onclick="triggerTeinteurAlarm()">❗ ALARME TEINTEUR (Vendeur)</button>
+            <button id="btnOpenTeinteurJobs" class="section-btn" style="background-color: #0f172a; border-color: var(--accent); display:none;" onclick="openTeinteurJobsModal()">
+                🛎️ Fiches Teinteur
+                <span id="teinteurJobsBadge" class="notif-badge">0</span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -817,10 +838,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.17" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.18" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.17 : Clavier virtuel fluide (glisser pour fermer), base manuelle et export bilan erreurs (CSV).</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.18 : Système Teinteur avec Timer, réparation catalogues et bouton mode PC au démarrage.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -843,7 +864,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.17</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.18</span></div>
     </div>
 </div>
 
@@ -887,6 +908,19 @@
         </div>
         <div id="onlineUsersModalList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
             <div style="text-align:center; padding:15px; color:#9ca3af;">Chargement...</div>
+        </div>
+    </div>
+</div>
+
+<!-- NOU: MODAL FICHES TEINTEUR (ALARMES) -->
+<div id="teinteurJobsModal" class="modal-overlay">
+    <div class="modal-content" style="border: 2px solid var(--accent);">
+        <div class="modal-header">
+            <h3 style="color:var(--accent);">🛎️ Fiches de Commande (Teinteur)</h3>
+            <button class="btn-close-modal" onclick="closeTeinteurJobsModal()">✕</button>
+        </div>
+        <div id="teinteurJobsList" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune commande en attente.</div>
         </div>
     </div>
 </div>
@@ -981,7 +1015,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.17"; 
+    const CURRENT_APP_VERSION = "v1.18"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -1015,6 +1049,7 @@
     let errorRecordsList = [];
     let resaleRecordsList = [];
     let selectedErrorDateFilter = null;
+    let activeTeinteurJobs = []; // NOU
 
     let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
 
@@ -1056,7 +1091,7 @@
 
     let isComputerMode = localStorage.getItem('central_computer_mode') === 'true';
 
-    function toggleComputerMode() {
+    window.toggleComputerMode = function() {
         isComputerMode = !isComputerMode;
         localStorage.setItem('central_computer_mode', isComputerMode);
         applyComputerMode();
@@ -1065,9 +1100,14 @@
 
     function applyComputerMode() {
         const btn = document.getElementById('btnComputerMode');
+        const loginBtn = document.getElementById('loginBtnComputerMode');
         if (btn) {
             btn.innerHTML = isComputerMode ? '💻 Mode PC' : '📱 Mode Tactile';
             btn.style.backgroundColor = isComputerMode ? 'var(--accent)' : '#1e293b';
+        }
+        if (loginBtn) {
+            loginBtn.innerHTML = isComputerMode ? '💻 Mode PC' : '📱 Tactile';
+            loginBtn.style.backgroundColor = isComputerMode ? 'var(--accent)' : '#1f2937';
         }
 
         const inputs = document.querySelectorAll('input, textarea');
@@ -1253,7 +1293,6 @@
         if (activeVirtualInput) { activeVirtualInput.blur(); activeVirtualInput = null; }
     }
 
-    // Gestion base manuelle (Autre...)
     window.checkCustomBase = function(prefix) {
         const sel = document.getElementById(prefix + 'Base');
         const cust = document.getElementById(prefix + 'BaseCustom');
@@ -1515,6 +1554,7 @@
             if (dateEl) dateEl.textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
             checkDailyHistoryReset(now);
+            updateTeinteurJobTimers(now.getTime()); // Update noul timer de la Teinteur
 
             if (document.getElementById('mainContainer').style.display === 'block') {
                 let expiry = localStorage.getItem('user_session_expiry');
@@ -1542,6 +1582,18 @@
         }, 1000);
     }
 
+    function updateTeinteurJobTimers(nowTime) {
+        document.querySelectorAll('.teinteur-job-timer').forEach(el => {
+            const st = parseInt(el.getAttribute('data-start-time'));
+            if (st) {
+                const diff = nowTime - st;
+                const m = Math.floor(diff / 60000).toString().padStart(2, '0');
+                const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                el.textContent = `${m}:${s}`;
+            }
+        });
+    }
+
     function checkAndShowChangelog() {
         const msg = localStorage.getItem('pending_update_notification');
         if (msg) {
@@ -1558,10 +1610,22 @@
     window.applyForcedUpdate = function() { logoutUserSession(); forceCleanReload(); }
 
     function updateAlarmButtonVisibility() {
-        const alarmBtn = document.getElementById('btnTeinteurAlarm');
-        if (localUser && (localUser.role === 'Vendeur' || localUser.role === 'Responsable' || localUser.role === 'Master Admin')) {
-            alarmBtn.style.display = 'block';
-        } else alarmBtn.style.display = 'none';
+        const btnAlarm = document.getElementById('btnTeinteurAlarm');
+        const btnJobs = document.getElementById('btnOpenTeinteurJobs');
+        
+        if (!localUser) return;
+        
+        if (localUser.role === 'Vendeur' || localUser.role === 'Responsable' || localUser.role === 'Master Admin') {
+            btnAlarm.style.display = 'block';
+        } else {
+            btnAlarm.style.display = 'none';
+        }
+
+        if (localUser.role === 'Teinteur' || localUser.role === 'Responsable' || localUser.role === 'Master Admin') {
+            btnJobs.style.display = 'block';
+        } else {
+            btnJobs.style.display = 'none';
+        }
     }
 
     function checkActiveSession() {
@@ -1905,6 +1969,7 @@
     let outOfStockList = [];
     let completedStockNotified = JSON.parse(localStorage.getItem('central_completed_notified')) || [];
     let currentStockCartItems = []; 
+    let notifiedTeinteurJobs = JSON.parse(localStorage.getItem('central_notified_teinteur_jobs')) || [];
 
     function playPersistentAlarm() {
         if (localUser && localUser.role === "Responsable") return;
@@ -1926,15 +1991,19 @@
     }
     window.playPersistentAlarm = playPersistentAlarm;
 
+    // NOU: FUNCTIE ALARMA TEINTEUR REVIZUITĂ
     window.triggerTeinteurAlarm = function() {
         if (!window.FB_db) return;
-        const alarmsRef = window.FB_ref(window.FB_db, 'teinteur_alarms');
-        const newAlarmRef = window.FB_push(alarmsRef);
-        window.FB_set(newAlarmRef, { sender: localUser.name, timestamp: Date.now() }).then(() => {
-            showAlert("🚨 Alarme envoyée aux Teinteurs !", true);
-            logDailyHistory(`🚨 ${localUser.name} a sonné les Teinteurs`);
-            document.getElementById('sectionSelectorModal').style.display = 'none';
-            applySectionView();
+        const ref = window.FB_ref(window.FB_db, 'teinteur_jobs');
+        const newRef = window.FB_push(ref);
+        window.FB_set(newRef, { 
+            id: newRef.key, 
+            sender: localUser.name, 
+            status: 'pending', 
+            timestamp: Date.now() 
+        }).then(() => {
+            showAlert("🚨 Fiche envoyée au Teinteur !", true);
+            logDailyHistory(`🚨 Fiche envoyée au teinteur`);
         });
     }
 
@@ -1988,8 +2057,7 @@
         }
     }
 
-    let lastProcessedAlarmId = null;
-    let initialLoadAlarm = true;
+    let lastProcessedPendingJobId = null;
 
     function initFirebaseListeners() {
         if (!window.FB_db) { setTimeout(initFirebaseListeners, 1000); return; }
@@ -2016,27 +2084,45 @@
             });
         }
 
-        const teinteurAlarmsRef = window.FB_ref(window.FB_db, 'teinteur_alarms');
-        window.FB_onValue(teinteurAlarmsRef, (snapshot) => {
+        // NOU: ASCULTĂTOR FIȘE TEINTEUR
+        const tJobsRef = window.FB_ref(window.FB_db, 'teinteur_jobs');
+        window.FB_onValue(tJobsRef, (snapshot) => {
             const data = snapshot.val();
-            if(!data) return;
-            const keys = Object.keys(data);
-            const latestKey = keys[keys.length - 1];
-            const latestAlarm = data[latestKey];
+            activeTeinteurJobs = data ? Object.values(data) : [];
+            let pendingCount = 0;
+            let latestPending = null;
 
-            if(initialLoadAlarm) {
-                lastProcessedAlarmId = latestKey;
-                initialLoadAlarm = false;
-                return;
+            activeTeinteurJobs.forEach(job => {
+                if (job.status === 'pending') {
+                    pendingCount++;
+                    if (!latestPending || job.timestamp > latestPending.timestamp) latestPending = job;
+                }
+                
+                // Dacă sunt Vendeur și comanda mea a fost finalizată:
+                if (job.status === 'completed' && job.sender === (localUser ? localUser.name : '') && !notifiedTeinteurJobs.includes(job.id)) {
+                    notifiedTeinteurJobs.push(job.id);
+                    localStorage.setItem('central_notified_teinteur_jobs', JSON.stringify(notifiedTeinteurJobs));
+                    playPersistentAlarm();
+                    showAlert(`✅ Commande finalisée par ${job.teinteur} !`, true);
+                }
+            });
+
+            const badge = document.getElementById('teinteurJobsBadge');
+            if (badge) {
+                if (pendingCount > 0) { badge.style.display = 'inline-block'; badge.textContent = pendingCount; }
+                else badge.style.display = 'none';
             }
 
-            if (latestKey !== lastProcessedAlarmId) {
-                lastProcessedAlarmId = latestKey;
-                if (localUser && localUser.role === 'Teinteur' && (Date.now() - latestAlarm.timestamp < 30000)) {
+            // Alarma doar pentru Teinteur la comenzi noi
+            if (localUser && (localUser.role === 'Teinteur' || localUser.role === 'Responsable')) {
+                if (latestPending && latestPending.id !== lastProcessedPendingJobId && (Date.now() - latestPending.timestamp < 30000)) {
+                    lastProcessedPendingJobId = latestPending.id;
                     playPersistentAlarm();
-                    showAlert(`❗ ALARME MAGASIN : ${latestAlarm.sender} a une commande !`, false);
+                    showAlert(`🚨 ${latestPending.sender} a envoyé une fiche !`, false);
                 }
             }
+
+            renderTeinteurJobs();
         });
 
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
@@ -2066,6 +2152,75 @@
                 renderOutOfStockRequests();
             } else { stockRequestsList = []; outOfStockList = []; renderStockRequests(); renderOutOfStockRequests(); }
         });
+    }
+
+    // --- LOGICĂ FICHES TEINTEUR ---
+    window.openTeinteurJobsModal = function() {
+        document.getElementById('teinteurJobsModal').style.display = 'flex';
+        renderTeinteurJobs();
+    }
+    window.closeTeinteurJobsModal = function() {
+        document.getElementById('teinteurJobsModal').style.display = 'none';
+    }
+
+    function renderTeinteurJobs() {
+        const list = document.getElementById('teinteurJobsList');
+        if (!list) return;
+        list.innerHTML = '';
+        
+        let visibleJobs = activeTeinteurJobs.filter(j => j.status === 'pending' || j.status === 'in_progress');
+        
+        if (visibleJobs.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune commande en attente.</div>';
+            return;
+        }
+
+        visibleJobs.sort((a,b) => b.timestamp - a.timestamp).forEach(job => {
+            const div = document.createElement('div');
+            let isPending = job.status === 'pending';
+            div.className = `job-card ${isPending ? '' : 'in_progress'}`;
+            
+            let btnHtml = '';
+            if (isPending) {
+                btnHtml = `<button class="btn btn-save" style="background-color:var(--accent); padding:8px 12px; margin:0;" onclick="acceptTeinteurJob('${job.id}')">✅ Prendre en charge</button>`;
+            } else if (job.teinteur === (localUser ? localUser.name : '')) {
+                btnHtml = `<button class="btn btn-save" style="background-color:var(--success); padding:8px 12px; margin:0;" onclick="finishTeinteurJob('${job.id}')">🏁 Terminée</button>`;
+            } else {
+                btnHtml = `<span style="font-size:11px; color:#9ca3af; font-style:italic;">En cours par ${job.teinteur}</span>`;
+            }
+
+            let statusHtml = isPending 
+                ? `<span style="color:#f59e0b; font-weight:bold;">En attente</span>` 
+                : `<span style="color:var(--accent); font-weight:bold;">Prise en charge</span>`;
+                
+            let timerHtml = isPending 
+                ? '' 
+                : `<div class="job-timer teinteur-job-timer" data-start-time="${job.startTime}">00:00</div>`;
+
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:14px; font-weight:bold; color:#fff;">Fiche de: <span style="color:#60a5fa;">${job.sender}</span></span>
+                    ${statusHtml}
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                    ${timerHtml}
+                    ${btnHtml}
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    window.acceptTeinteurJob = function(jobId) {
+        if (!window.FB_db) return;
+        window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/status`), 'in_progress');
+        window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/teinteur`), localUser.name);
+        window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/startTime`), Date.now());
+    }
+
+    window.finishTeinteurJob = function(jobId) {
+        if (!window.FB_db) return;
+        window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/status`), 'completed');
     }
 
     // --- ENVOI COMMANDES ---
@@ -2606,7 +2761,7 @@
 
     window.applySingleCollabUpdate = function(updateId, code, palette, encodedBases) {
         const newBases = JSON.parse(decodeURIComponent(encodedBases));
-        const itemIndex = customDatabase.findIndex(c => c.code === code && c.palette === palette);
+        const itemIndex = customDatabase.findIndex(c => c.code.toUpperCase() === code.toUpperCase() && c.palette.toUpperCase() === palette.toUpperCase());
         if (itemIndex >= 0) { customDatabase[itemIndex].bases = newBases; saveToStorage(); filterColors(); filterDedicatedPalette(); }
         dismissedUpdateIds.push(updateId);
         localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
@@ -2619,7 +2774,7 @@
     window.acceptAllCollabUpdates = function() {
         if (pendingCollabUpdates.length === 0) return;
         pendingCollabUpdates.forEach(upd => {
-            const itemIndex = customDatabase.findIndex(c => c.code === upd.code && c.palette === upd.palette);
+            const itemIndex = customDatabase.findIndex(c => c.code.toUpperCase() === upd.code.toUpperCase() && c.palette.toUpperCase() === upd.palette.toUpperCase());
             if (itemIndex >= 0) customDatabase[itemIndex].bases = upd.bases;
             dismissedUpdateIds.push(upd.id);
         });
@@ -2729,9 +2884,11 @@
         if (addedCount > 0) {
             let merged = [...customDatabase]; 
             tempDatabase.forEach(tempItem => {
-                const existingIndex = merged.findIndex(c => c.code === tempItem.code && c.palette === tempItem.palette);
-                if (existingIndex >= 0) merged[existingIndex] = tempItem; 
-                else merged.push(tempItem); 
+                const existingIndex = merged.findIndex(c => c.code.toUpperCase() === tempItem.code.toUpperCase() && c.palette.toUpperCase() === tempItem.palette.toUpperCase());
+                if (existingIndex >= 0) {
+                    // Actualizăm doar culoarea HEX, NU suprascriem bazele setate manual de utilizatori!
+                    merged[existingIndex].hex = tempItem.hex || merged[existingIndex].hex;
+                } else merged.push(tempItem); 
             });
             customDatabase = merged; 
             saveToStorage(); 
@@ -2769,6 +2926,7 @@
             document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
             document.getElementById('adminPanel').style.display = 'block'; 
             document.getElementById('adminPanel').scrollIntoView({ behavior: 'smooth' });
+            renderAdminUsersList(cachedAuthUsersData);
         } else { 
             document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
             document.getElementById('authUser').value = '';
@@ -2783,9 +2941,10 @@
     renderGuideTable();
     startRealTimeClock();
     checkActiveSession();
+    renderFoldersOverview(); // Fortare randare rapida a bazei locale de 6000 de culori
     filterColors();
     applyComputerMode();
-    autoSyncPalettes().then(() => renderFoldersOverview());
+    autoSyncPalettes(); // Cauta actualizari din sursa externa in fundal
 </script>
 
 </body>
