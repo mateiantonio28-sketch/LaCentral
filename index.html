@@ -326,6 +326,12 @@
         .vk-key.vk-shift { flex: 1.5; font-size: 11px; background: #475569; }
         .vk-key.vk-shift.active { background: var(--accent); }
 
+        #forcedUpdateModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
+            z-index: 9999999; align-items: center; justify-content: center; padding: 16px;
+        }
+
         /* Style Fișe Teinteur */
         .job-card {
             background: #1f2937; border: 1px solid var(--border); border-left: 5px solid var(--warning); 
@@ -334,25 +340,12 @@
         .job-card.in_progress { border-left-color: var(--accent); background: #1a2234; }
         .job-card.completed { border-left-color: var(--success); opacity: 0.8; }
         .job-timer { font-family: monospace; font-size: 16px; font-weight: bold; color: var(--accent); background: #111827; padding: 4px 8px; border-radius: 4px; display: inline-block; }
-
-        /* Style Live Tracker Box */
-        .live-tracker-item {
-            background: #1f2937; border: 1px solid var(--border); border-radius: 8px; 
-            padding: 12px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .live-tracker-item.pending { border-left: 5px solid #f59e0b; }
-        .live-tracker-item.progress { border-left: 5px solid var(--accent); background: #1a2234; }
-        .live-tracker-item.done { border-left: 5px solid var(--success); background: #064e3b; }
     </style>
 </head>
 <body>
 
-<!-- Banner Global pentru Alerte (Mutat aici pentru a fi vizibil și în Lock Screen) -->
-<div id="alertBanner" class="alert-box" style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999999; box-shadow: 0 4px 15px rgba(0,0,0,0.5);"></div>
-
 <div id="userLockScreen" class="lock-screen">
-    <!-- Buton PC/Tactile direct pe ecranul de logare -->
+    <!-- NOU: Buton PC/Tactile direct pe ecranul de logare -->
     <div style="position: absolute; top: 20px; right: 20px; z-index: 1000000;">
         <button onclick="toggleComputerMode()" id="loginBtnComputerMode" style="background:#1f2937; border:1px solid var(--border); color:#fff; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:bold; cursor:pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">📱 Tactile</button>
     </div>
@@ -402,6 +395,7 @@
     <div class="section-selector-card">
         <h2 style="color:var(--primary); margin-top:0;">Choisissez la Section</h2>
         <p style="font-size:13px; color:#9ca3af; margin-bottom:16px;">Sélectionnez l'activité pour cette session :</p>
+        
         <button class="section-btn" onclick="selectAppSection('Bases')">🎨 Consulter les bases</button>
         <button class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Passer commande interne</button>
         <button class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:#059669;">🔄 Teintes Re-vendables</button>
@@ -430,7 +424,7 @@
             <select id="appVolumeSelect" class="app-volume-select" onchange="changeAppVolume()" title="Volume Alarme">
                 <option value="1">🔊</option>
                 <option value="0.75">🔉</option>
-                <option value="0.50">🔈</option>
+                <option value="0.5">🔈</option>
                 <option value="0.25">🔈</option>
                 <option value="0">🔇</option>
             </select>
@@ -440,7 +434,7 @@
         </div>
     </div>
 
-    <div class="header" style="margin-top: 0; padding-bottom: 10px; margin-bottom: 12px; border-bottom: none;">
+    <div class="header" style="margin-top: 0;">
         <h1 id="appHeaderTitle">Vérifie les Bases</h1>
         <p id="appHeaderSubtitle">Système de Recherche de Couleurs & Bases Techniques</p>
         
@@ -462,10 +456,6 @@
                 <button class="btn-logout" onclick="confirmLogout()">Déconnexion</button>
             </div>
         </div>
-    </div>
-
-    <!-- TRACKER COMMANDES EN DIRECT -->
-    <div id="liveJobsContainer" style="display:none; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border);">
     </div>
 
     <!-- SECTION BASES -->
@@ -593,7 +583,7 @@
         </div>
     </div>
 
-    <!-- SECTION TEINTES REVENDABLES -->
+    <!-- SECTION TEINTES REVENDABLES (HAUT) -->
     <div id="sectionRevendablesContent" style="display: none;">
         <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
@@ -603,6 +593,7 @@
             <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#10b981;" onclick="toggleResaleForm()">➕ Ajouter une Teinte</button>
         </div>
 
+        <!-- FORMULAIRE INTÉGRÉ RE-VENDABLE -->
         <div id="resaleFormPanel" class="panel" style="border-color: #10b981; display: none;">
             <h3 style="color:#10b981; margin-bottom:14px;">➕ Ajouter une Teinte Re-vendable</h3>
             
@@ -655,7 +646,7 @@
         </div>
     </div>
 
-    <!-- SECTION ERREURS DE TEINTE -->
+    <!-- SECTION ERREURS DE TEINTE (BAS) AVEC CALENDRIER ET BOUTON EXPORT -->
     <div id="sectionErreursContent" style="display: none;">
         <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
@@ -669,6 +660,7 @@
             </div>
         </div>
 
+        <!-- FORMULAIRE INTÉGRÉ ERREUR DE TEINTE -->
         <div id="errorFormPanel" class="panel" style="border-color: #ef4444; display: none;">
             <h3 style="color:#ef4444; margin-bottom:14px;">⚠️ Déclarer une Erreur de Teinte</h3>
             
@@ -720,6 +712,7 @@
             </div>
         </div>
 
+        <!-- CALENDRIER INTERACTIF -->
         <div class="mini-calendar" id="errorMiniCalendar"></div>
 
         <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
@@ -733,6 +726,8 @@
             <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune erreur enregistrée.</div>
         </div>
     </div>
+
+    <div id="alertBanner" class="alert-box"></div>
 
     <div id="guidePanel" class="panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -843,10 +838,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.21" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.18" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.21 : Correctif critique syntaxe. Restauration complète des fonctionnalités.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.18 : Système Teinteur avec Timer, réparation catalogues et bouton mode PC au démarrage.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -869,35 +864,158 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.21</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.18</span></div>
     </div>
 </div>
 
-<!-- CLAVIER VIRTUEL FLUIDE (Corectat si reintrodus aici, unde trebuia sa fie) -->
-<div id="virtualKeyboard" class="virtual-keyboard">
-    <div class="vk-row" style="max-width:500px; margin:0 auto 6px auto; gap:4px;">
-        <div class="vk-key vk-wide" id="vkShiftBtn" onclick="toggleShift()">⇧ Maj</div>
-        <div class="vk-key vk-wide" onclick="vClose()">⬇ Fermer</div>
+<!-- MODALS SECONDAIRES -->
+<div id="historyModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📜 Historique du Jour (06:00 - 19:00)</h3>
+            <button class="btn-close-modal" onclick="closeHistoryModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activités et modifications enregistrées aujourd'hui :</p>
+        <div id="historyLogsList" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée.</div>
+        </div>
     </div>
-    <div id="vkRow1" class="vk-row"></div>
-    <div id="vkRow2" class="vk-row"></div>
-    <div id="vkRow3" class="vk-row"></div>
+</div>
+
+<div id="collabModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>👥 Notifications d'Équipe</h3>
+            <button class="btn-close-modal" onclick="closeCollabModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activité de l'équipe :</p>
+        
+        <div id="acceptAllContainer" style="display:none; margin-bottom: 10px;">
+            <button class="btn btn-save" style="background-color: var(--accent); padding: 8px; font-size: 12px;" onclick="acceptAllCollabUpdates()">⚡ Tout accepter d'un coup</button>
+        </div>
+
+        <div id="collabNotificationsList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>
+        </div>
+    </div>
+</div>
+
+<div id="onlineUsersModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>🟢 Utilisateurs Connectés en Ligne</h3>
+            <button class="btn-close-modal" onclick="document.getElementById('onlineUsersModal').style.display='none'">✕</button>
+        </div>
+        <div id="onlineUsersModalList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+            <div style="text-align:center; padding:15px; color:#9ca3af;">Chargement...</div>
+        </div>
+    </div>
+</div>
+
+<!-- NOU: MODAL FICHES TEINTEUR (ALARMES) -->
+<div id="teinteurJobsModal" class="modal-overlay">
+    <div class="modal-content" style="border: 2px solid var(--accent);">
+        <div class="modal-header">
+            <h3 style="color:var(--accent);">🛎️ Fiches de Commande (Teinteur)</h3>
+            <button class="btn-close-modal" onclick="closeTeinteurJobsModal()">✕</button>
+        </div>
+        <div id="teinteurJobsList" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune commande en attente.</div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MISE A JOUR FORCÉE -->
+<div id="forcedUpdateModal">
+    <div class="modal-content" style="text-align:center; border: 2px solid var(--accent);">
+        <h3 style="color:var(--accent); margin-top:0; font-size:18px;">🚀 Mise à jour système disponible !</h3>
+        <p style="font-size:13px; color:#9ca3af;">L'administrateur a publié une nouvelle version de l'application.</p>
+        <div style="background:#111827; padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:14px; text-align:left;">
+            <p style="font-size:12px; font-weight:bold; color:#10b981; margin:0 0 6px 0;">Détails des nouveautés :</p>
+            <p id="forcedUpdateText" style="font-size:12px; color:#f3f4f6; margin:0; line-height:1.4;">Chargement...</p>
+        </div>
+        <button class="btn btn-save" style="width:100%; padding:14px; font-size:14px; background-color:var(--accent);" onclick="applyForcedUpdate()">Mettre à jour & Redémarrer</button>
+    </div>
+</div>
+
+<div id="tokenModalOverlay" class="modal-overlay">
+    <div class="modal-content" style="text-align:center;">
+        <div class="modal-header">
+            <h3>🔑 API Token GitHub Manager</h3>
+            <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
+        </div>
+        <a href="https://github.com/settings/tokens/new?description=La-Centrale-App&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">🔗 Générer le Token GitHub</a>
+        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <button class="btn btn-save" onclick="saveTokenFromModal()">💾 Enregistrer</button>
+    </div>
+</div>
+
+<div id="editModalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalEditTitle">Modifier les bases</h3>
+            <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
+        </div>
+        <input type="hidden" id="fullEditIndex">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; margin-top: 10px;">
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Trimetal</label>
+                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Herbol</label>
+                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Sikkens</label>
+                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Unikalo</label>
+                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+        </div>
+
+        <button class="btn btn-save" onclick="saveFullEdit()">Enregistrer les modifications</button>
+    </div>
+</div>
+
+<!-- CLAVIER VIRTUEL AZERTY STANDARD -->
+<div class="virtual-keyboard" id="virtualKeyboard">
     <div class="vk-row">
-        <div class="vk-key" onclick="vKey('@', this)">@</div>
-        <div class="vk-key vk-space" onclick="vKey(' ', this)">Espace</div>
+        <div class="vk-key" onclick="vKey('1', this)">1</div>
+        <div class="vk-key" onclick="vKey('2', this)">2</div>
+        <div class="vk-key" onclick="vKey('3', this)">3</div>
+        <div class="vk-key" onclick="vKey('4', this)">4</div>
+        <div class="vk-key" onclick="vKey('5', this)">5</div>
+        <div class="vk-key" onclick="vKey('6', this)">6</div>
+        <div class="vk-key" onclick="vKey('7', this)">7</div>
+        <div class="vk-key" onclick="vKey('8', this)">8</div>
+        <div class="vk-key" onclick="vKey('9', this)">9</div>
+        <div class="vk-key" onclick="vKey('0', this)">0</div>
+    </div>
+    <div class="vk-row" id="vkRow1"></div>
+    <div class="vk-row" id="vkRow2"></div>
+    <div class="vk-row" id="vkRow3"></div>
+    <div class="vk-row">
+        <div class="vk-key vk-shift" id="vkShiftBtn" onclick="toggleShift()">CAPS</div>
+        <div class="vk-key" onclick="vKey('-', this)">-</div>
         <div class="vk-key" onclick="vKey('.', this)">.</div>
-        <div class="vk-key vk-wide" style="background:#7f1d1d;" 
+        <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
+        <div class="vk-key vk-wide" 
              onmousedown="startVDel(this, event)" 
              onmouseup="stopVDel(event)" 
              onmouseleave="stopVDel(event)" 
              ontouchstart="startVDel(this, event)" 
              ontouchend="stopVDel(event)" 
              ontouchcancel="stopVDel(event)">⌫</div>
+        <div class="vk-key vk-close" onclick="vClose()">✕</div>
     </div>
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.21"; 
+    const CURRENT_APP_VERSION = "v1.18"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -931,8 +1049,7 @@
     let errorRecordsList = [];
     let resaleRecordsList = [];
     let selectedErrorDateFilter = null;
-    let activeTeinteurJobs = []; 
-    let notifiedTeinteurJobs = JSON.parse(localStorage.getItem('central_notified_teinteur_jobs')) || [];
+    let activeTeinteurJobs = []; // NOU
 
     let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
 
@@ -1105,6 +1222,7 @@
     }
     renderVkRows();
 
+    // FUNCTIONALITATE NOUĂ: Închidere tastatură inteligentă (Swipe & Click outside)
     document.addEventListener('click', function(e) {
         if (!isComputerMode && activeVirtualInput) {
             const vk = document.getElementById('virtualKeyboard');
@@ -1121,7 +1239,7 @@
     
     document.getElementById('virtualKeyboard').addEventListener('touchmove', e => {
         let touchEndY = e.touches[0].clientY;
-        if (touchEndY - vkTouchStartY > 40) vClose(); 
+        if (touchEndY - vkTouchStartY > 40) vClose(); // Detectare glisare în jos
     }, {passive: true});
 
     window.openVirtualKeyboard = function(inputEl) {
@@ -1425,8 +1543,7 @@
 
     function startRealTimeClock() {
         setInterval(() => {
-            const nowTime = Date.now();
-            const now = new Date(nowTime);
+            const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const year = now.getFullYear();
@@ -1437,25 +1554,12 @@
             if (dateEl) dateEl.textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
             checkDailyHistoryReset(now);
-            updateTeinteurJobTimers(nowTime); 
-
-            if (activeTeinteurJobs.length > 0 && window.FB_db) {
-                activeTeinteurJobs.forEach(job => {
-                    if (job.status === 'completed' && job.endTime) {
-                        if (nowTime - job.endTime >= 300000) { 
-                            if (localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable' || localUser.name === job.teinteur)) {
-                                window.FB_remove(window.FB_ref(window.FB_db, `teinteur_jobs/${job.id}`));
-                            }
-                        }
-                    }
-                });
-                renderLiveJobsTracker(); 
-            }
+            updateTeinteurJobTimers(now.getTime()); // Update noul timer de la Teinteur
 
             if (document.getElementById('mainContainer').style.display === 'block') {
                 let expiry = localStorage.getItem('user_session_expiry');
                 if (expiry) {
-                    const remaining = parseInt(expiry, 10) - nowTime;
+                    const remaining = parseInt(expiry, 10) - Date.now();
                     const timerSpan = document.getElementById('sessionCountdown');
                     if (remaining <= 0) {
                         timerSpan.textContent = "00:00:00";
@@ -1488,53 +1592,6 @@
                 el.textContent = `${m}:${s}`;
             }
         });
-    }
-
-    window.renderLiveJobsTracker = function() {
-        const container = document.getElementById('liveJobsContainer');
-        if (!container) return;
-
-        if (!localUser || !['Vendeur', 'Responsable', 'Master Admin'].includes(localUser.role)) {
-            container.style.display = 'none';
-            return;
-        }
-
-        let html = '';
-        let hasVisibleJobs = false;
-
-        activeTeinteurJobs.sort((a,b) => b.timestamp - a.timestamp).forEach(job => {
-            if (job.status === 'completed' && job.endTime && (Date.now() - job.endTime >= 300000)) return;
-
-            hasVisibleJobs = true;
-            let timeStr = new Date(job.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            let itemClass = '';
-            let statusHtml = '';
-
-            if (job.status === 'pending') {
-                itemClass = 'pending';
-                statusHtml = `⏳ Commande de <b>${job.sender}</b> - En attente`;
-            } else if (job.status === 'in_progress') {
-                itemClass = 'progress';
-                statusHtml = `🔵 Commande de <b>${job.sender}</b> - En préparation par <b>${job.teinteur}</b>`;
-            } else if (job.status === 'completed') {
-                itemClass = 'done';
-                statusHtml = `✅ Commande de <b>${job.sender}</b> finalisée par <b>${job.teinteur}</b> !`;
-            }
-
-            html += `
-                <div class="live-tracker-item ${itemClass}">
-                    <div>${statusHtml}</div>
-                    <div style="font-size:10px; color:#9ca3af;">${timeStr}</div>
-                </div>
-            `;
-        });
-
-        if (hasVisibleJobs) {
-            container.innerHTML = `<h4 style="margin:0 0 10px 0; color:#60a5fa; font-size:12px; text-transform:uppercase;">📡 Tracker de Commandes en Direct</h4>` + html;
-            container.style.display = 'block';
-        } else {
-            container.style.display = 'none';
-        }
     }
 
     function checkAndShowChangelog() {
@@ -1934,6 +1991,7 @@
     }
     window.playPersistentAlarm = playPersistentAlarm;
 
+    // NOU: FUNCTIE ALARMA TEINTEUR REVIZUITĂ
     window.triggerTeinteurAlarm = function() {
         if (!window.FB_db) return;
         const ref = window.FB_ref(window.FB_db, 'teinteur_jobs');
@@ -1946,8 +2004,6 @@
         }).then(() => {
             showAlert("🚨 Fiche envoyée au Teinteur !", true);
             logDailyHistory(`🚨 Fiche envoyée au teinteur`);
-            document.getElementById('sectionSelectorModal').style.display = 'none';
-            applySectionView();
         });
     }
 
@@ -1973,7 +2029,7 @@
         const history = JSON.parse(localStorage.getItem('central_daily_history') || '[]');
         list.innerHTML = '';
         if (history.length === 0) {
-            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activit\u00e9 enregistr\u00e9e depuis 06:00.</div>';
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée depuis 06:00.</div>';
             document.getElementById('historyModal').style.display = 'flex';
             return;
         }
@@ -2028,6 +2084,7 @@
             });
         }
 
+        // NOU: ASCULTĂTOR FIȘE TEINTEUR
         const tJobsRef = window.FB_ref(window.FB_db, 'teinteur_jobs');
         window.FB_onValue(tJobsRef, (snapshot) => {
             const data = snapshot.val();
@@ -2040,6 +2097,8 @@
                     pendingCount++;
                     if (!latestPending || job.timestamp > latestPending.timestamp) latestPending = job;
                 }
+                
+                // Dacă sunt Vendeur și comanda mea a fost finalizată:
                 if (job.status === 'completed' && job.sender === (localUser ? localUser.name : '') && !notifiedTeinteurJobs.includes(job.id)) {
                     notifiedTeinteurJobs.push(job.id);
                     localStorage.setItem('central_notified_teinteur_jobs', JSON.stringify(notifiedTeinteurJobs));
@@ -2054,6 +2113,7 @@
                 else badge.style.display = 'none';
             }
 
+            // Alarma doar pentru Teinteur la comenzi noi
             if (localUser && (localUser.role === 'Teinteur' || localUser.role === 'Responsable')) {
                 if (latestPending && latestPending.id !== lastProcessedPendingJobId && (Date.now() - latestPending.timestamp < 30000)) {
                     lastProcessedPendingJobId = latestPending.id;
@@ -2061,8 +2121,8 @@
                     showAlert(`🚨 ${latestPending.sender} a envoyé une fiche !`, false);
                 }
             }
+
             renderTeinteurJobs();
-            renderLiveJobsTracker();
         });
 
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
@@ -2094,6 +2154,7 @@
         });
     }
 
+    // --- LOGICĂ FICHES TEINTEUR ---
     window.openTeinteurJobsModal = function() {
         document.getElementById('teinteurJobsModal').style.display = 'flex';
         renderTeinteurJobs();
@@ -2160,56 +2221,9 @@
     window.finishTeinteurJob = function(jobId) {
         if (!window.FB_db) return;
         window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/status`), 'completed');
-        window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/endTime`), Date.now());
     }
 
-    window.renderLiveJobsTracker = function() {
-        const container = document.getElementById('liveJobsContainer');
-        if (!container) return;
-
-        if (!localUser || !['Vendeur', 'Responsable', 'Master Admin'].includes(localUser.role)) {
-            container.style.display = 'none';
-            return;
-        }
-
-        let html = '';
-        let hasVisibleJobs = false;
-
-        activeTeinteurJobs.sort((a,b) => b.timestamp - a.timestamp).forEach(job => {
-            if (job.status === 'completed' && job.endTime && (Date.now() - job.endTime >= 300000)) return;
-
-            hasVisibleJobs = true;
-            let timeStr = new Date(job.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            let itemClass = '';
-            let statusHtml = '';
-
-            if (job.status === 'pending') {
-                itemClass = 'pending';
-                statusHtml = `⏳ Commande de <b>${job.sender}</b> - En attente`;
-            } else if (job.status === 'in_progress') {
-                itemClass = 'progress';
-                statusHtml = `🔵 Commande de <b>${job.sender}</b> - En préparation par <b>${job.teinteur}</b>`;
-            } else if (job.status === 'completed') {
-                itemClass = 'done';
-                statusHtml = `✅ Commande de <b>${job.sender}</b> finalisée par <b>${job.teinteur}</b> !`;
-            }
-
-            html += `
-                <div class="live-tracker-item ${itemClass}">
-                    <div>${statusHtml}</div>
-                    <div style="font-size:10px; color:#9ca3af;">${timeStr}</div>
-                </div>
-            `;
-        });
-
-        if (hasVisibleJobs) {
-            container.innerHTML = `<h4 style="margin:0 0 10px 0; color:#60a5fa; font-size:12px; text-transform:uppercase;">📡 Tracker de Commandes en Direct</h4>` + html;
-            container.style.display = 'block';
-        } else {
-            container.style.display = 'none';
-        }
-    }
-
+    // --- ENVOI COMMANDES ---
     window.sendSingleStockRequest = function() {
         const brand = document.getElementById('singleBrand').value;
         const prodName = document.getElementById('singleProductName').value.trim();
@@ -2252,7 +2266,7 @@
         const loc = document.getElementById('listLocation').value.trim().toUpperCase();
 
         if (!brand || !prodName || !bucket || !loc) { alert("❌ Remplissez tous les champs !"); return; }
-        if (!isPallet && !qty) { alert("❌ Indiquez la cantitate !"); return; }
+        if (!isPallet && !qty) { alert("❌ Indiquez la quantité !"); return; }
 
         const fullProductName = `${brand} ${prodName}`;
         currentStockCartItems.push({ product: fullProductName, base: base, bucketSize: bucket, quantity: qty, location: loc });
@@ -2398,6 +2412,7 @@
         window.FB_set(window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`), 'completed').then(() => showAlert("✅ Stock validé !", true));
     }
 
+    // --- FORMULAIRES INTÉGRÉS DIRECTS (REMPLACANT LES POP-UPS) ---
     window.toggleErrorForm = function() {
         const panel = document.getElementById('errorFormPanel');
         if (panel.style.display === 'block') {
@@ -2852,6 +2867,7 @@
         
         for (let file of filesToSync) {
             try {
+                // Fetch forté sans cache
                 const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${file}?v=${CURRENT_APP_VERSION}&t=${Date.now()}`, { cache: "no-store" });
                 if (res.ok) {
                     const data = await res.json();
@@ -2870,6 +2886,7 @@
             tempDatabase.forEach(tempItem => {
                 const existingIndex = merged.findIndex(c => c.code.toUpperCase() === tempItem.code.toUpperCase() && c.palette.toUpperCase() === tempItem.palette.toUpperCase());
                 if (existingIndex >= 0) {
+                    // Actualizăm doar culoarea HEX, NU suprascriem bazele setate manual de utilizatori!
                     merged[existingIndex].hex = tempItem.hex || merged[existingIndex].hex;
                 } else merged.push(tempItem); 
             });
@@ -2924,10 +2941,10 @@
     renderGuideTable();
     startRealTimeClock();
     checkActiveSession();
-    renderFoldersOverview(); 
+    renderFoldersOverview(); // Fortare randare rapida a bazei locale de 6000 de culori
     filterColors();
     applyComputerMode();
-    autoSyncPalettes(); 
+    autoSyncPalettes(); // Cauta actualizari din sursa externa in fundal
 </script>
 
 </body>
