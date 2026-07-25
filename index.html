@@ -1036,6 +1036,7 @@
 
     let filesToSync = JSON.parse(localStorage.getItem('central_synced_files')) || ['ral.json', 'ncs.json', '5051.json', 'flamant.json', 'farrowball.json'];
     document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
+    if(document.getElementById('loginVersionDisplay')) document.getElementById('loginVersionDisplay').textContent = "Version " + CURRENT_APP_VERSION;
 
     let isAuthenticated = false;
     let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
