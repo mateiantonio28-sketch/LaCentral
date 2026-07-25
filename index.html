@@ -2098,7 +2098,12 @@
             document.getElementById('vendeurLivePopup').style.display = 'none';
         };
 
-        // NOU: ASCULTĂTOR FIȘE TEINTEUR AVANSAT
+        let lastSeenJobState = '';
+        window.openVendeurLivePopup = function() {
+            document.getElementById('vendeurLivePopup').style.display = 'flex';
+        };
+
+        // NOU: ASCULTĂTOR FIȘE TEINTEUR AVANSAT (AUTO-CLOSE & X)
         const tJobsRef = window.FB_ref(window.FB_db, 'teinteur_jobs');
         window.FB_onValue(tJobsRef, (snapshot) => {
             const data = snapshot.val();
@@ -2111,30 +2116,62 @@
                     if (!latestPending || job.timestamp > latestPending.timestamp) latestPending = job;
                 }
                 if (job.sender === (localUser ? localUser.name : '')) {
-                    if (job.status === 'in_progress' || job.status === 'completed') {
+                    if (job.status === 'pending' || job.status === 'in_progress' || job.status === 'completed') {
                         if (!myActiveJob || job.timestamp > myActiveJob.timestamp) myActiveJob = job;
                     }
                 }
             });
 
             const vPopup = document.getElementById('vendeurLivePopup');
+            const btnAlarm = document.getElementById('btnTeinteurAlarm');
+
+            if (myActiveJob) {
+                if (btnAlarm) {
+                    if (myActiveJob.status === 'pending') {
+                        btnAlarm.innerHTML = '⏳ ALARME ENVOYÉE (En attente...)';
+                        btnAlarm.style.borderColor = '#6b7280';
+                        btnAlarm.style.color = '#9ca3af';
+                        btnAlarm.onclick = null;
+                    } else {
+                        btnAlarm.innerHTML = '👁️ VOIR STATUS COMMANDE';
+                        btnAlarm.style.borderColor = 'var(--warning)';
+                        btnAlarm.style.color = 'var(--warning)';
+                        btnAlarm.onclick = window.openVendeurLivePopup;
+                    }
+                }
+            } else {
+                if (btnAlarm) {
+                    btnAlarm.innerHTML = '❗ ALARME TEINTEUR (Vendeur)';
+                    btnAlarm.style.borderColor = 'var(--danger)';
+                    btnAlarm.style.color = 'var(--danger)';
+                    btnAlarm.onclick = window.triggerTeinteurAlarm;
+                }
+            }
+
             if (vPopup && myActiveJob && localUser && localUser.role !== 'Teinteur') {
                 const content = document.getElementById('vendeurLivePopupContent');
                 const title = document.getElementById('vlTitle');
                 const timerEl = document.getElementById('vlTimer');
                 const btn = document.getElementById('vlBtn');
                 btn.setAttribute('data-job-id', myActiveJob.id);
-                document.getElementById('vlTeinteur').textContent = myActiveJob.teinteur;
+                document.getElementById('vlTeinteur').textContent = myActiveJob.teinteur || '...';
+
+                let stateKey = myActiveJob.id + '_' + myActiveJob.status;
+                let statusChanged = (lastSeenJobState !== stateKey);
+                if (statusChanged) lastSeenJobState = stateKey;
 
                 if (myActiveJob.status === 'in_progress') {
-                    vPopup.style.display = 'flex';
+                    if (statusChanged) {
+                        vPopup.style.display = 'flex';
+                        setTimeout(() => { if(document.getElementById('vendeurLivePopup')) document.getElementById('vendeurLivePopup').style.display = 'none'; }, 6000);
+                    }
                     content.style.borderColor = 'var(--warning)'; title.style.color = 'var(--warning)';
                     title.innerHTML = '⏳ Commande en préparation...';
                     timerEl.style.color = 'var(--warning)'; btn.style.display = 'none';
                     timerEl.setAttribute('data-start-time', myActiveJob.startTime);
                     timerEl.classList.add('teinteur-job-timer');
                 } else if (myActiveJob.status === 'completed') {
-                    vPopup.style.display = 'flex';
+                    if (statusChanged) vPopup.style.display = 'flex';
                     content.style.borderColor = 'var(--success)'; title.style.color = 'var(--success)';
                     title.innerHTML = '✅ PRÊT À ÊTRE RÉCUPÉRÉ !';
                     timerEl.style.color = 'var(--success)'; timerEl.textContent = 'TERMINÉ';
@@ -2146,7 +2183,10 @@
                         playPersistentAlarm();
                     }
                 }
-            } else if (vPopup && !myActiveJob) vPopup.style.display = 'none';
+            } else if (vPopup && !myActiveJob && lastSeenJobState !== '') {
+                vPopup.style.display = 'none';
+                lastSeenJobState = '';
+            }
 
             const badge = document.getElementById('teinteurJobsBadge');
             if (badge) {
