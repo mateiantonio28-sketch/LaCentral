@@ -2934,6 +2934,54 @@
 
     function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
+    window.forceSyncPalettesAdmin = async function() {
+        const stat = document.getElementById('syncAdminStatus');
+        stat.style.display = 'block';
+        stat.style.color = '#3b82f6';
+        stat.textContent = '⏳ Téléchargement des JSON depuis GitHub...';
+        
+        let files = ['ral.json', 'ncs.json', '5051.json', 'flamant.json', 'farrowball.json'];
+        let tempDatabase = [];
+        let addedCount = 0;
+        
+        for (let file of files) {
+            try {
+                const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${file}?t=${Date.now()}`, { cache: "no-store" });
+                if (res.ok) {
+                    const data = await res.json();
+                    data.forEach(item => { if (item.code) { tempDatabase.push(item); addedCount++; } });
+                }
+            } catch(e) { console.warn("Eroare la " + file); }
+        }
+        
+        if (addedCount > 0) {
+            customDatabase = tempDatabase;
+            saveToStorage();
+            if (typeof renderFoldersOverview === 'function') renderFoldersOverview();
+            stat.style.color = '#10b981';
+            stat.textContent = `✅ Succès ! ${addedCount} couleurs synchronisées avec succès. Rechargez la page !`;
+        } else {
+            stat.style.color = '#ef4444';
+            stat.textContent = '❌ Échec de la synchronisation. Fichiers introuvables sur Git.';
+        }
+    };
+
+    window.updateTargetPaletteDropdown = function() {};
+    window.renderFoldersOverview = function() {
+        const grid = document.getElementById('foldersOverviewList');
+        const count = document.getElementById('mainNuancierCount');
+        if(!grid) return;
+        if(count) count.textContent = customDatabase.length + " couleurs";
+        let folders = {};
+        customDatabase.forEach(c => { folders[c.palette] = (folders[c.palette] || 0) + 1; });
+        grid.innerHTML = '';
+        Object.keys(folders).forEach(p => {
+            grid.innerHTML += `<div class="folder-overview-item"><strong>📁 ${p}</strong> <span style="background:#374151; padding:2px 8px; border-radius:10px; font-size:11px;">${folders[p]}</span></div>`;
+        });
+    };
+    window.filterColors = function() {};
+    window.debouncedFilterColors = function() {};
+
     initVolumeUI();
     renderGuideTable();
     startRealTimeClock();
