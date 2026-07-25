@@ -815,16 +815,11 @@
             <button class="btn btn-admin" style="width:100%; background-color:#c2410c;" onclick="removeDuplicateColors()">🧹 Supprimer les Doublons</button>
         </div>
         
-        <button class="collapsible-btn" onclick="toggleCollapse('syncGitForm')">📂 Sychroniser, Créer & Éditer Nuancier (Git) <span>▼</span></button>
+        <button class="collapsible-btn" onclick="toggleCollapse('syncGitForm')">📂 Sychroniser Nuanciers (6000+ Couleurs) <span>▼</span></button>
         <div id="syncGitForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
-            <label style="font-size:11px; color:#9ca3af;">Choisir un fichier existant ou créer un nouveau :</label>
-            <select id="gitExistingFilesSelect" inputmode="none" onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
-
-            <input type="text" id="syncFileName" placeholder="Nom du fichier (ex: farrow_ball.json)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-            <input type="text" id="syncFolderPalette" placeholder="Nom du Dossier / Nuancier (ex: FARROW&BALL)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-            <textarea id="syncFileContent" rows="6" placeholder='Collez ou modifiez le code JSON [{"code": "...", "hex": "..."}] ici...' inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
-            
-            <button class="btn btn-save" style="background-color:#2563eb;" onclick="uploadAndSyncNewPalette()">🚀 Enregistrer sur GitHub</button>
+            <p style="font-size:11px; color:#9ca3af; margin-top:0;">Forcer la synchronisation des palettes (RAL, NCS, 5051, etc.) depuis GitHub vers l'application.</p>
+            <button class="btn btn-save" style="background-color:#2563eb; width:100%;" onclick="forceSyncPalettesAdmin()">🔄 Forcer la Sychronisation des 6000 Couleurs</button>
+            <div id="syncAdminStatus" style="margin-top:10px; font-size:12px; color:#10b981; font-weight:bold; display:none;"></div>
         </div>
 
         <button class="collapsible-btn" onclick="toggleCollapse('backupGitForm')">💾 Créer / Restaurer Backup (Git) <span>▼</span></button>
