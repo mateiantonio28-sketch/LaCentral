@@ -2977,7 +2977,114 @@
         }
     };
 
-    window.updateTargetPaletteDropdown = function() {};
+    window.updateTargetPaletteDropdown = function() {
+        const sel = document.getElementById('targetPaletteSelect');
+        if(!sel) return;
+        let palettes = new Set();
+        customDatabase.forEach(c => palettes.add(c.palette));
+        sel.innerHTML = '<option value="">-- Choisir Nuancier --</option>';
+        palettes.forEach(p => { sel.innerHTML += `<option value="${p}">${p}</option>`; });
+    };
+
+    window.saveSingleColorToFolder = function() {
+        const palette = document.getElementById('targetPaletteSelect').value;
+        const code = document.getElementById('manageCode').value.trim().toUpperCase();
+        const hex = document.getElementById('manageHex').value.trim();
+        if(!palette || !code) return alert("Palette et Code obligatoires!");
+        const idx = customDatabase.findIndex(c => c.code.toUpperCase() === code && c.palette === palette);
+        if(idx >= 0) {
+            customDatabase[idx].hex = hex || customDatabase[idx].hex;
+            showAlert(`Couleur ${code} mise à jour!`, true);
+        } else {
+            customDatabase.push({ code: code, palette: palette, hex: hex || "#cbd5e1", bases: {} });
+            showAlert(`Couleur ${code} ajoutée!`, true);
+        }
+        saveToStorage(); updateTargetPaletteDropdown();
+        if (typeof renderFoldersOverview === 'function') renderFoldersOverview();
+    };
+
+    window.deleteSingleColorFromFolder = function() {
+        const palette = document.getElementById('targetPaletteSelect').value;
+        const code = document.getElementById('manageCode').value.trim().toUpperCase();
+        if(!palette || !code) return alert("Palette et Code obligatoires!");
+        const initLen = customDatabase.length;
+        customDatabase = customDatabase.filter(c => !(c.code.toUpperCase() === code && c.palette === palette));
+        if (customDatabase.length < initLen) {
+            saveToStorage(); showAlert(`Couleur ${code} supprimée!`, true);
+            if (typeof renderFoldersOverview === 'function') renderFoldersOverview();
+        } else alert("Couleur introuvable.");
+    };
+
+    window.removeDuplicateColors = function() {
+        const unique = []; const seen = new Set(); let dupCount = 0;
+        customDatabase.forEach(c => {
+            const key = c.code.toUpperCase() + "_" + c.palette.toUpperCase();
+            if(seen.has(key)) dupCount++;
+            else { seen.add(key); unique.push(c); }
+        });
+        if(dupCount > 0) {
+            customDatabase = unique; saveToStorage();
+            showAlert(`🧹 ${dupCount} doublons supprimés!`, true);
+            if (typeof renderFoldersOverview === 'function') renderFoldersOverview();
+        } else showAlert(`Aucun doublon trouvé.`, true);
+    };
+
+    window.createSystemBackup = async function() {
+        const token = document.getElementById('ghTokenInput').value.trim() || localStorage.getItem('central_github_token');
+        if(!token) return alert("Token GitHub requis !");
+        const stat = document.getElementById('backupAdminStatus');
+        stat.style.display = 'block'; stat.style.color = '#3b82f6';
+        stat.textContent = '⏳ Création du backup en cours...';
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const backupFilename = `backups/backup_${CURRENT_APP_VERSION}_${timestamp}.json`;
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(customDatabase, null, 2))));
+        try {
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${backupFilename}`, {
+                method: "PUT", headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ message: `Backup automatique ${CURRENT_APP_VERSION}`, content: content })
+            });
+            if(res.ok) {
+                stat.style.color = '#10b981'; stat.textContent = `✅ Backup réussi: ${backupFilename}`;
+                fetchBackupList();
+            } else throw new Error("Échec de la sauvegarde.");
+        } catch(e) { stat.style.color = '#ef4444'; stat.textContent = '❌ Erreur: ' + e.message; }
+    };
+
+    window.fetchBackupList = async function() {
+        const token = document.getElementById('ghTokenInput').value.trim() || localStorage.getItem('central_github_token');
+        const sel = document.getElementById('backupListSelect');
+        if(!token) return alert("Token GitHub requis (dans la section Update App) !");
+        sel.innerHTML = '<option value="">⏳ Chargement...</option>';
+        try {
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/backups`, { headers: { "Authorization": `token ${token}` } });
+            if(res.ok) {
+                const files = await res.json();
+                sel.innerHTML = '<option value="">-- Sélectionnez un backup --</option>';
+                files.reverse().forEach(f => {
+                    if(f.name.endsWith('.json')) sel.innerHTML += `<option value="${f.path}">${f.name}</option>`;
+                });
+            } else sel.innerHTML = '<option value="">Aucun backup trouvé sur GitHub.</option>';
+        } catch(e) { sel.innerHTML = '<option value="">Erreur de chargement.</option>'; }
+    };
+
+    window.restoreSystemBackup = async function() {
+        const token = document.getElementById('ghTokenInput').value.trim() || localStorage.getItem('central_github_token');
+        const path = document.getElementById('backupListSelect').value;
+        const stat = document.getElementById('backupAdminStatus');
+        if(!token || !path) return alert("Sélectionnez un backup et vérifiez le token.");
+        if(!confirm("⚠️ ATTENTION: Cela va écraser la base de données locale. Continuer ?")) return;
+        stat.style.display = 'block'; stat.style.color = '#3b82f6'; stat.textContent = '⏳ Restauration en cours...';
+        try {
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`, { headers: { "Authorization": `token ${token}` } });
+            if(res.ok) {
+                const fileData = await res.json();
+                customDatabase = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+                saveToStorage(); updateTargetPaletteDropdown();
+                if (typeof renderFoldersOverview === 'function') renderFoldersOverview();
+                stat.style.color = '#10b981'; stat.textContent = '✅ Restauration terminée ! Rechargez la page.';
+            } else throw new Error("Impossible de lire le backup.");
+        } catch(e) { stat.style.color = '#ef4444'; stat.textContent = '❌ Erreur: ' + e.message; }
+    };
     window.renderFoldersOverview = function() {
         const grid = document.getElementById('foldersOverviewList');
         const count = document.getElementById('mainNuancierCount');
