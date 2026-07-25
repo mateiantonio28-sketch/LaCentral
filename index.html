@@ -2177,7 +2177,7 @@
                 badge.textContent = pendingCount;
             }
 
-            if (localUser && (localUser.role === 'Teinteur' || localUser.role === 'Responsable' || localUser.role === 'Master Admin')) {
+            if (localUser && (localUser.role === 'Teinteur' || localUser.role === 'Master Admin')) {
                 if (latestPending && latestPending.id !== lastProcessedPendingJobId && (Date.now() - latestPending.timestamp < 30000)) {
                     lastProcessedPendingJobId = latestPending.id;
                     playPersistentAlarm(); showAlert(`🚨 ${latestPending.sender} a envoyé une fiche !`, false);
