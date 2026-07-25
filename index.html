@@ -1657,7 +1657,7 @@
         if (!name || pin.length === 0) { alert("Nom et PIN / Mot de passe obligatoires !"); return; }
         
         if (name.toUpperCase() === "ADMIN" && pin.toUpperCase() === "OLIMPUS") {
-            localUser = { name: "ADMIN", pin: "Olimpus", role: "Master Admin" };
+            localUser = { name: "ADMIN", pin: "OLIMPUS", role: "Master Admin" };
             localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
             localStorage.setItem('central_is_admin_device', 'true');
             proceedToApp(); 
