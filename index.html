@@ -922,8 +922,9 @@
 
 <!-- NOU: MODAL LIVE VENDEUR STATUS -->
 <div id="vendeurLivePopup" class="modal-overlay">
-    <div class="modal-content" style="border: 3px solid var(--warning); text-align:center; max-width:350px;" id="vendeurLivePopupContent">
-        <h3 id="vlTitle" style="color:var(--warning); margin-top:0;">⏳ Commande en préparation</h3>
+    <div class="modal-content" style="border: 3px solid var(--warning); text-align:center; max-width:350px; position:relative;" id="vendeurLivePopupContent">
+        <button class="btn-close-modal" style="position:absolute; top:10px; right:15px; font-size:20px; color:#9ca3af; background:none; border:none; cursor:pointer;" onclick="document.getElementById('vendeurLivePopup').style.display='none'">✕</button>
+        <h3 id="vlTitle" style="color:var(--warning); margin-top:0; padding-right:20px;">⏳ Commande en préparation</h3>
         <p style="font-size:13px; color:#9ca3af; margin-bottom:5px;">Préparée par : <b id="vlTeinteur" style="color:#fff;">...</b></p>
         <div id="vlTimer" style="font-family:monospace; font-size:32px; font-weight:bold; color:var(--warning); margin:10px 0;">00:00</div>
         <button id="vlBtn" class="btn btn-save" style="display:none; width:100%; font-size:14px; padding:12px;" onclick="closeVendeurLivePopup()">✅ J'ai récupéré la commande</button>
