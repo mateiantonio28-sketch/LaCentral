@@ -47,16 +47,13 @@
         window.FB_get = get;
         window.FB_onDisconnect = onDisconnect;
 
-        // Init Messaging avec support High Priority et Foreground Handler
         isSupported().then((supported) => {
             if (supported) {
                 window.FB_messaging = getMessaging(app);
                 window.FB_getToken = getToken;
                 
                 onMessage(window.FB_messaging, (payload) => {
-                    console.log('Message reçu haute priorité foreground : ', payload);
                     if (payload && payload.notification) {
-                        // Déclenchement de l'alarme locale si l'app est ouverte
                         if (typeof window.playPersistentAlarm === 'function') {
                             window.playPersistentAlarm();
                         }
@@ -65,13 +62,8 @@
             }
         });
 
-        // Enregistrement du PWA Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./firebase-messaging-sw.js').then((registration) => {
-                console.log('Service Worker enregistré avec succès :', registration.scope);
-            }).catch((err) => {
-                console.log('Erreur Service Worker :', err);
-            });
+            navigator.serviceWorker.register('./firebase-messaging-sw.js').catch((err) => {});
         }
     </script>
 
@@ -134,6 +126,7 @@
             background-color: #10b981; border-radius: 50%;
             box-shadow: 0 0 6px #10b981;
             animation: pulse-green 2s infinite;
+            cursor: pointer;
         }
         @keyframes pulse-green {
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
@@ -157,11 +150,12 @@
         .section-selector-card {
             background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
             padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-height: 90vh; overflow-y: auto;
         }
         .section-btn {
             background: #374151; color: white; border: 1px solid var(--border);
-            padding: 16px; border-radius: 8px; font-size: 15px; font-weight: bold;
-            cursor: pointer; width: 100%; margin-bottom: 12px; transition: background 0.2s;
+            padding: 14px; border-radius: 8px; font-size: 14px; font-weight: bold;
+            cursor: pointer; width: 100%; margin-bottom: 10px; transition: background 0.2s;
         }
         .section-btn:hover { background: var(--accent); }
 
@@ -312,7 +306,6 @@
         .vk-key.vk-shift { flex: 1.5; font-size: 11px; background: #475569; }
         .vk-key.vk-shift.active { background: var(--accent); }
 
-        /* MODAL MISE A JOUR FORCÉE */
         #forcedUpdateModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
@@ -327,8 +320,8 @@
         <h2>La Centrale ProShop</h2>
         <p id="lockSubtitle">Connexion Utilisateur</p>
         
-        <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-        <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
+        <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
         
         <div class="login-pin-pad">
             <div class="pin-key" onclick="loginPinKey('1', this)">1</div>
@@ -367,11 +360,13 @@
 <div id="sectionSelectorModal" class="section-selector-overlay">
     <div class="section-selector-card">
         <h2 style="color:var(--primary); margin-top:0;">Choisissez la Section</h2>
-        <p style="font-size:13px; color:#9ca3af; margin-bottom:20px;">Sélectionnez l'activité pour cette session :</p>
+        <p style="font-size:13px; color:#9ca3af; margin-bottom:16px;">Sélectionnez l'activité pour cette session :</p>
         <button class="section-btn" onclick="selectAppSection('Bases')">🎨 Consulter les bases</button>
         <button class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Passer commande interne</button>
+        <button class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:#b91c1c;">⚠️ Erreurs de Teinte</button>
+        <button class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:#059669;">🔄 Teintes Re-vendables</button>
         
-        <button id="btnTeinteurAlarm" class="section-btn" style="background-color: var(--danger); display: none; margin-top: 14px; border: 2px solid #7f1d1d;" onclick="triggerTeinteurAlarm()">❗ ALARME TEINTEUR</button>
+        <button id="btnTeinteurAlarm" class="section-btn" style="background-color: var(--danger); display: none; margin-top: 10px; border: 2px solid #7f1d1d;" onclick="triggerTeinteurAlarm()">❗ ALARME TEINTEUR</button>
     </div>
 </div>
 
@@ -406,8 +401,8 @@
             <div>📅 <span id="currentDateDisplay">--/--/---- --:--</span></div>
             
             <div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:bold; color:#10b981;" title="Utilisateurs en ligne">
-                <span class="online-dot"></span>
-                En ligne: <span id="onlineUsersCount" style="color:#fff; background:#064e3b; padding:2px 8px; border-radius:10px;">0</span>
+                <span class="online-dot" onclick="openOnlineUsersModal()"></span>
+                En ligne: <span id="onlineUsersCount" style="color:#fff; background:#064e3b; padding:2px 8px; border-radius:10px; cursor:pointer;" onclick="openOnlineUsersModal()">0</span>
             </div>
 
             <div>⏱️ Session: <span id="sessionCountdown" style="color:#f59e0b; font-weight:bold;">10:00:00</span></div>
@@ -422,6 +417,7 @@
         </div>
     </div>
 
+    <!-- SECTION BASES -->
     <div id="sectionBasesContent">
         <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="debouncedFilterColors()">
 
@@ -452,7 +448,6 @@
 
     <!-- SECTION STOCK -->
     <div id="sectionStockContent" style="display: none;">
-        
         <div class="stock-tabs">
             <button class="stock-tab-btn active" id="tabBtnSingle" onclick="switchStockMode('single')">⚡ Demande simple</button>
             <button class="stock-tab-btn" id="tabBtnList" onclick="switchStockMode('list')">📋 Demande liste</button>
@@ -535,6 +530,38 @@
         </div>
     </div>
 
+    <!-- SECTION ERREURS DE TEINTE -->
+    <div id="sectionErreursContent" style="display: none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="margin:0; color:#ef4444; font-size:16px;">⚠️ Registre des Erreurs de Teinte</h3>
+            <button class="btn btn-save" style="width:auto; padding:8px 12px; background-color:#ef4444;" onclick="openErrorModal()">➕ Déclarer une Erreur</button>
+        </div>
+
+        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom de collègue (ex: Antonio)..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
+        
+        <div id="errorStatsBox" style="background:var(--panel-bg); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#9ca3af; border:1px solid var(--border);">
+            Total erreurs enregistrées : <b id="totalErrorsCount" style="color:#fff;">0</b> | Total volume raté : <b id="totalErrorLitres" style="color:#ef4444;">0 L / KG</b>
+        </div>
+
+        <div id="errorRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune erreur enregistrée.</div>
+        </div>
+    </div>
+
+    <!-- SECTION TEINTES REVENDABLES -->
+    <div id="sectionRevendablesContent" style="display: none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="margin:0; color:#10b981; font-size:16px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
+            <button class="btn btn-save" style="width:auto; padding:8px 12px; background-color:#10b981;" onclick="openResaleModal()">➕ Ajouter une Teinte</button>
+        </div>
+
+        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:12px;">
+
+        <div id="resaleRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune teinte re-vendable en stock.</div>
+        </div>
+    </div>
+
     <div id="alertBanner" class="alert-box"></div>
 
     <div id="guidePanel" class="panel">
@@ -572,7 +599,6 @@
             <button class="btn-close-modal" onclick="closeAdminPanel()">✕</button>
         </div>
 
-        <!-- GESTION UTILISATEURS -->
         <button class="collapsible-btn" onclick="toggleCollapse('manageUsersForm')" style="background-color:#1e3a8a; border-color:#3b82f6;">
             👥 Gestion des Accès Utilisateurs <span id="adminPendingBadgePanel" class="admin-badge-inline">0</span> <span>▼</span>
         </button>
@@ -625,7 +651,6 @@
         
         <button class="collapsible-btn" onclick="toggleCollapse('syncGitForm')">📂 Sychroniser, Créer & Éditer Nuancier (Git) <span>▼</span></button>
         <div id="syncGitForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
-            
             <label style="font-size:11px; color:#9ca3af;">Choisir un fichier existant ou créer un nouveau :</label>
             <select id="gitExistingFilesSelect" inputmode="none" onchange="loadSelectedGitFile()" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
 
@@ -648,10 +673,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.10" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.11" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.10 : Intégration des notifications push à haute priorité (High Priority) pour un réveil instantané des appareils.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.11 : Connexion par touche Entrée, liste des utilisateurs online, module Erreurs de Teinte et Teintes Re-vendables.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -674,10 +699,11 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.10</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.11</span></div>
     </div>
 </div>
 
+<!-- MODALS -->
 <div id="historyModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -709,7 +735,86 @@
     </div>
 </div>
 
-<!-- MODAL DE MISE A JOUR FORCÉE -->
+<!-- MODAL UTILISATEURS EN LIGNE -->
+<div id="onlineUsersModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>🟢 Utilisateurs Connectés en Ligne</h3>
+            <button class="btn-close-modal" onclick="document.getElementById('onlineUsersModal').style.display='none'">✕</button>
+        </div>
+        <div id="onlineUsersModalList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+            <div style="text-align:center; padding:15px; color:#9ca3af;">Chargement...</div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DÉCLARATION ERREUR DE TEINTE -->
+<div id="errorModal" class="modal-overlay">
+    <div class="modal-content" style="border: 2px solid #ef4444;">
+        <div class="modal-header">
+            <h3 style="color:#ef4444;">⚠️ Déclarer une Erreur de Teinte</h3>
+            <button class="btn-close-modal" onclick="closeErrorModal()">✕</button>
+        </div>
+        <select id="errBrand" onchange="updateErrorDropdowns()" style="background:#1f2937; border-color:var(--border);">
+            <option value="">Sélectionnez la marque</option>
+            <option value="Trimetal">Trimetal</option>
+            <option value="Herbol">Herbol</option>
+            <option value="Sikkens">Sikkens</option>
+            <option value="Levis">Levis</option>
+            <option value="Unikalo">Unikalo</option>
+            <option value="Unikatex">Unikatex</option>
+            <option value="Eurotex">Eurotex</option>
+            <option value="Mathys">Mathys</option>
+            <option value="Rust-oleum">Rust-oleum</option>
+            <option value="Liber">Liber</option>
+        </select>
+        <input type="text" id="errProductName" placeholder="Nom du produit (si connu)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <select id="errBase"><option value="">Base</option></select>
+            <select id="errBucketSize"><option value="">Capacité (L / KG)</option></select>
+        </div>
+        <input type="number" id="errQuantity" placeholder="Quantité (ex: 1, 2...)" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="date" id="errDate" style="background:#111827; color:#fff; border:1px solid var(--border); padding:10px; border-radius:6px; width:100%; margin-bottom:8px;">
+        <textarea id="errReason" rows="2" placeholder="Motif de l'erreur (ex: mauvaise base, erreur de code...)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
+        <input type="text" id="errSignature" placeholder="Signature (Nom de la personne responsable de l'erreur)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        
+        <button class="btn btn-save" style="background-color:#ef4444; margin-top:6px;" onclick="saveErrorRecord()">💾 Enregistrer l'Erreur</button>
+    </div>
+</div>
+
+<!-- MODAL AJOUT TEINTE RE-VENDABLE -->
+<div id="resaleModal" class="modal-overlay">
+    <div class="modal-content" style="border: 2px solid #10b981;">
+        <div class="modal-header">
+            <h3 style="color:#10b981;">🔄 Ajouter une Teinte Re-vendable</h3>
+            <button class="btn-close-modal" onclick="closeResaleModal()">✕</button>
+        </div>
+        <select id="resBrand" onchange="updateResaleDropdowns()" style="background:#1f2937; border-color:var(--border);">
+            <option value="">Sélectionnez la marque</option>
+            <option value="Trimetal">Trimetal</option>
+            <option value="Herbol">Herbol</option>
+            <option value="Sikkens">Sikkens</option>
+            <option value="Levis">Levis</option>
+            <option value="Unikalo">Unikalo</option>
+            <option value="Unikatex">Unikatex</option>
+            <option value="Eurotex">Eurotex</option>
+            <option value="Mathys">Mathys</option>
+            <option value="Rust-oleum">Rust-oleum</option>
+            <option value="Liber">Liber</option>
+        </select>
+        <input type="text" id="resProductName" placeholder="Nom du produit" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="text" id="resColorCode" placeholder="Code Couleur (ex: RAL 9010 ou NCS S 0502-Y)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <select id="resBase"><option value="">Base</option></select>
+            <select id="resBucketSize"><option value="">Capacité (L / KG)</option></select>
+        </div>
+        <input type="number" id="resQuantity" placeholder="Quantité en stock" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        
+        <button class="btn btn-save" style="background-color:#10b981; margin-top:6px;" onclick="saveResaleRecord()">💾 Ajouter au Stock Re-vendable</button>
+    </div>
+</div>
+
+<!-- MODAL MISE A JOUR FORCÉE -->
 <div id="forcedUpdateModal">
     <div class="modal-content" style="text-align:center; border: 2px solid var(--accent);">
         <h3 style="color:var(--accent); margin-top:0; font-size:18px;">🚀 Mise à jour système disponible !</h3>
@@ -799,7 +904,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.10"; 
+    const CURRENT_APP_VERSION = "v1.11"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -809,13 +914,15 @@
         "Herbol": { bases: ["DU1", "DU3", "LA1", "LA3", "LA4", "LU1", "LU3", "LU4"], sizes: ["1L", "2.5L", "5L", "12.5L"] },
         "Sikkens": { bases: ["W05", "N00"], sizes: ["1L", "2.5L", "5L", "10L"] },
         "Unikalo": { bases: ["BLANC", "B+", "C", "D"], sizes: ["0.75L", "3L", "12L", "16kg", "20kg", "22kg"] },
-        "Levis": { bases: [], sizes: [] },
+        "Levis": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L", "10L"] },
         "Unikatex": { bases: [], sizes: ["22kg"] },
-        "Eurotex": { bases: [], sizes: ["22kg"] }
+        "Eurotex": { bases: [], sizes: ["22kg"] },
+        "Mathys": { bases: [], sizes: ["1L", "5L", "10L", "20L"] },
+        "Rust-oleum": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L"] },
+        "Liber": { bases: [], sizes: ["0.5L", "1L", "2.5L"] }
     };
 
     let filesToSync = JSON.parse(localStorage.getItem('central_synced_files')) || ['ral.json', 'ncs.json', '5051.json', 'flamant.json', 'farrowball.json'];
-
     document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
 
     let isAuthenticated = false;
@@ -827,14 +934,15 @@
     let previousPendingCount = -1;
     let cachedAuthUsersData = null; 
     let learnedLocations = {}; 
-    
+    let onlineUsersMap = {};
+    let errorRecordsList = [];
+    let resaleRecordsList = [];
+
     let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
 
     function initVolumeUI() {
         const volSelect = document.getElementById('appVolumeSelect');
-        if(volSelect) {
-            volSelect.value = appVolume === 0 ? "0" : appVolume.toString();
-        }
+        if(volSelect) volSelect.value = appVolume === 0 ? "0" : appVolume.toString();
     }
 
     window.changeAppVolume = function() {
@@ -934,6 +1042,14 @@
         }
     }
 
+    // Gestion de la touche ENTREE sur l'écran de connexion
+    window.checkLoginEnter = function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleUserAuth();
+        }
+    }
+
     let pinDelInterval = null;
     let pinDelTimeout = null;
     let isPinDeleting = false;
@@ -1007,11 +1123,8 @@
     window.toggleShift = function() {
         isShiftActive = !isShiftActive;
         const shiftBtn = document.getElementById('vkShiftBtn');
-        if (isShiftActive) {
-            shiftBtn.classList.add('active');
-        } else {
-            shiftBtn.classList.remove('active');
-        }
+        if (isShiftActive) shiftBtn.classList.add('active');
+        else shiftBtn.classList.remove('active');
         renderVkRows();
     }
 
@@ -1075,6 +1188,7 @@
         }
     }
 
+    // Gestion Dropdowns Stock / Erreurs / Revendables
     window.updateStockDropdowns = function(prefix) {
         const brand = document.getElementById(prefix + 'Brand').value;
         const baseSelect = document.getElementById(prefix + 'Base');
@@ -1092,6 +1206,42 @@
             });
         }
         checkLearnedLocation(prefix);
+    }
+
+    window.updateErrorDropdowns = function() {
+        const brand = document.getElementById('errBrand').value;
+        const baseSelect = document.getElementById('errBase');
+        const sizeSelect = document.getElementById('errBucketSize');
+        
+        baseSelect.innerHTML = '<option value="">Base (Optionnel)</option>';
+        sizeSelect.innerHTML = '<option value="">Capacité (L / KG)</option>';
+        
+        if (BRANDS_DATA[brand]) {
+            BRANDS_DATA[brand].bases.forEach(b => {
+                baseSelect.innerHTML += `<option value="${b}">${b}</option>`;
+            });
+            BRANDS_DATA[brand].sizes.forEach(s => {
+                sizeSelect.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+        }
+    }
+
+    window.updateResaleDropdowns = function() {
+        const brand = document.getElementById('resBrand').value;
+        const baseSelect = document.getElementById('resBase');
+        const sizeSelect = document.getElementById('resBucketSize');
+        
+        baseSelect.innerHTML = '<option value="">Base (Optionnel)</option>';
+        sizeSelect.innerHTML = '<option value="">Capacité (L / KG)</option>';
+        
+        if (BRANDS_DATA[brand]) {
+            BRANDS_DATA[brand].bases.forEach(b => {
+                baseSelect.innerHTML += `<option value="${b}">${b}</option>`;
+            });
+            BRANDS_DATA[brand].sizes.forEach(s => {
+                sizeSelect.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+        }
     }
 
     window.toggleQuantityInput = function(prefix) {
@@ -1140,9 +1290,8 @@
 
     window.toggleCollapse = function(id) {
         const content = document.getElementById(id);
-        if(content.style.display === "block") {
-            content.style.display = "none";
-        } else {
+        if(content.style.display === "block") content.style.display = "none";
+        else {
             document.querySelectorAll('.collapsible-content').forEach(c => c.style.display = 'none');
             content.style.display = "block";
         }
@@ -1250,7 +1399,12 @@
         const presenceRef = window.FB_ref(window.FB_db, `presence/${deviceId}`);
         
         if (document.getElementById('mainContainer').style.display === 'block') {
-            window.FB_set(presenceRef, { name: localUser.name, role: localUser.role, timestamp: Date.now() });
+            window.FB_set(presenceRef, { 
+                name: localUser.name, 
+                role: localUser.role, 
+                deviceId: deviceId,
+                timestamp: Date.now() 
+            });
             if (!isPresenceTracking) {
                 window.FB_onDisconnect(presenceRef).remove(); 
                 isPresenceTracking = true;
@@ -1266,16 +1420,14 @@
         
         const connectedRef = window.FB_ref(window.FB_db, '.info/connected');
         window.FB_onValue(connectedRef, (snap) => {
-            if (snap.val() === true) {
-                updateMyPresence(); 
-            }
+            if (snap.val() === true) updateMyPresence();
         });
 
         const allPresenceRef = window.FB_ref(window.FB_db, 'presence');
         window.FB_onValue(allPresenceRef, (snap) => {
-            const data = snap.val();
-            let count = 0;
-            if (data) count = Object.keys(data).length;
+            const data = snap.val() || {};
+            onlineUsersMap = data;
+            const count = Object.keys(data).length;
             
             const onlineCountEl = document.getElementById('onlineUsersCount');
             if (onlineCountEl) onlineCountEl.textContent = count;
@@ -1285,6 +1437,42 @@
         window.FB_onValue(locRef, (snap) => {
             learnedLocations = snap.val() || {};
         });
+
+        // Écouteur Erreurs de Teinte
+        const errRef = window.FB_ref(window.FB_db, 'tint_errors');
+        window.FB_onValue(errRef, (snap) => {
+            const data = snap.val();
+            errorRecordsList = data ? Object.values(data) : [];
+            renderErrorRecords();
+        });
+
+        // Écouteur Teintes Revendables
+        const resaleRef = window.FB_ref(window.FB_db, 'tint_resales');
+        window.FB_onValue(resaleRef, (snap) => {
+            const data = snap.val();
+            resaleRecordsList = data ? Object.values(data) : [];
+            renderResaleRecords();
+        });
+    }
+
+    // Affichage modale utilisateurs en ligne
+    window.openOnlineUsersModal = function() {
+        const list = document.getElementById('onlineUsersModalList');
+        list.innerHTML = '';
+        const keys = Object.keys(onlineUsersMap);
+
+        if (keys.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:15px; color:#9ca3af;">Aucun utilisateur en ligne.</div>';
+        } else {
+            keys.forEach(id => {
+                const u = onlineUsersMap[id];
+                const div = document.createElement('div');
+                div.style.cssText = "background:#111827; border:1px solid var(--border); border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center; font-size:13px;";
+                div.innerHTML = `<div><strong>🟢 ${u.name}</strong> <span style="color:#60a5fa; font-size:11px;">(${u.role})</span></div><div style="color:#9ca3af; font-size:10px;">ID: ${u.deviceId.substring(0,8)}...</div>`;
+                list.appendChild(div);
+            });
+        }
+        document.getElementById('onlineUsersModal').style.display = 'flex';
     }
 
     function startRealTimeClock() {
@@ -1368,22 +1556,17 @@
             localStorage.removeItem('central_app_section');
         } 
         
-        if (adminExpiry && now < parseInt(adminExpiry, 10)) {
-            isAuthenticated = true; 
-        } else {
-            isAuthenticated = false;
-        }
+        if (adminExpiry && now < parseInt(adminExpiry, 10)) isAuthenticated = true; 
+        else isAuthenticated = false;
 
         if (userExpiry && now < parseInt(userExpiry, 10) && localUser) {
             document.getElementById('userLockScreen').style.display = 'none';
-            
             if (!currentAppSection) {
                 updateAlarmButtonVisibility();
                 document.getElementById('sectionSelectorModal').style.display = 'flex';
             } else {
                 applySectionView();
             }
-
             document.getElementById('welcomeUser').textContent = `${localUser.name} (${localUser.role})`;
             checkAndShowChangelog();
             initFirebaseListeners();
@@ -1401,21 +1584,15 @@
         
         if (localUser) {
             subtitle.innerHTML = `Bienvenue, <strong>${localUser.name}</strong> !<br><span style="color:#60a5fa; font-weight:bold; font-size:12px; margin-top:4px; display:inline-block;">Poste : ${localUser.role}</span>`;
-            
             userInput.value = localUser.name;
             userInput.style.display = 'none';
-            
-            if(localUser.role) {
-                roleInput.value = localUser.role;
-            }
+            if(localUser.role) roleInput.value = localUser.role;
             roleInput.style.display = 'none'; 
         } else {
             subtitle.textContent = "Créer un profil local (PIN ou Mot de passe)";
-            
             userInput.value = "";
             userInput.disabled = false;
             userInput.style.display = 'block';
-            
             roleInput.disabled = false;
             roleInput.style.display = 'block';
         }
@@ -1462,26 +1639,16 @@
                         alert("❌ Identifiants incorrects ou code PIN erroné !");
                         return;
                     }
-                    
                     localUser = { name: userData.name, pin: userData.pin, role: userData.role };
                     localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
-                    
                     proceedToApp();
                 }
             } else {
-                const newUser = {
-                    name: name,
-                    pin: pin,
-                    role: role,
-                    status: 'pending',
-                    timestamp: Date.now()
-                };
+                const newUser = { name: name, pin: pin, role: role, status: 'pending', timestamp: Date.now() };
                 await window.FB_set(userRef, newUser);
-                
                 localUser = { name: name, pin: pin, role: role };
                 localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
-                
-                alert("✅ Demande envoyée ! Veuillez attendre l'approbation de l'administrateur pour accéder à l'application.");
+                alert("✅ Demande envoyée ! Veuillez attendre l'approbation de l'administrateur.");
                 initUserScreen(); 
             }
         } catch(e) {
@@ -1497,7 +1664,6 @@
         localStorage.setItem('user_session_expiry', expiry);
 
         document.getElementById('userLockScreen').style.display = 'none';
-        
         updateAlarmButtonVisibility();
         document.getElementById('sectionSelectorModal').style.display = 'flex';
         updateMyPresence(); 
@@ -1510,8 +1676,7 @@
                     .then((currentToken) => {
                         if (currentToken) {
                             const deviceId = getOrCreateDeviceId();
-                            const tokenRef = window.FB_ref(window.FB_db, `auth_users/${deviceId}/fcmToken`);
-                            window.FB_set(tokenRef, currentToken);
+                            window.FB_set(window.FB_ref(window.FB_db, `auth_users/${deviceId}/fcmToken`), currentToken);
                         }
                     }).catch((err) => {});
                 }
@@ -1540,16 +1705,30 @@
         const subtitle = document.getElementById('appHeaderSubtitle');
         const basesSec = document.getElementById('sectionBasesContent');
         const stockSec = document.getElementById('sectionStockContent');
+        const erreursSec = document.getElementById('sectionErreursContent');
+        const revendablesSec = document.getElementById('sectionRevendablesContent');
+
+        // Masquer tout
+        basesSec.style.display = 'none';
+        stockSec.style.display = 'none';
+        erreursSec.style.display = 'none';
+        revendablesSec.style.display = 'none';
 
         if (currentAppSection === 'Stock') {
             title.textContent = "Gestion du Stock";
             subtitle.textContent = "Commandes de seaux et produits pour rayons";
-            basesSec.style.display = 'none';
             stockSec.style.display = 'block';
+        } else if (currentAppSection === 'Erreurs') {
+            title.textContent = "Erreurs de Teinte";
+            subtitle.textContent = "Registre de transparence et analyse des rebuts";
+            erreursSec.style.display = 'block';
+        } else if (currentAppSection === 'Revendables') {
+            title.textContent = "Teintes Re-vendables";
+            subtitle.textContent = "Maximisation de la vente des seaux préparés en plus";
+            revendablesSec.style.display = 'block';
         } else {
             title.textContent = "Vérifie les Bases";
             subtitle.textContent = "Système de Recherche de Couleurs & Bases";
-            stockSec.style.display = 'none';
             basesSec.style.display = 'block';
         }
         checkAndShowChangelog();
@@ -1558,9 +1737,7 @@
     }
 
     window.confirmLogout = function() {
-        if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
-            logoutUserSession();
-        }
+        if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) logoutUserSession();
     }
 
     function logoutUserSession() {
@@ -1576,11 +1753,8 @@
     window.validateAuth = function() {
         const u = document.getElementById('authUser').value.trim();
         const p = document.getElementById('authPass').value.trim();
-        if (u.toUpperCase() === "ADMIN" && p.toUpperCase() === "OLIMPUS") { 
-            grantAdminAccess(); 
-        } else { 
-            showAlert("Identifiants Administrateur incorrects."); 
-        }
+        if (u.toUpperCase() === "ADMIN" && p.toUpperCase() === "OLIMPUS") grantAdminAccess(); 
+        else showAlert("Identifiants Administrateur incorrects."); 
     }
 
     function grantAdminAccess() {
@@ -1599,16 +1773,11 @@
         populateGuideAdminForm();
         populateGitFilesDropdown();
         document.getElementById('sourceCodeInput').value = document.documentElement.outerHTML;
-
         renderAdminUsersList(cachedAuthUsersData);
-
         showAlert("Panneau Admin déverrouillé avec succès.", true);
     }
 
-    window.closeAdminPanel = function() {
-        document.getElementById('adminPanel').style.display = 'none';
-    }
-
+    window.closeAdminPanel = function() { document.getElementById('adminPanel').style.display = 'none'; }
     window.lockAdminPanel = function() {
         isAuthenticated = false;
         localStorage.removeItem('admin_session_expiry');
@@ -1621,9 +1790,7 @@
         window.FB_set(window.FB_ref(window.FB_db, `device_tests/${deviceId}`), {
             timestamp: Date.now(),
             admin: localUser.name
-        }).then(() => {
-            showAlert(`Signal de test envoyé à l'appareil de ${userName} !`, true);
-        });
+        }).then(() => showAlert(`Signal de test envoyé à l'appareil de ${userName} !`, true));
     }
 
     function listenToAuthUsersGlobal() {
@@ -1643,7 +1810,6 @@
             const data = snapshot.val();
             cachedAuthUsersData = data; 
             let pendingCount = 0;
-            
             if(data) {
                 Object.keys(data).forEach(id => {
                     if(data[id].status === 'pending') pendingCount++;
@@ -1652,28 +1818,22 @@
 
             const badgePanel = document.getElementById('adminPendingBadgePanel');
             const badgeBtn = document.getElementById('btnAdminBadge');
-
             [badgePanel, badgeBtn].forEach(badge => {
                 if(badge) {
                     if(pendingCount > 0) {
                         badge.style.display = 'inline-block';
                         badge.textContent = pendingCount;
-                    } else {
-                        badge.style.display = 'none';
-                    }
+                    } else badge.style.display = 'none';
                 }
             });
 
-            const isAdminDevice = localStorage.getItem('central_is_admin_device') === 'true' || isAuthenticated;
+            const isAdminDevice = localStorage.getItem('central_is_admin_device'] === 'true' || isAuthenticated;
             if (isAdminDevice && previousPendingCount >= 0 && pendingCount > previousPendingCount) {
                 playPersistentAlarm();
                 showAlert(`🔔 Nouvel utilisateur en attente d'approbation (${pendingCount}) !`, true);
             }
             previousPendingCount = pendingCount;
-
-            if(isAuthenticated) {
-                renderAdminUsersList(data);
-            }
+            if(isAuthenticated) renderAdminUsersList(data);
         });
     }
 
@@ -1682,8 +1842,7 @@
         if (newName && newName.trim() !== "" && newName !== currentName) {
             if(!window.FB_db) return;
             window.FB_set(window.FB_ref(window.FB_db, `auth_users/${deviceId}/name`), newName.trim())
-                .then(() => showAlert("Nom d'utilisateur mis à jour avec succès !", true))
-                .catch(() => showAlert("Erreur lors de la mise à jour du nom."));
+                .then(() => showAlert("Nom d'utilisateur mis à jour avec succès !", true));
         }
     }
 
@@ -1702,10 +1861,8 @@
             keys.forEach(deviceId => {
                 const u = data[deviceId];
                 const div = document.createElement('div');
-                
                 let isPending = u.status === 'pending';
                 let bgBorder = isPending ? "background:#2e2203; border:1px solid #b45309;" : "background:#1f2937; border:1px solid var(--border);";
-                
                 div.style.cssText = `${bgBorder} padding:10px; border-radius:6px; font-size:12px; margin-bottom:4px;`;
                 
                 let statusColor = u.status === 'approved' ? '#4ade80' : (u.status === 'blocked' ? '#fca5a5' : '#f59e0b');
@@ -1733,21 +1890,15 @@
     }
 
     window.confirmBlockUser = function(deviceId, name) {
-        if(confirm(`Êtes-vous sûr de vouloir bloquer définitivement l'accès pour ${name} ?
-Cet utilisateur perdra son accès immédiatement.`)) {
-            setAdminUserStatus(deviceId, 'blocked');
-        }
+        if(confirm(`Voulez-vous bloquer l'accès pour ${name} ?`)) setAdminUserStatus(deviceId, 'blocked');
     }
-    
     window.confirmDeleteUser = function(deviceId, name) {
-        if(confirm(`Êtes-vous sûr de vouloir supprimer complètement le compte de ${name} ?
-Cet utilisateur devra soumettre une nouvelle demande.`)) {
+        if(confirm(`Voulez-vous supprimer le compte de ${name} ?`)) {
             if(!window.FB_db) return;
             window.FB_remove(window.FB_ref(window.FB_db, `auth_users/${deviceId}`));
-            showAlert(`Le compte de ${name} a été supprimé !`, true);
+            showAlert(`Compte supprimé !`, true);
         }
     }
-
     window.setAdminUserStatus = function(deviceId, status) {
         if(!window.FB_db) return;
         window.FB_set(window.FB_ref(window.FB_db, `auth_users/${deviceId}/status`), status);
@@ -1760,10 +1911,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
     ];
 
     let customDatabase = JSON.parse(localStorage.getItem('central_unified_paint_data')) || defaultDatabase;
-    let openPalettes = {};
-
-    function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
-
     let pendingCollabUpdates = [];
     let dismissedUpdateIds = JSON.parse(localStorage.getItem('central_dismissed_updates')) || [];
     let stockRequestsList = [];
@@ -1800,10 +1947,7 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         if (!window.FB_db) return;
         const alarmsRef = window.FB_ref(window.FB_db, 'teinteur_alarms');
         const newAlarmRef = window.FB_push(alarmsRef);
-        window.FB_set(newAlarmRef, {
-            sender: localUser.name,
-            timestamp: Date.now()
-        }).then(() => {
+        window.FB_set(newAlarmRef, { sender: localUser.name, timestamp: Date.now() }).then(() => {
             showAlert("🚨 Alarme envoyée aux Teinteurs !", true);
             logDailyHistory(`🚨 ${localUser.name} a sonné les Teinteurs`);
             document.getElementById('sectionSelectorModal').style.display = 'none';
@@ -1822,7 +1966,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         const hour = nowDate.getHours();
         const lastResetDate = localStorage.getItem('central_last_history_reset_date');
         const todayStr = nowDate.toDateString();
-
         if (hour >= 6 && lastResetDate !== todayStr) {
             localStorage.setItem('central_daily_history', JSON.stringify([]));
             localStorage.setItem('central_last_history_reset_date', todayStr);
@@ -1833,23 +1976,19 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         const list = document.getElementById('historyLogsList');
         const history = JSON.parse(localStorage.getItem('central_daily_history') || '[]');
         list.innerHTML = '';
-
         if (history.length === 0) {
             list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée depuis 06:00.</div>';
             document.getElementById('historyModal').style.display = 'flex';
             return;
         }
-
         history.forEach(item => {
             const div = document.createElement('div');
             div.style.cssText = "background:#111827; border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center; font-size:12px;";
             div.innerHTML = `<span>${item.text}</span><span style="color:#60a5fa; font-weight:bold;">${item.time}</span>`;
             list.appendChild(div);
         });
-
         document.getElementById('historyModal').style.display = 'flex';
     }
-
     window.closeHistoryModal = function() { document.getElementById('historyModal').style.display = 'none'; }
 
     window.switchStockMode = function(mode) {
@@ -1886,11 +2025,9 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         const myTestRef = window.FB_ref(window.FB_db, `device_tests/${getOrCreateDeviceId()}`);
         window.FB_onValue(myTestRef, (snapshot) => {
             const data = snapshot.val();
-            if (data && data.timestamp) {
-                if (Date.now() - data.timestamp < 15000) {
-                    playPersistentAlarm();
-                    showAlert(`🔔 Test sonore déclenché par l'Admin (${data.admin}) !`, false);
-                }
+            if (data && data.timestamp && (Date.now() - data.timestamp < 15000)) {
+                playPersistentAlarm();
+                showAlert(`🔔 Test sonore déclenché par l'Admin (${data.admin}) !`, false);
             }
         });
 
@@ -1900,12 +2037,11 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
             window.FB_onValue(myStatusRef, (snapshot) => {
                 const status = snapshot.val();
                 const isInApp = document.getElementById('mainContainer').style.display === 'block';
-                
                 if (status === 'blocked' && isInApp) {
-                    alert("🚫 Cet appareil a été bloqué par l'administrateur ! Votre accès a été révoqué immédiatement.");
+                    alert("🚫 Cet appareil a été bloqué par l'administrateur !");
                     logoutUserSession();
                 } else if (status === null && localUser && isInApp) {
-                    alert("🗑️ Votre compte a été supprimé du système par l'administrateur.");
+                    alert("🗑️ Votre compte a été supprimé du système.");
                     localStorage.removeItem('central_app_user_account');
                     localUser = null;
                     logoutUserSession();
@@ -1917,7 +2053,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         window.FB_onValue(teinteurAlarmsRef, (snapshot) => {
             const data = snapshot.val();
             if(!data) return;
-            
             const keys = Object.keys(data);
             const latestKey = keys[keys.length - 1];
             const latestAlarm = data[latestKey];
@@ -1930,7 +2065,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
 
             if (latestKey !== lastProcessedAlarmId) {
                 lastProcessedAlarmId = latestKey;
-                
                 if (localUser && localUser.role === 'Teinteur' && (Date.now() - latestAlarm.timestamp < 30000)) {
                     playPersistentAlarm();
                     showAlert(`❗ ALARME MAGASIN : ${latestAlarm.sender} a une commande !`, false);
@@ -1945,12 +2079,8 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
                 let updatesList = Object.values(data);
                 let myName = localUser ? localUser.name : "Anonyme";
                 let prevCount = pendingCollabUpdates.length;
-                
                 pendingCollabUpdates = updatesList.filter(u => u.author !== myName && !dismissedUpdateIds.includes(u.id));
-                
-                if (pendingCollabUpdates.length > prevCount && prevCount >= 0) {
-                    playPersistentAlarm();
-                }
+                if (pendingCollabUpdates.length > prevCount && prevCount >= 0) playPersistentAlarm();
                 updateCollabBadge();
                 renderCollabNotifications();
             }
@@ -1962,7 +2092,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
             if (data) {
                 let rawStock = Object.values(data);
                 let previousCount = stockRequestsList.length;
-                
                 stockRequestsList = rawStock.filter(s => s.status === 'pending');
                 outOfStockList = rawStock.filter(s => s.status === 'out_of_stock');
                 
@@ -1979,7 +2108,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
                         logDailyHistory(`✅ Stock réapprovisionné pour ${req.author}`);
                     }
                 });
-
                 renderStockRequests();
                 renderOutOfStockRequests();
             } else {
@@ -1991,256 +2119,226 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         });
     }
 
-    function broadcastBaseUpdate(code, palette, newBases) {
-        if (!window.FB_db) return;
-        const authorName = localUser ? localUser.name : "Un collègue";
-        const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
-        const newUpdateRef = window.FB_push(updatesRef);
-        
-        window.FB_set(newUpdateRef, {
-            id: newUpdateRef.key, author: authorName, code: code, palette: palette, bases: newBases, timestamp: Date.now()
-        });
-        logDailyHistory(`✏️ ${authorName} a modifié les bases de ${code}`);
+    // --- MODULE 1 : ERREURS DE TEINTE ---
+    window.openErrorModal = function() {
+        document.getElementById('errBrand').value = "";
+        document.getElementById('errProductName').value = "";
+        document.getElementById('errBase').innerHTML = '<option value="">Base</option>';
+        document.getElementById('errBucketSize').innerHTML = '<option value="">Capacité (L / KG)</option>';
+        document.getElementById('errQuantity').value = "1";
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('errDate').value = todayStr;
+        document.getElementById('errReason').value = "";
+        document.getElementById('errSignature').value = localUser ? localUser.name : "";
+        document.getElementById('errorModal').style.display = 'flex';
     }
 
-    window.sendSingleStockRequest = function() {
-        const brand = document.getElementById('singleBrand').value;
-        const prodName = document.getElementById('singleProductName').value.trim();
-        const base = document.getElementById('singleBase').value;
-        const bucket = document.getElementById('singleBucketSize').value;
-        const isPallet = document.getElementById('singlePallet').checked;
-        const qty = isPallet ? "Palette complète" : document.getElementById('singleQuantity').value.trim();
-        const loc = document.getElementById('singleLocation').value.trim().toUpperCase();
+    window.closeErrorModal = function() { document.getElementById('errorModal').style.display = 'none'; }
 
-        if (!brand || !prodName || !bucket || !loc) { 
-            alert("❌ Veuillez remplir tous les champs obligatoires (Marque, Produit, Capacité, Emplacement) !"); 
-            return; 
-        }
-        if (!isPallet && !qty) {
-            alert("❌ Veuillez indiquer la quantité !");
+    window.saveErrorRecord = function() {
+        const brand = document.getElementById('errBrand').value;
+        const prodName = document.getElementById('errProductName').value.trim();
+        const base = document.getElementById('errBase').value;
+        const bucket = document.getElementById('errBucketSize').value;
+        const qty = parseFloat(document.getElementById('errQuantity').value) || 1;
+        const dateVal = document.getElementById('errDate').value;
+        const reason = document.getElementById('errReason').value.trim();
+        const signature = document.getElementById('errSignature').value.trim();
+
+        if (!brand || !bucket || !reason || !signature) {
+            alert("❌ Veuillez remplir la marque, la capacité, le motif et la signature !");
             return;
         }
 
         if (!window.FB_db) { alert("Erreur Firebase."); return; }
 
-        const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
-        const newReqRef = window.FB_push(stockRef);
-        
-        const fullProductName = `${brand} ${prodName}`;
-        
-        const listData = {
-            id: newReqRef.key,
-            author: localUser ? localUser.name : "Inconnu",
-            items: [{ product: fullProductName, base: base, bucketSize: bucket, quantity: qty, location: loc }],
-            status: 'pending',
+        const errsRef = window.FB_ref(window.FB_db, 'tint_errors');
+        const newRef = window.FB_push(errsRef);
+
+        const record = {
+            id: newRef.key,
+            brand: brand,
+            productName: prodName,
+            base: base,
+            bucketSize: bucket,
+            quantity: qty,
+            date: dateVal,
+            reason: reason,
+            signature: signature,
+            creatorDevice: getOrCreateDeviceId(),
+            creatorUser: localUser ? localUser.name : "Inconnu",
             timestamp: Date.now()
         };
 
-        window.FB_set(newReqRef, listData).then(() => {
-            saveLearnedLocation(brand, prodName, loc);
-            showAlert("📨 Demande urgente envoyée au magasinier !", true);
-            logDailyHistory(`📦 ${localUser.name} a demandé 1 seau de ${fullProductName}`);
+        window.FB_set(newRef, record).then(() => {
+            showAlert("⚠️ Erreur de teinte enregistrée avec transparence !", true);
+            logDailyHistory(`⚠️ ${localUser.name} a déclaré une erreur de teinte (${brand} ${bucket})`);
+            closeErrorModal();
+        });
+    }
+
+    function renderErrorRecords() {
+        const list = document.getElementById('errorRecordsList');
+        const totalCountEl = document.getElementById('totalErrorsCount');
+        const totalLitresEl = document.getElementById('totalErrorLitres');
+        if (!list) return;
+        list.innerHTML = '';
+
+        const query = document.getElementById('errorSearchInput') ? document.getElementById('errorSearchInput').value.trim().toLowerCase() : '';
+
+        const filtered = errorRecordsList.filter(item => {
+            if (!query) return true;
+            return item.signature.toLowerCase().includes(query) || item.creatorUser.toLowerCase().includes(query) || item.brand.toLowerCase().includes(query) || (item.productName && item.productName.toLowerCase().includes(query));
+        });
+
+        totalCountEl.textContent = filtered.length;
+        let totalVol = 0;
+        filtered.forEach(item => {
+            let numVal = parseFloat(item.bucketSize) || 1;
+            totalVol += (numVal * (item.quantity || 1));
+        });
+        totalLitresEl.textContent = `${totalVol.toFixed(1)} L / KG`;
+
+        if (filtered.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucun enregistrement d\'erreur trouvé.</div>';
+            return;
+        }
+
+        filtered.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#1f2937; border:1px solid #7f1d1d; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
             
-            document.getElementById('singleProductName').value = '';
-            document.getElementById('singleLocation').value = '';
-            document.getElementById('singleLocation').style.borderColor = "var(--border)";
-        });
-    }
-
-    window.addStockItemToList = function() {
-        const brand = document.getElementById('listBrand').value;
-        const prodName = document.getElementById('listProductName').value.trim();
-        const base = document.getElementById('listBase').value;
-        const bucket = document.getElementById('listBucketSize').value;
-        const isPallet = document.getElementById('listPallet').checked;
-        const qty = isPallet ? "Palette complète" : document.getElementById('listQuantity').value.trim();
-        const loc = document.getElementById('listLocation').value.trim().toUpperCase();
-
-        if (!brand || !prodName || !bucket || !loc) { 
-            alert("❌ Veuillez remplir tous les champs obligatoires (Marque, Produit, Capacité, Emplacement) !"); 
-            return; 
-        }
-        if (!isPallet && !qty) {
-            alert("❌ Veuillez indiquer la quantité !");
-            return;
-        }
-
-        const fullProductName = `${brand} ${prodName}`;
-        currentStockCartItems.push({ product: fullProductName, base: base, bucketSize: bucket, quantity: qty, location: loc });
-        saveLearnedLocation(brand, prodName, loc);
-
-        document.getElementById('listProductName').value = '';
-        document.getElementById('listLocation').value = '';
-        document.getElementById('listLocation').style.borderColor = "var(--border)";
-        renderStockCart();
-    }
-
-    function renderStockCart() {
-        const container = document.getElementById('stockCartItemsList');
-        const sendBtn = document.getElementById('sendStockCartBtn');
-        container.innerHTML = '';
-
-        if (currentStockCartItems.length === 0) {
-            container.innerHTML = '<div style="text-align:center; color:#6b7280; font-size:11px; padding:6px;">Aucun article ajouté.</div>';
-            sendBtn.style.display = 'none';
-            return;
-        }
-
-        sendBtn.style.display = 'block';
-
-        currentStockCartItems.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:6px; padding:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;";
-            let displayBase = item.base ? `${item.base}, ` : '';
-            div.innerHTML = `
-                <div>
-                    <strong>${item.product}</strong> (${displayBase}${item.bucketSize}) x <b>${item.quantity}</b><br>
-                    <span style="color:#9ca3af; font-size:11px;">📍 ${item.location}</span>
-                </div>
-                <button class="btn btn-danger" style="padding:4px 8px; font-size:11px; min-width:auto;" onclick="removeStockCartItem(${index})">✕</button>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    window.removeStockCartItem = function(index) {
-        currentStockCartItems.splice(index, 1);
-        renderStockCart();
-    }
-
-    window.sendFinalStockList = function() {
-        if (currentStockCartItems.length === 0) return;
-        if (!window.FB_db) { alert("Erreur Firebase."); return; }
-
-        const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
-        const newReqRef = window.FB_push(stockRef);
-        
-        const listData = {
-            id: newReqRef.key,
-            author: localUser ? localUser.name : "Inconnu",
-            items: currentStockCartItems,
-            status: 'pending',
-            timestamp: Date.now()
-        };
-
-        window.FB_set(newReqRef, listData).then(() => {
-            showAlert("🚀 Liste complète envoyée au magasinier !", true);
-            logDailyHistory(`📦 ${localUser.name} a commandé une liste de ${currentStockCartItems.length} article(s)`);
-            currentStockCartItems = [];
-            renderStockCart();
-        });
-    }
-
-    function renderStockRequests() {
-        const container = document.getElementById('stockRequestsList');
-        if (!container) return;
-        container.innerHTML = '';
-
-        if (stockRequestsList.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active de stock.</div>';
-            return;
-        }
-
-        stockRequestsList.forEach(req => {
-            const div = document.createElement('div');
-            div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
-            let isMagasinier = localUser && localUser.role === 'Magasinier';
-
-            let itemsHtml = '';
-            if (req.items && Array.isArray(req.items)) {
-                req.items.forEach(it => {
-                    let dispBase = it.base ? `Base: ${it.base}, ` : '';
-                    itemsHtml += `<div style="font-size:12px; color:#d1d5db; border-left:2px solid var(--accent); padding-left:6px; margin:4px 0;">• <b>${it.product}</b> (${dispBase}${it.bucketSize}) - <b>Qté: ${it.quantity}</b><br><span style="font-size:11px; color:#9ca3af;">📍 ${it.location}</span></div>`;
-                });
-            } else {
-                itemsHtml = `<div style="font-size:12px; color:#d1d5db;">• <b>${req.product}</b> - Qté: ${req.quantity}<br>📍 ${req.location}</div>`;
-            }
+            let canDelete = localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable');
+            let dispBase = item.base ? `Base: ${item.base}, ` : '';
 
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:13px; color:#60a5fa; font-weight:bold;">📦 Commande de ${req.author}</span>
+                    <span style="color:#fca5a5; font-weight:bold; font-size:13px;">⚠️ ${item.brand} ${item.productName ? '- ' + item.productName : ''}</span>
+                    <span style="color:#9ca3af; font-size:11px;">📅 ${item.date}</span>
                 </div>
-                <div style="margin:4px 0;">${itemsHtml}</div>
-                ${isMagasinier ? `
-                    <div style="display:flex; gap:6px; margin-top:6px;">
-                        <button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Valider</button>
-                        <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1;" onclick="markOutOfStock('${req.id}')">❌ Out of Stock</button>
-                    </div>
-                ` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation...</div>`}
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    window.markOutOfStock = function(reqId) {
-        if (!window.FB_db) return;
-        const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
-        window.FB_set(reqRef, 'out_of_stock').then(() => {
-            showAlert("❌ Demande marquée 'Out of Stock' !", true);
-            logDailyHistory(`❌ Produit en rupture de stock marqué par le magasinier`);
-        });
-    }
-
-    function renderOutOfStockRequests() {
-        const container = document.getElementById('outOfStockRequestsList');
-        if (!container) return;
-        container.innerHTML = '';
-
-        if (outOfStockList.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:15px; color:#6b7280; font-size:12px;">Aucun produit en rupture de stock.</div>';
-            return;
-        }
-
-        outOfStockList.forEach(req => {
-            const div = document.createElement('div');
-            div.style.cssText = "background:#2a1215; border:1px solid #7f1d1d; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
-            
-            let canManageOutOfStock = localUser && (localUser.role === 'Magasinier' || localUser.role === "Responsable");
-
-            let itemsHtml = '';
-            if (req.items && Array.isArray(req.items)) {
-                req.items.forEach(it => {
-                    let dispBase = it.base ? `(${it.base})` : '';
-                    itemsHtml += `<div style="font-size:12px; color:#fca5a5; border-left:2px solid var(--danger); padding-left:6px; margin:4px 0;">• <b>${it.product}</b> ${dispBase} - Qté: ${it.quantity}<br><span style="font-size:11px; color:#9ca3af;">📍 ${it.location}</span></div>`;
-                });
-            }
-
-            div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:13px; color:#fca5a5; font-weight:bold;">⚠️ Rupture stock (Demandeur: ${req.author})</span>
+                <div style="font-size:12px; color:#d1d5db;">
+                    • ${dispBase}Capacité: <b>${item.bucketSize}</b> | Qté: <b>${item.quantity}</b><br>
+                    • <b>Motif :</b> ${item.reason}<br>
+                    • <b>Auteur (Signataire) :</b> <span style="color:#60a5fa;">${item.signature}</span> <span style="font-size:10px; color:#9ca3af;">(Créé par: ${item.creatorUser})</span>
                 </div>
-                <div style="margin:4px 0;">${itemsHtml}</div>
-                ${canManageOutOfStock ? `
-                    <div style="display:flex; gap:6px; margin-top:6px;">
-                        <button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Arrivé & Validé</button>
-                        <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1; background-color:#7f1d1d;" onclick="closeDemandStock('${req.id}')">🗑️ Clôturer</button>
-                    </div>
-                ` : `<div style="font-size:11px; color:#9ca3af; font-style:italic;">Mode visuel (En attente de réapprovisionnement par le magasinier)</div>`}
+                ${canDelete ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:10px; align-self:flex-end; margin-top:4px; background-color:#7f1d1d;" onclick="deleteErrorRecord('${item.id}')">🗑️ Supprimer l'erreur (Bilan annuel)</button>` : ''}
             `;
-            container.appendChild(div);
+            list.appendChild(div);
         });
     }
 
-    window.closeDemandStock = function(reqId) {
-        if (!window.FB_db) return;
-        if (confirm("Voulez-vous vraiment clôturer et supprimer cette demande non disponible ?")) {
-            const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}`);
-            window.FB_remove(reqRef).then(() => {
-                showAlert("🗑️ Demande clôturée.", true);
-                logDailyHistory(`🗑️ Une demande de stock non disponible a été clôturée`);
+    window.filterErrorRecords = function() { renderErrorRecords(); }
+
+    window.deleteErrorRecord = function(id) {
+        if (confirm("Voulez-vous supprimer définitivement cet enregistrement d'erreur ? (Nettoyage annuel)")) {
+            if (!window.FB_db) return;
+            window.FB_remove(window.FB_ref(window.FB_db, `tint_errors/${id}`)).then(() => {
+                showAlert("🗑️ Enregistrement supprimé.", true);
             });
         }
     }
 
-    window.validateStockRequest = function(reqId) {
-        if (!window.FB_db) return;
-        const reqRef = window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`);
-        window.FB_set(reqRef, 'completed').then(() => {
-            showAlert("✅ Stock validé et réapprovisionné !", true);
-            logDailyHistory(`✅ Stock réapprovisionné și validé`);
+    // --- MODULE 2 : TEINTES RE-VENDABLES ---
+    window.openResaleModal = function() {
+        document.getElementById('resBrand').value = "";
+        document.getElementById('resProductName').value = "";
+        document.getElementById('resColorCode').value = "";
+        document.getElementById('resBase').innerHTML = '<option value="">Base</option>';
+        document.getElementById('resBucketSize').innerHTML = '<option value="">Capacité (L / KG)</option>';
+        document.getElementById('resQuantity').value = "1";
+        document.getElementById('resaleModal').style.display = 'flex';
+    }
+
+    window.closeResaleModal = function() { document.getElementById('resaleModal').style.display = 'none'; }
+
+    window.saveResaleRecord = function() {
+        const brand = document.getElementById('resBrand').value;
+        const prodName = document.getElementById('resProductName').value.trim();
+        const colorCode = document.getElementById('resColorCode').value.trim().toUpperCase();
+        const base = document.getElementById('resBase').value;
+        const bucket = document.getElementById('resBucketSize').value;
+        const qty = parseInt(document.getElementById('resQuantity').value) || 1;
+
+        if (!brand || !colorCode || !bucket) {
+            alert("❌ Veuillez renseigner la marque, le code couleur et la capacité !");
+            return;
+        }
+
+        if (!window.FB_db) { alert("Erreur Firebase."); return; }
+
+        const resaleRef = window.FB_ref(window.FB_db, 'tint_resales');
+        const newRef = window.FB_push(resaleRef);
+
+        const record = {
+            id: newRef.key,
+            brand: brand,
+            productName: prodName,
+            colorCode: colorCode,
+            base: base,
+            bucketSize: bucket,
+            quantity: qty,
+            addedBy: localUser ? localUser.name : "Inconnu",
+            timestamp: Date.now()
+        };
+
+        window.FB_set(newRef, record).then(() => {
+            showAlert("✅ Teinte ajoutée au stock re-vendable !", true);
+            logDailyHistory(`🔄 ${localUser.name} a ajouté une teinte re-vendable (${colorCode})`);
+            closeResaleModal();
         });
     }
 
+    function renderResaleRecords() {
+        const list = document.getElementById('resaleRecordsList');
+        if (!list) return;
+        list.innerHTML = '';
+
+        const query = document.getElementById('resaleSearchInput') ? document.getElementById('resaleSearchInput'].value.trim().toLowerCase() : '';
+
+        const filtered = resaleRecordsList.filter(item => {
+            if (!query) return true;
+            return item.colorCode.toLowerCase().includes(query) || item.brand.toLowerCase().includes(query) || (item.productName && item.productName.toLowerCase().includes(query)) || (item.base && item.base.toLowerCase().includes(query));
+        });
+
+        if (filtered.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune teinte re-vendable trouvée.</div>';
+            return;
+        }
+
+        filtered.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#1f2937; border:1px solid #10b981; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
+            
+            let dispBase = item.base ? `Base: ${item.base}, ` : '';
+
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:#34d399; font-weight:bold; font-size:14px;">🎨 Code : ${item.colorCode}</span>
+                    <span style="background:#064e3b; color:#34d399; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:bold;">Qté: ${item.quantity}</span>
+                </div>
+                <div style="font-size:12px; color:#d1d5db;">
+                    • <b>Marque / Produit :</b> ${item.brand} ${item.productName ? '- ' + item.productName : ''}<br>
+                    • <b>Spécifications :</b> ${dispBase}Capacité: <b>${item.bucketSize}</b><br>
+                    • <b>Ajouté par :</b> <span style="color:#60a5fa;">${item.addedBy}</span>
+                </div>
+                <button class="btn btn-danger" style="padding:4px 8px; font-size:10px; align-self:flex-end; margin-top:4px; background-color:#7f1d1d;" onclick="deleteResaleRecord('${item.id}')">🗑️ Vendu / Supprimer du stock</button>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    window.filterResaleRecords = function() { renderResaleRecords(); }
+
+    window.deleteResaleRecord = function(id) {
+        if (confirm("Voulez-vous supprimer cette teinte (produit vendu ou retiré du stock) ?")) {
+            if (!window.FB_db) return;
+            window.FB_remove(window.FB_ref(window.FB_db, `tint_resales/${id}`)).then(() => {
+                showAlert("🗑️ Retiré des teintes re-vendables.", true);
+            });
+        }
+    }
+
+    // --- Resto Cod ---
     window.openCollabModal = function() { document.getElementById('collabModal').style.display = 'flex'; }
     window.closeCollabModal = function() { document.getElementById('collabModal').style.display = 'none'; }
 
@@ -2249,9 +2347,7 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         if (pendingCollabUpdates.length > 0) {
             badge.style.display = 'inline-block';
             badge.textContent = pendingCollabUpdates.length;
-        } else {
-            badge.style.display = 'none';
-        }
+        } else badge.style.display = 'none';
     }
 
     function renderCollabNotifications() {
@@ -2265,14 +2361,12 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
             list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>';
             return;
         }
-
         acceptAllDiv.style.display = 'block';
 
         pendingCollabUpdates.forEach(upd => {
             const div = document.createElement('div');
             div.style.cssText = "background:#111827; border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;";
             let basesStr = Object.keys(upd.bases).map(k => `${k}: ${upd.bases[k]}`).join(' | ');
-            
             div.innerHTML = `
                 <div style="font-size:12px; color:#60a5fa; font-weight:bold;">👤 ${upd.author} a modifié ${upd.code} (${upd.palette})</div>
                 <div style="font-size:11px; color:#d1d5db;">Nouvelles bases : ${basesStr}</div>
@@ -2295,7 +2389,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         updateCollabBadge();
         renderCollabNotifications();
         showAlert(`✅ Mise à jour appliquée pour ${code} !`, true);
-        logDailyHistory(`📥 ${localUser.name} a accepté la modif de ${code}`);
     }
 
     window.acceptAllCollabUpdates = function() {
@@ -2311,7 +2404,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         updateCollabBadge();
         renderCollabNotifications();
         showAlert(`⚡ Toutes les modifications ont été appliquées !`, true);
-        logDailyHistory(`⚡ ${localUser.name} a accepté toutes les modifications en bloc`);
         closeCollabModal();
     }
 
@@ -2344,6 +2436,14 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
             broadcastBaseUpdate(customDatabase[index].code, customDatabase[index].palette, updatedBases);
             showAlert(`Bases mises à jour et partagées !`, true);
         }
+    }
+
+    function broadcastBaseUpdate(code, palette, newBases) {
+        if (!window.FB_db) return;
+        const authorName = localUser ? localUser.name : "Un collègue";
+        const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
+        const newUpdateRef = window.FB_push(updatesRef);
+        window.FB_set(newUpdateRef, { id: newUpdateRef.key, author: authorName, code: code, palette: palette, bases: newBases, timestamp: Date.now() });
     }
 
     function updateTargetPaletteDropdown() {
@@ -2385,7 +2485,7 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         if (customDatabase.length < initialLength) {
             saveToStorage(); filterColors(); renderFoldersOverview(); filterDedicatedPalette();
             showAlert(`Couleur supprimée !`, true); document.getElementById('manageCode').value = '';
-        } else { alert("Couleur non trouvée !"); }
+        } else alert("Couleur non trouvée !");
     }
 
     window.removeDuplicateColors = function() {
@@ -2418,16 +2518,12 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
                 }
             } catch (e) {}
         }
-        
         if (addedCount > 0) {
             let merged = [...customDatabase]; 
             tempDatabase.forEach(tempItem => {
                 const existingIndex = merged.findIndex(c => c.code === tempItem.code && c.palette === tempItem.palette);
-                if (existingIndex >= 0) {
-                    merged[existingIndex] = tempItem; 
-                } else {
-                    merged.push(tempItem); 
-                }
+                if (existingIndex >= 0) merged[existingIndex] = tempItem; 
+                else merged.push(tempItem); 
             });
             customDatabase = merged; 
             saveToStorage(); filterColors(); updateTargetPaletteDropdown();
@@ -2532,7 +2628,7 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
     }
 
     window.restoreSystemBackup = async function() {
-        if(!confirm("Êtes-vous sûr de vouloir restaurer la base de données depuis le dernier backup ? Cela écrasera les couleurs actuelles.")) return;
+        if(!confirm("Êtes-vous sûr de vouloir restaurer la base de données ?")) return;
         showAlert("⏳ Restauration en cours...");
         try {
             const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/backup_database.json?t=${Date.now()}`);
@@ -2545,15 +2641,9 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
                     renderFoldersOverview();
                     updateTargetPaletteDropdown();
                     showAlert(`✅ Base de données restaurée avec succès (${data.length} couleurs) !`, true);
-                } else {
-                    showAlert("❌ Le backup est vide.");
-                }
-            } else {
-                showAlert("❌ Fichier backup introuvable sur GitHub.");
-            }
-        } catch (err) {
-            showAlert(`❌ Erreur réseau lors de la restauration.`);
-        }
+                } else showAlert("❌ Le backup est vide.");
+            } else showAlert("❌ Fichier backup introuvable sur GitHub.");
+        } catch (err) { showAlert(`❌ Erreur réseau.`); }
     }
 
     function renderFoldersOverview() {
@@ -2747,7 +2837,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
                     changelog: newChangelog,
                     timestamp: Date.now()
                 });
-                
                 showAlert("✅ Mise à jour publiée !", true);
                 localStorage.setItem('pending_update_notification', newChangelog);
                 setTimeout(() => forceCleanReload(), 2000);
@@ -2792,6 +2881,8 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
             document.getElementById('authPanel').style.display = 'block'; 
         }
     }
+
+    function saveToStorage() { localStorage.setItem('central_unified_paint_data', JSON.stringify(customDatabase)); }
 
     initVolumeUI();
     renderGuideTable();
