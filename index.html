@@ -1998,39 +1998,78 @@
     }
 
     function logDailyHistory(actionText) {
-        let history = JSON.parse(localStorage.getItem('central_daily_history') || '[]');
-        const timeStr = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        history.unshift({ time: timeStr, text: actionText });
-        localStorage.setItem('central_daily_history', JSON.stringify(history));
+        let history = JSON.parse(localStorage.getItem('central_weekly_history') || '[]');
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('fr-FR');
+        const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        history.unshift({ ts: now.getTime(), date: dateStr, time: timeStr, text: actionText });
+        
+        const sevenDaysAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000);
+        history = history.filter(item => item.ts > sevenDaysAgo);
+        
+        localStorage.setItem('central_weekly_history', JSON.stringify(history));
     }
 
     function checkDailyHistoryReset(nowDate) {
-        const hour = nowDate.getHours();
-        const lastResetDate = localStorage.getItem('central_last_history_reset_date');
-        const todayStr = nowDate.toDateString();
-        if (hour >= 6 && lastResetDate !== todayStr) {
-            localStorage.setItem('central_daily_history', JSON.stringify([]));
-            localStorage.setItem('central_last_history_reset_date', todayStr);
-        }
+        // Logic replaced by 7-day rolling window
     }
 
     window.openHistoryModal = function() {
         const list = document.getElementById('historyLogsList');
-        const history = JSON.parse(localStorage.getItem('central_daily_history') || '[]');
+        const history = JSON.parse(localStorage.getItem('central_weekly_history') || '[]');
         list.innerHTML = '';
+        
+        const titleEl = document.querySelector('#historyModal h3');
+        if (titleEl) titleEl.textContent = '📜 Historique (7 Derniers Jours)';
+        
         if (history.length === 0) {
-            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée depuis 06:00.</div>';
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité récente.</div>';
             document.getElementById('historyModal').style.display = 'flex';
             return;
         }
+        
+        const grouped = {};
         history.forEach(item => {
-            const div = document.createElement('div');
-            div.style.cssText = "background:#111827; border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center; font-size:12px;";
-            div.innerHTML = `<span>${item.text}</span><span style="color:#60a5fa; font-weight:bold;">${item.time}</span>`;
-            list.appendChild(div);
+            if(!grouped[item.date]) grouped[item.date] = [];
+            grouped[item.date].push(item);
         });
+
+        Object.keys(grouped).forEach(date => {
+            const dateHeader = document.createElement('div');
+            dateHeader.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#1f2937; padding:8px 12px; border-radius:6px; margin-top:10px; color:var(--primary); font-weight:bold; font-size:13px;";
+            dateHeader.innerHTML = `<span>📅 ${date}</span> <button class="btn-admin-discrete" style="padding:4px 8px; font-size:10px; border-color:#3b82f6; color:#60a5fa;" onclick="exportHistoryDay('${date}')">📥 Exporter</button>`;
+            list.appendChild(dateHeader);
+
+            grouped[date].forEach(item => {
+                const div = document.createElement('div');
+                div.style.cssText = "background:#111827; border-left:3px solid var(--accent); border-radius:4px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:11px; margin:4px 0 4px 10px;";
+                div.innerHTML = `<span style="color:#d1d5db;">${item.text}</span><span style="color:#60a5fa; font-weight:bold; margin-left:10px;">${item.time}</span>`;
+                list.appendChild(div);
+            });
+        });
+        
         document.getElementById('historyModal').style.display = 'flex';
     }
+
+    window.exportHistoryDay = function(dateStr) {
+        const history = JSON.parse(localStorage.getItem('central_weekly_history') || '[]');
+        const dayLogs = history.filter(h => h.date === dateStr);
+        if(dayLogs.length === 0) return;
+        
+        let txt = `HISTORIQUE DES ACTIVITÉS - ${dateStr}\n-----------------------------------\n\n`;
+        // Reverse array to read chronologically from top to bottom
+        dayLogs.reverse().forEach(l => { txt += `[${l.time}] ${l.text}\n`; });
+        
+        let blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Historique_${dateStr.replace(/\//g, '-')}.txt`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     window.closeHistoryModal = function() { document.getElementById('historyModal').style.display = 'none'; }
 
     window.switchStockMode = function(mode) {
