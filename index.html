@@ -393,16 +393,17 @@
 </div>
 
 <div id="sectionSelectorModal" class="section-selector-overlay">
-    <div class="section-selector-card">
-        <h2 style="color:var(--primary); margin-top:0;">Choisissez la Section</h2>
+    <div class="section-selector-card" style="position:relative;">
+        <button class="btn-logout" style="position:absolute; top:15px; right:15px; margin:0;" onclick="confirmLogout()">Déconnexion</button>
+        <h2 style="color:var(--primary); margin-top:0; padding-right:80px;">Choisissez la Section</h2>
         <p style="font-size:13px; color:#9ca3af; margin-bottom:16px;">Sélectionnez l'activité pour cette session :</p>
         
-        <button class="section-btn" onclick="selectAppSection('Bases')">🎨 Consulter les bases</button>
-        <button class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Passer commande interne</button>
-        <button class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:#059669;">🔄 Teintes Re-vendables</button>
-        <button class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:#b91c1c;">⚠️ Erreurs de Teinte</button>
+        <button id="btnSecBases" class="section-btn" onclick="selectAppSection('Bases')">🎨 Consulter les bases</button>
+        <button id="btnSecStock" class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Passer commande interne</button>
+        <button id="btnSecRevendables" class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:#059669;">🔄 Teintes Re-vendables</button>
+        <button id="btnSecErreurs" class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:#b91c1c;">⚠️ Erreurs de Teinte</button>
         
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border);">
+        <div id="btnSecAlarmsContainer" style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border);">
             <button id="btnTeinteurAlarm" class="section-btn" style="background-color: transparent; color: var(--danger); border: 2px solid var(--danger);" onclick="triggerTeinteurAlarm()">❗ ALARME TEINTEUR (Vendeur)</button>
             <button id="btnOpenTeinteurJobs" class="section-btn" style="background-color: #0f172a; border-color: var(--accent); display:none;" onclick="openTeinteurJobsModal()">
                 🛎️ Fiches Teinteur
