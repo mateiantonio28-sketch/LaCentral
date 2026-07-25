@@ -47,14 +47,20 @@
         window.FB_get = get;
         window.FB_onDisconnect = onDisconnect;
 
-        // Init Messaging uniquement sur les appareils compatibles
+        // Init Messaging avec support High Priority et Foreground Handler
         isSupported().then((supported) => {
             if (supported) {
                 window.FB_messaging = getMessaging(app);
                 window.FB_getToken = getToken;
                 
                 onMessage(window.FB_messaging, (payload) => {
-                    console.log('Message reçu lorsque l\'application est ouverte : ', payload);
+                    console.log('Message reçu haute priorité foreground : ', payload);
+                    if (payload && payload.notification) {
+                        // Déclenchement de l'alarme locale si l'app est ouverte
+                        if (typeof window.playPersistentAlarm === 'function') {
+                            window.playPersistentAlarm();
+                        }
+                    }
                 });
             }
         });
@@ -642,10 +648,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.9" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.10" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.9 : Correction synchronisation et restauration du backup.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.10 : Intégration des notifications push à haute priorité (High Priority) pour un réveil instantané des appareils.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -668,7 +674,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.9</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.10</span></div>
     </div>
 </div>
 
@@ -793,7 +799,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.9"; 
+    const CURRENT_APP_VERSION = "v1.10"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -1788,6 +1794,7 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
             }
         } catch(e) {}
     }
+    window.playPersistentAlarm = playPersistentAlarm;
 
     window.triggerTeinteurAlarm = function() {
         if (!window.FB_db) return;
@@ -2412,15 +2419,14 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
             } catch (e) {}
         }
         
-        // --- LOGIQUE DE FUSION (MERGE) REPARÉE ---
         if (addedCount > 0) {
-            let merged = [...customDatabase]; // Păstrăm tot ce era deja în memorie (cele 6000 de culori locale)
+            let merged = [...customDatabase]; 
             tempDatabase.forEach(tempItem => {
                 const existingIndex = merged.findIndex(c => c.code === tempItem.code && c.palette === tempItem.palette);
                 if (existingIndex >= 0) {
-                    merged[existingIndex] = tempItem; // Actualizează doar dacă există deja
+                    merged[existingIndex] = tempItem; 
                 } else {
-                    merged.push(tempItem); // Adaugă noutățile
+                    merged.push(tempItem); 
                 }
             });
             customDatabase = merged; 
@@ -2525,7 +2531,6 @@ Cet utilisateur devra soumettre une nouvelle demande.`)) {
         } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
     }
 
-    // --- FONCTION RESTAURATION BACKUP ---
     window.restoreSystemBackup = async function() {
         if(!confirm("Êtes-vous sûr de vouloir restaurer la base de données depuis le dernier backup ? Cela écrasera les couleurs actuelles.")) return;
         showAlert("⏳ Restauration en cours...");
