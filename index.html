@@ -2771,6 +2771,19 @@
         }
     }
 
+    window.sellResaleRecord = function(id, currentQty) {
+        const sellQtyInput = document.getElementById(`sellQty_${id}`);
+        const sellQty = parseInt(sellQtyInput.value);
+        if (isNaN(sellQty) || sellQty <= 0 || sellQty > currentQty) { alert("Quantité invalide !"); return; }
+        if (!window.FB_db) return;
+        
+        if (sellQty === currentQty) {
+            window.FB_remove(window.FB_ref(window.FB_db, `tint_resales/${id}`)).then(() => showAlert("Teinte vendue et retirée !", true));
+        } else {
+            window.FB_set(window.FB_ref(window.FB_db, `tint_resales/${id}/quantity`), currentQty - sellQty).then(() => showAlert(`Vendu ${sellQty} seau(x). Stock mis à jour !`, true));
+        }
+    }
+
     window.openCollabModal = function() { document.getElementById('collabModal').style.display = 'flex'; }
     window.closeCollabModal = function() { document.getElementById('collabModal').style.display = 'none'; }
 
