@@ -2090,44 +2090,75 @@
             });
         }
 
-        // NOU: ASCULTĂTOR FIȘE TEINTEUR
+        window.closeVendeurLivePopup = function() {
+            const btn = document.getElementById('vlBtn');
+            const jobId = btn.getAttribute('data-job-id');
+            if (jobId && window.FB_db) window.FB_remove(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}`));
+            document.getElementById('vendeurLivePopup').style.display = 'none';
+        };
+
+        // NOU: ASCULTĂTOR FIȘE TEINTEUR AVANSAT
         const tJobsRef = window.FB_ref(window.FB_db, 'teinteur_jobs');
         window.FB_onValue(tJobsRef, (snapshot) => {
             const data = snapshot.val();
             activeTeinteurJobs = data ? Object.values(data) : [];
-            let pendingCount = 0;
-            let latestPending = null;
+            let pendingCount = 0; let latestPending = null; let myActiveJob = null;
 
             activeTeinteurJobs.forEach(job => {
                 if (job.status === 'pending') {
                     pendingCount++;
                     if (!latestPending || job.timestamp > latestPending.timestamp) latestPending = job;
                 }
-                
-                // Dacă sunt Vendeur și comanda mea a fost finalizată:
-                if (job.status === 'completed' && job.sender === (localUser ? localUser.name : '') && !notifiedTeinteurJobs.includes(job.id)) {
-                    notifiedTeinteurJobs.push(job.id);
-                    localStorage.setItem('central_notified_teinteur_jobs', JSON.stringify(notifiedTeinteurJobs));
-                    playPersistentAlarm();
-                    showAlert(`✅ Commande finalisée par ${job.teinteur} !`, true);
+                if (job.sender === (localUser ? localUser.name : '')) {
+                    if (job.status === 'in_progress' || job.status === 'completed') {
+                        if (!myActiveJob || job.timestamp > myActiveJob.timestamp) myActiveJob = job;
+                    }
                 }
             });
 
+            const vPopup = document.getElementById('vendeurLivePopup');
+            if (vPopup && myActiveJob && localUser && localUser.role !== 'Teinteur') {
+                const content = document.getElementById('vendeurLivePopupContent');
+                const title = document.getElementById('vlTitle');
+                const timerEl = document.getElementById('vlTimer');
+                const btn = document.getElementById('vlBtn');
+                btn.setAttribute('data-job-id', myActiveJob.id);
+                document.getElementById('vlTeinteur').textContent = myActiveJob.teinteur;
+
+                if (myActiveJob.status === 'in_progress') {
+                    vPopup.style.display = 'flex';
+                    content.style.borderColor = 'var(--warning)'; title.style.color = 'var(--warning)';
+                    title.innerHTML = '⏳ Commande en préparation...';
+                    timerEl.style.color = 'var(--warning)'; btn.style.display = 'none';
+                    timerEl.setAttribute('data-start-time', myActiveJob.startTime);
+                    timerEl.classList.add('teinteur-job-timer');
+                } else if (myActiveJob.status === 'completed') {
+                    vPopup.style.display = 'flex';
+                    content.style.borderColor = 'var(--success)'; title.style.color = 'var(--success)';
+                    title.innerHTML = '✅ PRÊT À ÊTRE RÉCUPÉRÉ !';
+                    timerEl.style.color = 'var(--success)'; timerEl.textContent = 'TERMINÉ';
+                    timerEl.classList.remove('teinteur-job-timer');
+                    btn.style.display = 'block'; btn.style.backgroundColor = 'var(--success)';
+                    if (!notifiedTeinteurJobs.includes(myActiveJob.id)) {
+                        notifiedTeinteurJobs.push(myActiveJob.id);
+                        localStorage.setItem('central_notified_teinteur_jobs', JSON.stringify(notifiedTeinteurJobs));
+                        playPersistentAlarm();
+                    }
+                }
+            } else if (vPopup && !myActiveJob) vPopup.style.display = 'none';
+
             const badge = document.getElementById('teinteurJobsBadge');
             if (badge) {
-                if (pendingCount > 0) { badge.style.display = 'inline-block'; badge.textContent = pendingCount; }
-                else badge.style.display = 'none';
+                badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+                badge.textContent = pendingCount;
             }
 
-            // Alarma doar pentru Teinteur la comenzi noi
-            if (localUser && (localUser.role === 'Teinteur' || localUser.role === 'Responsable')) {
+            if (localUser && (localUser.role === 'Teinteur' || localUser.role === 'Responsable' || localUser.role === 'Master Admin')) {
                 if (latestPending && latestPending.id !== lastProcessedPendingJobId && (Date.now() - latestPending.timestamp < 30000)) {
                     lastProcessedPendingJobId = latestPending.id;
-                    playPersistentAlarm();
-                    showAlert(`🚨 ${latestPending.sender} a envoyé une fiche !`, false);
+                    playPersistentAlarm(); showAlert(`🚨 ${latestPending.sender} a envoyé une fiche !`, false);
                 }
             }
-
             renderTeinteurJobs();
         });
 
