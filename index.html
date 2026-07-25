@@ -2752,7 +2752,12 @@
                     • <b>Spécifications :</b> ${dispBase}Capacité: <b>${item.bucketSize}</b><br>
                     • <b>Ajouté par :</b> <span style="color:#60a5fa;">${item.addedBy}</span>
                 </div>
-                <button class="btn btn-danger" style="padding:4px 8px; font-size:10px; align-self:flex-end; margin-top:4px; background-color:#7f1d1d;" onclick="deleteResaleRecord('${item.id}')">🗑️ Vendu / Supprimer du stock</button>
+                ${localUser && ['Vendeur', 'Teinteur', 'Responsable', 'Master Admin'].includes(localUser.role) ? `
+                <div style="display:flex; gap:6px; align-self:flex-end; margin-top:6px; align-items:center;">
+                    <label style="margin:0; font-size:11px; color:#9ca3af;">Vendre:</label>
+                    <input type="number" id="sellQty_${item.id}" value="1" min="1" max="${item.quantity}" style="width:45px; padding:4px; font-size:12px; background:#111827; color:#fff; border:1px solid var(--border); border-radius:4px; text-align:center;">
+                    <button class="btn btn-danger" style="padding:6px 12px; font-size:11px; background-color:#7f1d1d; min-width:auto; margin:0;" onclick="sellResaleRecord('${item.id}', ${item.quantity})">🛒 Vendre</button>
+                </div>` : ''}
             `;
             list.appendChild(div);
         });
