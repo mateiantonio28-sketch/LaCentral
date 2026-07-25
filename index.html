@@ -427,7 +427,7 @@
             <select id="appVolumeSelect" class="app-volume-select" onchange="changeAppVolume()" title="Volume Alarme">
                 <option value="1">🔊</option>
                 <option value="0.75">🔉</option>
-                <option value="0.5">🔈</option>
+                <option value="0.50">🔈</option>
                 <option value="0.25">🔈</option>
                 <option value="0">🔇</option>
             </select>
@@ -842,10 +842,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.20" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.21" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.20 : Correctif clavier virtuel glissant et restauration de l'accès clavier matériel.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.21 : Correctif critique syntaxe. Restauration complète des fonctionnalités.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -868,12 +868,12 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.20</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.21</span></div>
     </div>
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.20"; 
+    const CURRENT_APP_VERSION = "v1.21"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -1888,6 +1888,7 @@
     let outOfStockList = [];
     let completedStockNotified = JSON.parse(localStorage.getItem('central_completed_notified')) || [];
     let currentStockCartItems = []; 
+    let notifiedTeinteurJobs = JSON.parse(localStorage.getItem('central_notified_teinteur_jobs')) || [];
 
     function playPersistentAlarm() {
         if (localUser && localUser.role === "Responsable") return;
