@@ -89,8 +89,9 @@
         <h2>Tools Administrativ</h2>
         <p>Introduceți datele de acces</p>
         <input type="text" id="adminUser" placeholder="Utilizator (ADMIN)">
-        <input type="password" id="adminPass" placeholder="Parolă (Olimpus)">
+        <input type="password" id="adminPass" placeholder="Parolă">
         <button class="btn btn-save" onclick="validateAdminLogin()">Se autentifică</button>
+        <button class="btn" style="background:transparent; color:#9ca3af; font-size:12px; margin-top:10px; border:1px solid #374151;" onclick="resetAdminPassword()">🔄 Resetare Parolă</button>
     </div>
 </div>
 
@@ -137,13 +138,34 @@
     });
 
     function validateAdminLogin() {
-        const u = document.getElementById('adminUser').value.trim();
-        const p = document.getElementById('adminPass').value.trim();
-        if (u === "ADMIN" && p === "Olimpus") {
+        const u = document.getElementById('adminUser').value.trim().toUpperCase();
+        const p = document.getElementById('adminPass').value.trim().toUpperCase();
+        
+        // Verifică dacă există o parolă nouă setată, altfel folosește "OLIMPUS"
+        const savedPass = localStorage.getItem('admin_tools_custom_pass') || "OLIMPUS";
+
+        if (u === "ADMIN" && p === savedPass) {
             localStorage.setItem('admin_tools_auth', 'true');
             openAdminPanel();
         } else {
             alert("❌ Utilizator sau parolă incorectă!");
+        }
+    }
+
+    function resetAdminPassword() {
+        const pin = prompt("Introduceți codul PIN de securitate pentru resetare:");
+        
+        if (pin === "2805") {
+            const newPass = prompt("Cod PIN corect! Introduceți noua parolă pentru ADMIN:");
+            if (newPass && newPass.trim() !== "") {
+                // Salvăm noua parolă forțând-o să fie cu majuscule
+                localStorage.setItem('admin_tools_custom_pass', newPass.trim().toUpperCase());
+                alert("✅ Parola a fost resetată cu succes! Vă puteți autentifica.");
+            } else {
+                alert("❌ Resetare anulată. Parola nu a fost modificată.");
+            }
+        } else if (pin !== null) {
+            alert("❌ Cod PIN incorect! Acces respins.");
         }
     }
 
@@ -172,12 +194,10 @@
             return showStatus('❌ Format invalid! Lipește tot blocul care conține [CAUTĂ] și [ÎNLOCUIEȘTE].', 'error');
         }
 
-        // Extragerea automată a codului din structura generată de AI
         const parts = rawAiCode.split('[ÎNLOCUIEȘTE]');
         let searchStr = parts[0].replace('[CAUTĂ]', '').trim();
         let replaceStr = parts[1].trim();
 
-        // Normalizare delimitatori de linie pentru a asigura potrivirea perfectă
         searchStr = searchStr.replace(/\r\n/g, '\n');
         replaceStr = replaceStr.replace(/\r\n/g, '\n');
 
@@ -216,7 +236,7 @@
             if (!putRes.ok) throw new Error("Eroare la salvarea pe GitHub.");
 
             showStatus('✅ Succes! Codul a fost modificat parțial și trimis automat în Git.', 'success');
-            document.getElementById('aiInputCode').value = ''; // Curățăm ecranul pentru următoarea sarcină
+            document.getElementById('aiInputCode').value = '';
 
         } catch (error) {
             console.error(error);
