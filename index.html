@@ -2617,12 +2617,15 @@
                         <b style="color:#fca5a5;">⚠️ ${item.brand} ${item.productName ? '- ' + item.productName : ''}</b>
                         <span style="color:#9ca3af; font-size:11px;">📅 ${item.date}</span>
                     </div>
-                    <div style="color:#d1d5db; font-size:11px;">
+                    <div style="color:#d1d5db; font-size:11px; margin-bottom:6px;">
                         • ${dispBase}Capacité: <b>${item.bucketSize}</b> | Qté: <b>${item.quantity}</b><br>
-                        • <b>Motif :</b> ${item.reason} | <b>Auteur :</b> <span style="color:#60a5fa;">${item.signature}</span>
+                        • <b>Motif :</b> ${item.reason}<br>
+                        • <b>Signé :</b> ${item.signature} | <b>Enregistré par :</b> <span style="color:#60a5fa; font-weight:bold;">${item.creatorUser || 'Inconnu'}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        ${localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable') ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:10px; min-width:auto; background-color:#7f1d1d; border-radius:6px;" onclick="deleteErrorRecord('${item.id}')">🗑️ Supprimer</button>` : ''}
                     </div>
                 </div>
-                ${localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable') ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:10px; min-width:auto; background-color:#7f1d1d;" onclick="deleteErrorRecord('${item.id}')">🗑️</button>` : ''}
             `;
             list.appendChild(div);
         });
