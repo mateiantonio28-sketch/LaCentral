@@ -320,8 +320,9 @@
         <h2>La Centrale ProShop</h2>
         <p id="lockSubtitle">Connexion Utilisateur</p>
         
-        <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
-        <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
+        <!-- Câmpurile corectate pentru a afișa normal tastatura nativă -->
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur" onkeydown="checkLoginEnter(event)">
+        <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" onkeydown="checkLoginEnter(event)">
         
         <div class="login-pin-pad">
             <div class="pin-key" onclick="loginPinKey('1', this)">1</div>
@@ -676,7 +677,7 @@
             <input type="text" id="newVersionInput" value="v1.11" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.11 : Connexion par touche Entrée, liste des utilisateurs online, module Erreurs de Teinte et Teintes Re-vendables.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.11 : Correction affichage clavier sur l'écran de connexion et validation par Entrée.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -1042,7 +1043,6 @@
         }
     }
 
-    // Gestion de la touche ENTREE sur l'écran de connexion
     window.checkLoginEnter = function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -1188,7 +1188,6 @@
         }
     }
 
-    // Gestion Dropdowns Stock / Erreurs / Revendables
     window.updateStockDropdowns = function(prefix) {
         const brand = document.getElementById(prefix + 'Brand').value;
         const baseSelect = document.getElementById(prefix + 'Base');
@@ -1438,7 +1437,6 @@
             learnedLocations = snap.val() || {};
         });
 
-        // Écouteur Erreurs de Teinte
         const errRef = window.FB_ref(window.FB_db, 'tint_errors');
         window.FB_onValue(errRef, (snap) => {
             const data = snap.val();
@@ -1446,7 +1444,6 @@
             renderErrorRecords();
         });
 
-        // Écouteur Teintes Revendables
         const resaleRef = window.FB_ref(window.FB_db, 'tint_resales');
         window.FB_onValue(resaleRef, (snap) => {
             const data = snap.val();
@@ -1455,7 +1452,6 @@
         });
     }
 
-    // Affichage modale utilisateurs en ligne
     window.openOnlineUsersModal = function() {
         const list = document.getElementById('onlineUsersModalList');
         list.innerHTML = '';
@@ -1708,7 +1704,6 @@
         const erreursSec = document.getElementById('sectionErreursContent');
         const revendablesSec = document.getElementById('sectionRevendablesContent');
 
-        // Masquer tout
         basesSec.style.display = 'none';
         stockSec.style.display = 'none';
         erreursSec.style.display = 'none';
@@ -1827,7 +1822,7 @@
                 }
             });
 
-            const isAdminDevice = localStorage.getItem('central_is_admin_device'] === 'true' || isAuthenticated;
+            const isAdminDevice = localStorage.getItem('central_is_admin_device') === 'true' || isAuthenticated;
             if (isAdminDevice && previousPendingCount >= 0 && pendingCount > previousPendingCount) {
                 playPersistentAlarm();
                 showAlert(`🔔 Nouvel utilisateur en attente d'approbation (${pendingCount}) !`, true);
@@ -2119,7 +2114,6 @@
         });
     }
 
-    // --- MODULE 1 : ERREURS DE TEINTE ---
     window.openErrorModal = function() {
         document.getElementById('errBrand').value = "";
         document.getElementById('errProductName').value = "";
@@ -2230,7 +2224,7 @@
     window.filterErrorRecords = function() { renderErrorRecords(); }
 
     window.deleteErrorRecord = function(id) {
-        if (confirm("Voulez-vous supprimer définitivement cet enregistrement d'erreur ? (Nettoyage annuel)")) {
+        if (confirm("Voulez-vous supprimer définitivement cet enregistrement d'erreur ?")) {
             if (!window.FB_db) return;
             window.FB_remove(window.FB_ref(window.FB_db, `tint_errors/${id}`)).then(() => {
                 showAlert("🗑️ Enregistrement supprimé.", true);
@@ -2238,7 +2232,6 @@
         }
     }
 
-    // --- MODULE 2 : TEINTES RE-VENDABLES ---
     window.openResaleModal = function() {
         document.getElementById('resBrand').value = "";
         document.getElementById('resProductName').value = "";
@@ -2293,7 +2286,7 @@
         if (!list) return;
         list.innerHTML = '';
 
-        const query = document.getElementById('resaleSearchInput') ? document.getElementById('resaleSearchInput'].value.trim().toLowerCase() : '';
+        const query = document.getElementById('resaleSearchInput') ? document.getElementById('resaleSearchInput').value.trim().toLowerCase() : '';
 
         const filtered = resaleRecordsList.filter(item => {
             if (!query) return true;
@@ -2330,7 +2323,7 @@
     window.filterResaleRecords = function() { renderResaleRecords(); }
 
     window.deleteResaleRecord = function(id) {
-        if (confirm("Voulez-vous supprimer cette teinte (produit vendu ou retiré du stock) ?")) {
+        if (confirm("Voulez-vous supprimer cette teinte ?")) {
             if (!window.FB_db) return;
             window.FB_remove(window.FB_ref(window.FB_db, `tint_resales/${id}`)).then(() => {
                 showAlert("🗑️ Retiré des teintes re-vendables.", true);
@@ -2338,7 +2331,6 @@
         }
     }
 
-    // --- Resto Cod ---
     window.openCollabModal = function() { document.getElementById('collabModal').style.display = 'flex'; }
     window.closeCollabModal = function() { document.getElementById('collabModal').style.display = 'none'; }
 
