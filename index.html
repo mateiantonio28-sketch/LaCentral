@@ -1801,9 +1801,11 @@
 
     function logoutUserSession() {
         isAuthenticated = false;
+        localStorage.removeItem('user_session_expiry');
         localStorage.removeItem('admin_session_expiry');
         localStorage.removeItem('central_app_section');
         document.getElementById('mainContainer').style.display = 'none';
+        document.getElementById('sectionSelectorModal').style.display = 'none';
         document.getElementById('userLockScreen').style.display = 'flex';
         initUserScreen();
         updateMyPresence(); 
