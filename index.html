@@ -1704,9 +1704,13 @@
         localStorage.setItem('user_session_expiry', expiry);
 
         document.getElementById('userLockScreen').style.display = 'none';
-        updateAlarmButtonVisibility();
-        document.getElementById('sectionSelectorModal').style.display = 'flex';
         updateMyPresence(); 
+
+        if (localUser && (localUser.role === 'Magasinier' || localUser.role === 'Préparateur de commande')) {
+            selectAppSection('Stock');
+        } else {
+            showSectionSelector();
+        }
 
         if (window.FB_messaging) {
             Notification.requestPermission().then((permission) => {
