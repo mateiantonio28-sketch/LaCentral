@@ -298,12 +298,20 @@
         .cal-cell.has-error { background: #7f1d1d; color: #fca5a5; font-weight: bold; border: 1px solid #ef4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
         .cal-cell.selected { border: 2px solid var(--accent); }
 
-        /* CLAVIER VIRTUEL AZERTY STANDARD */
+        /* CLAVIER VIRTUEL FLUIDE (V1.17) */
         .virtual-keyboard {
-            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+            position: fixed; bottom: 0; left: 0; width: 100%;
             background: #1e293b; padding: 10px 4px 20px 4px; z-index: 100000;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.9); border-top: 2px solid #334155;
             user-select: none;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            visibility: hidden;
+            display: block; 
+        }
+        .virtual-keyboard.active {
+            transform: translateY(0);
+            visibility: visible;
         }
         .vk-row { display: flex; justify-content: center; margin-bottom: 6px; gap: 4px; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; }
         .vk-key {
@@ -331,8 +339,9 @@
         <h2>La Centrale ProShop</h2>
         <p id="lockSubtitle">Connexion Utilisateur</p>
         
-        <input type="text" id="regUser" placeholder="Nom d'utilisateur" onkeydown="checkLoginEnter(event)">
-        <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" onkeydown="checkLoginEnter(event)">
+        <!-- Restaurat functionalitatea tastaturii virtuale + enter -->
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
+        <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
         
         <div class="login-pin-pad">
             <div class="pin-key" onclick="loginPinKey('1', this)">1</div>
@@ -475,15 +484,21 @@
                 <option value="Unikalo">Unikalo</option>
                 <option value="Unikatex">Unikatex</option>
                 <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
             </select>
             <input type="text" id="singleProductName" placeholder="Nom du produit (ex: Rubbol...)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="checkLearnedLocation('single')">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <select id="singleBase"><option value="">Base</option></select>
+                <div>
+                    <select id="singleBase" onchange="checkCustomBase('single')" style="width:100%;"><option value="">Base</option></select>
+                    <input type="text" id="singleBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
                 <select id="singleBucketSize"><option value="">Capacité</option></select>
             </div>
             
             <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 8px; background:#111827; padding:8px; border-radius:6px; border:1px solid var(--border);">
-                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer;">
+                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer; margin-top:0;">
                     <input type="checkbox" id="singlePallet" style="width:18px; height:18px; margin:0;" onchange="toggleQuantityInput('single')"> Palette complète
                 </label>
                 <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" style="flex:1; margin:0;">
@@ -504,15 +519,21 @@
                 <option value="Unikalo">Unikalo</option>
                 <option value="Unikatex">Unikatex</option>
                 <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
             </select>
             <input type="text" id="listProductName" placeholder="Nom du produit" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="checkLearnedLocation('list')">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <select id="listBase"><option value="">Base</option></select>
+                <div>
+                    <select id="listBase" onchange="checkCustomBase('list')" style="width:100%;"><option value="">Base</option></select>
+                    <input type="text" id="listBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
                 <select id="listBucketSize"><option value="">Capacité</option></select>
             </div>
             
             <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 8px; background:#111827; padding:8px; border-radius:6px; border:1px solid var(--border);">
-                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer;">
+                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer; margin-top:0;">
                     <input type="checkbox" id="listPallet" style="width:18px; height:18px; margin:0;" onchange="toggleQuantityInput('list')"> Palette complète
                 </label>
                 <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" style="flex:1; margin:0;">
@@ -541,14 +562,14 @@
         </div>
     </div>
 
-    <!-- SECTION TEINTES REVENDABLES (AVEC FORMULAIRE INTÉGRÉ) -->
+    <!-- SECTION TEINTES REVENDABLES (HAUT) -->
     <div id="sectionRevendablesContent" style="display: none;">
-        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
-                <h3 style="margin:0; color:#10b981; font-size:17px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
-                <p style="margin:4px 0 0 0; font-size:12px; color:#9ca3af;">Gérez et consultez les seaux préparés en plus disponibles à la vente.</p>
+                <h3 style="margin:0; color:#10b981; font-size:16px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Gérez et consultez les seaux préparés en plus disponibles à la vente.</p>
             </div>
-            <button class="btn btn-save" style="width:auto; margin-top:0; padding:12px 18px; background-color:#10b981;" onclick="toggleResaleForm()">➕ Ajouter une Teinte</button>
+            <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#10b981;" onclick="toggleResaleForm()">➕ Ajouter une Teinte</button>
         </div>
 
         <!-- FORMULAIRE INTÉGRÉ RE-VENDABLE -->
@@ -567,7 +588,7 @@
                 <option value="Eurotex">Eurotex</option>
                 <option value="Mathys">Mathys</option>
                 <option value="Rust-oleum">Rust-oleum</option>
-                <option value="Liber">Liber</option>
+                <option value="Libert">Libert</option>
             </select>
 
             <label>Nom du produit (Optionnel) :</label>
@@ -579,7 +600,8 @@
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div>
                     <label>Base :</label>
-                    <select id="resBase"><option value="">Base</option></select>
+                    <select id="resBase" onchange="checkCustomBase('res')"><option value="">Base</option></select>
+                    <input type="text" id="resBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
                 </div>
                 <div>
                     <label>Capacité :</label>
@@ -596,23 +618,24 @@
             </div>
         </div>
 
-        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:14px;">
+        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:12px;">
 
         <div id="resaleRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
             <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune teinte re-vendable en stock.</div>
         </div>
     </div>
 
-    <!-- SECTION ERREURS DE TEINTE (AVEC FORMULAIRE INTÉGRÉ) -->
+    <!-- SECTION ERREURS DE TEINTE (BAS) AVEC CALENDRIER ET BOUTON EXPORT -->
     <div id="sectionErreursContent" style="display: none;">
-        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
-                <h3 style="margin:0; color:#ef4444; font-size:17px;">⚠️ Registre des Erreurs de Teinte</h3>
-                <p style="margin:4px 0 0 0; font-size:12px; color:#9ca3af;">Suivi transparent et calendrier des rebuts de fabrication.</p>
+                <h3 style="margin:0; color:#ef4444; font-size:16px;">⚠️ Registre des Erreurs de Teinte</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Suivi transparent et calendrier des rebuts de fabrication.</p>
             </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn btn-save" style="width:auto; margin-top:0; padding:12px 18px; background-color:#ef4444;" onclick="toggleErrorForm()">➕ Déclarer une Erreur</button>
-                <button id="btnPurgeErrors" class="btn btn-danger" style="display:none; width:auto; margin-top:0; padding:12px 14px; background-color:#7f1d1d;" onclick="purgeAllErrors()">🗑️ Vider tout</button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 14px; background-color:#ef4444;" onclick="toggleErrorForm()">➕ Déclarer</button>
+                <button id="btnExportErrors" class="btn btn-save" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:#3b82f6;" onclick="exportErrorsCSV()">📥 Exporter Bilan</button>
+                <button id="btnPurgeErrors" class="btn btn-danger" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:#7f1d1d;" onclick="purgeAllErrors()">🗑️ Vider tout</button>
             </div>
         </div>
 
@@ -632,7 +655,7 @@
                 <option value="Eurotex">Eurotex</option>
                 <option value="Mathys">Mathys</option>
                 <option value="Rust-oleum">Rust-oleum</option>
-                <option value="Liber">Liber</option>
+                <option value="Libert">Libert</option>
             </select>
 
             <label>Nom du produit (si connu) :</label>
@@ -641,7 +664,8 @@
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div>
                     <label>Base :</label>
-                    <select id="errBase"><option value="">Base</option></select>
+                    <select id="errBase" onchange="checkCustomBase('err')"><option value="">Base</option></select>
+                    <input type="text" id="errBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
                 </div>
                 <div>
                     <label>Capacité :</label>
@@ -670,11 +694,11 @@
         <!-- CALENDRIER INTERACTIF -->
         <div class="mini-calendar" id="errorMiniCalendar"></div>
 
-        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:14px;">
+        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
         
-        <div id="errorStatsBox" style="background:var(--panel-bg); padding:12px; border-radius:8px; margin-bottom:14px; font-size:13px; color:#9ca3af; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <div id="errorStatsBox" style="background:var(--panel-bg); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#9ca3af; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
             <span>Total erreurs : <b id="totalErrorsCount" style="color:#fff;">0</b> | Volume raté : <b id="totalErrorLitres" style="color:#ef4444;">0 L / KG</b></span>
-            <button id="clearDateFilterBtn" style="display:none; background:none; border:none; color:var(--accent); font-size:12px; cursor:pointer; font-weight:bold;" onclick="resetDateFilter()">🔄 Afficher tout</button>
+            <button id="clearDateFilterBtn" style="display:none; background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; font-weight:bold;" onclick="resetDateFilter()">🔄 Afficher tout</button>
         </div>
 
         <div id="errorRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
@@ -793,10 +817,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.14" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.17" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.14 : Remplacement des pop-ups par des formulaires verticaux intégrés.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.17 : Clavier virtuel fluide (glisser pour fermer), base manuelle et export bilan erreurs (CSV).</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -819,7 +843,7 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.14</span></div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.17</span></div>
     </div>
 </div>
 
@@ -957,7 +981,7 @@
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.14"; 
+    const CURRENT_APP_VERSION = "v1.17"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -972,7 +996,7 @@
         "Eurotex": { bases: [], sizes: ["22kg"] },
         "Mathys": { bases: [], sizes: ["1L", "5L", "10L", "20L"] },
         "Rust-oleum": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L"] },
-        "Liber": { bases: [], sizes: ["0.5L", "1L", "2.5L"] }
+        "Libert": { bases: [], sizes: ["0.5L", "1L", "2.5L"] }
     };
 
     let filesToSync = JSON.parse(localStorage.getItem('central_synced_files')) || ['ral.json', 'ncs.json', '5051.json', 'flamant.json', 'farrowball.json'];
@@ -1158,12 +1182,32 @@
     }
     renderVkRows();
 
+    // FUNCTIONALITATE NOUĂ: Închidere tastatură inteligentă (Swipe & Click outside)
+    document.addEventListener('click', function(e) {
+        if (!isComputerMode && activeVirtualInput) {
+            const vk = document.getElementById('virtualKeyboard');
+            if (!vk.contains(e.target) && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.closest('.vk-key')) {
+                vClose();
+            }
+        }
+    });
+
+    let vkTouchStartY = 0;
+    document.getElementById('virtualKeyboard').addEventListener('touchstart', e => {
+        vkTouchStartY = e.touches[0].clientY;
+    }, {passive: true});
+    
+    document.getElementById('virtualKeyboard').addEventListener('touchmove', e => {
+        let touchEndY = e.touches[0].clientY;
+        if (touchEndY - vkTouchStartY > 40) vClose(); // Detectare glisare în jos
+    }, {passive: true});
+
     window.openVirtualKeyboard = function(inputEl) {
-        if(inputEl.style.display === 'none') return; 
+        if(isComputerMode) return; 
         document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
         inputEl.classList.add('active-input');
         activeVirtualInput = inputEl;
-        document.getElementById('virtualKeyboard').style.display = 'block';
+        document.getElementById('virtualKeyboard').classList.add('active');
     }
 
     window.vKey = function(char, el) {
@@ -1205,8 +1249,27 @@
 
     window.vClose = function() {
         document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
-        document.getElementById('virtualKeyboard').style.display = 'none';
+        document.getElementById('virtualKeyboard').classList.remove('active');
         if (activeVirtualInput) { activeVirtualInput.blur(); activeVirtualInput = null; }
+    }
+
+    // Gestion base manuelle (Autre...)
+    window.checkCustomBase = function(prefix) {
+        const sel = document.getElementById(prefix + 'Base');
+        const cust = document.getElementById(prefix + 'BaseCustom');
+        if (sel && cust) {
+            if (sel.value === 'AUTRE') cust.style.display = 'block';
+            else { cust.style.display = 'none'; cust.value = ''; }
+        }
+    }
+
+    function getBaseValue(prefix) {
+        const sel = document.getElementById(prefix + 'Base');
+        const cust = document.getElementById(prefix + 'BaseCustom');
+        if (sel && sel.value === 'AUTRE') {
+            return cust ? cust.value.trim().toUpperCase() : '';
+        }
+        return sel ? sel.value : '';
     }
 
     window.updateStockDropdowns = function(prefix) {
@@ -1219,6 +1282,8 @@
             BRANDS_DATA[brand].bases.forEach(b => baseSelect.innerHTML += `<option value="${b}">${b}</option>`);
             BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
         }
+        baseSelect.innerHTML += `<option value="AUTRE">➕ Autre (Manuelle)...</option>`;
+        checkCustomBase(prefix);
         checkLearnedLocation(prefix);
     }
 
@@ -1232,6 +1297,8 @@
             BRANDS_DATA[brand].bases.forEach(b => baseSelect.innerHTML += `<option value="${b}">${b}</option>`);
             BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
         }
+        baseSelect.innerHTML += `<option value="AUTRE">➕ Autre (Manuelle)...</option>`;
+        checkCustomBase('err');
     }
 
     window.updateResaleDropdowns = function() {
@@ -1244,6 +1311,8 @@
             BRANDS_DATA[brand].bases.forEach(b => baseSelect.innerHTML += `<option value="${b}">${b}</option>`);
             BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
         }
+        baseSelect.innerHTML += `<option value="AUTRE">➕ Autre (Manuelle)...</option>`;
+        checkCustomBase('res');
     }
 
     window.toggleQuantityInput = function(prefix) {
@@ -1367,7 +1436,7 @@
             localStorage.setItem('central_github_token', t);
             document.getElementById('ghTokenInput').value = t;
             closeTokenModal();
-            showAlert("Token GitHub API sauvegardé avec succès !", true);
+            showAlert("Token GitHub API sauvegardé !", true);
         } else alert("Token invalide !");
     }
 
@@ -1758,7 +1827,7 @@
                 }
             });
 
-            const isAdminDevice = localStorage.getItem('central_is_admin_device'] === 'true' || isAuthenticated;
+            const isAdminDevice = localStorage.getItem('central_is_admin_device') === 'true' || isAuthenticated;
             if (isAdminDevice && previousPendingCount >= 0 && pendingCount > previousPendingCount) {
                 playPersistentAlarm();
                 showAlert(`🔔 Nouvel utilisateur en attente d'approbation (${pendingCount}) !`, true);
@@ -1947,6 +2016,29 @@
             });
         }
 
+        const teinteurAlarmsRef = window.FB_ref(window.FB_db, 'teinteur_alarms');
+        window.FB_onValue(teinteurAlarmsRef, (snapshot) => {
+            const data = snapshot.val();
+            if(!data) return;
+            const keys = Object.keys(data);
+            const latestKey = keys[keys.length - 1];
+            const latestAlarm = data[latestKey];
+
+            if(initialLoadAlarm) {
+                lastProcessedAlarmId = latestKey;
+                initialLoadAlarm = false;
+                return;
+            }
+
+            if (latestKey !== lastProcessedAlarmId) {
+                lastProcessedAlarmId = latestKey;
+                if (localUser && localUser.role === 'Teinteur' && (Date.now() - latestAlarm.timestamp < 30000)) {
+                    playPersistentAlarm();
+                    showAlert(`❗ ALARME MAGASIN : ${latestAlarm.sender} a une commande !`, false);
+                }
+            }
+        });
+
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
             const data = snapshot.val();
@@ -1976,6 +2068,195 @@
         });
     }
 
+    // --- ENVOI COMMANDES ---
+    window.sendSingleStockRequest = function() {
+        const brand = document.getElementById('singleBrand').value;
+        const prodName = document.getElementById('singleProductName').value.trim();
+        const base = getBaseValue('single');
+        const bucket = document.getElementById('singleBucketSize').value;
+        const isPallet = document.getElementById('singlePallet').checked;
+        const qty = isPallet ? "Palette complète" : document.getElementById('singleQuantity').value.trim();
+        const loc = document.getElementById('singleLocation').value.trim().toUpperCase();
+
+        if (!brand || !prodName || !bucket || !loc) { alert("❌ Remplissez tous les champs obligatoires !"); return; }
+        if (!isPallet && !qty) { alert("❌ Indiquez la quantité !"); return; }
+        if (!window.FB_db) return;
+
+        const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
+        const newReqRef = window.FB_push(stockRef);
+        const fullProductName = `${brand} ${prodName}`;
+        
+        window.FB_set(newReqRef, {
+            id: newReqRef.key, author: localUser ? localUser.name : "Inconnu",
+            items: [{ product: fullProductName, base: base, bucketSize: bucket, quantity: qty, location: loc }],
+            status: 'pending', timestamp: Date.now()
+        }).then(() => {
+            saveLearnedLocation(brand, prodName, loc);
+            showAlert("📨 Demande urgente envoyée !");
+            logDailyHistory(`📦 Demande urgente de ${fullProductName}`);
+            document.getElementById('singleProductName').value = '';
+            document.getElementById('singleLocation').value = '';
+            document.getElementById('singleLocation').style.borderColor = "var(--border)";
+            document.getElementById('singleBaseCustom').style.display = 'none';
+        });
+    }
+
+    window.addStockItemToList = function() {
+        const brand = document.getElementById('listBrand').value;
+        const prodName = document.getElementById('listProductName').value.trim();
+        const base = getBaseValue('list');
+        const bucket = document.getElementById('listBucketSize').value;
+        const isPallet = document.getElementById('listPallet').checked;
+        const qty = isPallet ? "Palette complète" : document.getElementById('listQuantity').value.trim();
+        const loc = document.getElementById('listLocation').value.trim().toUpperCase();
+
+        if (!brand || !prodName || !bucket || !loc) { alert("❌ Remplissez tous les champs !"); return; }
+        if (!isPallet && !qty) { alert("❌ Indiquez la quantité !"); return; }
+
+        const fullProductName = `${brand} ${prodName}`;
+        currentStockCartItems.push({ product: fullProductName, base: base, bucketSize: bucket, quantity: qty, location: loc });
+        saveLearnedLocation(brand, prodName, loc);
+
+        document.getElementById('listProductName').value = '';
+        document.getElementById('listLocation').value = '';
+        document.getElementById('listLocation').style.borderColor = "var(--border)";
+        document.getElementById('listBaseCustom').style.display = 'none';
+        renderStockCart();
+    }
+
+    function renderStockCart() {
+        const container = document.getElementById('stockCartItemsList');
+        const sendBtn = document.getElementById('sendStockCartBtn');
+        container.innerHTML = '';
+        if (currentStockCartItems.length === 0) {
+            container.innerHTML = '<div style="text-align:center; color:#6b7280; font-size:11px; padding:6px;">Aucun article ajouté.</div>';
+            sendBtn.style.display = 'none';
+            return;
+        }
+        sendBtn.style.display = 'block';
+        currentStockCartItems.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:6px; padding:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;";
+            let displayBase = item.base ? `${item.base}, ` : '';
+            div.innerHTML = `
+                <div>
+                    <strong>${item.product}</strong> (${displayBase}${item.bucketSize}) x <b>${item.quantity}</b><br>
+                    <span style="color:#9ca3af; font-size:11px;">📍 ${item.location}</span>
+                </div>
+                <button class="btn btn-danger" style="padding:4px 8px; font-size:11px; min-width:auto;" onclick="removeStockCartItem(${index})">✕</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    window.removeStockCartItem = function(index) { currentStockCartItems.splice(index, 1); renderStockCart(); }
+
+    window.sendFinalStockList = function() {
+        if (currentStockCartItems.length === 0) return;
+        if (!window.FB_db) return;
+
+        const stockRef = window.FB_ref(window.FB_db, 'stock_requests');
+        const newReqRef = window.FB_push(stockRef);
+        window.FB_set(newReqRef, {
+            id: newReqRef.key, author: localUser ? localUser.name : "Inconnu",
+            items: currentStockCartItems, status: 'pending', timestamp: Date.now()
+        }).then(() => {
+            showAlert("🚀 Liste envoyée au magasinier !");
+            logDailyHistory(`📦 Liste de ${currentStockCartItems.length} article(s) envoyée`);
+            currentStockCartItems = [];
+            renderStockCart();
+        });
+    }
+
+    function renderStockRequests() {
+        const container = document.getElementById('stockRequestsList');
+        if (!container) return;
+        container.innerHTML = '';
+        if (stockRequestsList.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active.</div>';
+            return;
+        }
+        stockRequestsList.forEach(req => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
+            let isMagasinier = localUser && localUser.role === 'Magasinier';
+            let itemsHtml = '';
+            if (req.items && Array.isArray(req.items)) {
+                req.items.forEach(it => {
+                    let dispBase = it.base ? `Base: ${it.base}, ` : '';
+                    itemsHtml += `<div style="font-size:12px; color:#d1d5db; border-left:2px solid var(--accent); padding-left:6px; margin:4px 0;">• <b>${it.product}</b> (${dispBase}${it.bucketSize}) - <b>Qté: ${it.quantity}</b><br><span style="font-size:11px; color:#9ca3af;">📍 ${it.location}</span></div>`;
+                });
+            }
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; color:#60a5fa; font-weight:bold;">📦 Commande de ${req.author}</span>
+                </div>
+                <div style="margin:4px 0;">${itemsHtml}</div>
+                ${isMagasinier ? `
+                    <div style="display:flex; gap:6px; margin-top:6px;">
+                        <button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Valider</button>
+                        <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1;" onclick="markOutOfStock('${req.id}')">❌ Out of Stock</button>
+                    </div>
+                ` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation...</div>`}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    window.markOutOfStock = function(reqId) {
+        if (!window.FB_db) return;
+        window.FB_set(window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`), 'out_of_stock').then(() => {
+            showAlert("❌ Demande marquée 'Out of Stock' !", true);
+        });
+    }
+
+    function renderOutOfStockRequests() {
+        const container = document.getElementById('outOfStockRequestsList');
+        if (!container) return;
+        container.innerHTML = '';
+        if (outOfStockList.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:15px; color:#6b7280; font-size:12px;">Aucun produit en rupture de stock.</div>';
+            return;
+        }
+        outOfStockList.forEach(req => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#2a1215; border:1px solid #7f1d1d; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
+            let canManageOutOfStock = localUser && (localUser.role === 'Magasinier' || localUser.role === "Responsable");
+            let itemsHtml = '';
+            if (req.items && Array.isArray(req.items)) {
+                req.items.forEach(it => {
+                    let dispBase = it.base ? `(${it.base})` : '';
+                    itemsHtml += `<div style="font-size:12px; color:#fca5a5; border-left:2px solid var(--danger); padding-left:6px; margin:4px 0;">• <b>${it.product}</b> ${dispBase} - Qté: ${it.quantity}<br><span style="font-size:11px; color:#9ca3af;">📍 ${it.location}</span></div>`;
+                });
+            }
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; color:#fca5a5; font-weight:bold;">⚠️ Rupture stock (Demandeur: ${req.author})</span>
+                </div>
+                <div style="margin:4px 0;">${itemsHtml}</div>
+                ${canManageOutOfStock ? `
+                    <div style="display:flex; gap:6px; margin-top:6px;">
+                        <button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Arrivé & Validé</button>
+                        <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1; background-color:#7f1d1d;" onclick="closeDemandStock('${req.id}')">🗑️ Clôturer</button>
+                    </div>
+                ` : `<div style="font-size:11px; color:#9ca3af; font-style:italic;">En attente de réapprovisionnement...</div>`}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    window.closeDemandStock = function(reqId) {
+        if (!window.FB_db) return;
+        if (confirm("Voulez-vous vraiment clôturer et supprimer cette demande ?")) {
+            window.FB_remove(window.FB_ref(window.FB_db, `stock_requests/${reqId}`)).then(() => showAlert("🗑️ Demande clôturée.", true));
+        }
+    }
+
+    window.validateStockRequest = function(reqId) {
+        if (!window.FB_db) return;
+        window.FB_set(window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`), 'completed').then(() => showAlert("✅ Stock validé !", true));
+    }
+
     // --- FORMULAIRES INTÉGRÉS DIRECTS (REMPLACANT LES POP-UPS) ---
     window.toggleErrorForm = function() {
         const panel = document.getElementById('errorFormPanel');
@@ -1991,6 +2272,7 @@
             document.getElementById('errDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('errReason').value = "";
             document.getElementById('errSignature').value = localUser ? localUser.name : "";
+            document.getElementById('errBaseCustom').style.display = 'none';
             panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
@@ -2007,6 +2289,7 @@
             document.getElementById('resBase').innerHTML = '<option value="">Base</option>';
             document.getElementById('resBucketSize').innerHTML = '<option value="">Capacité (L / KG)</option>';
             document.getElementById('resQuantity').value = "1";
+            document.getElementById('resBaseCustom').style.display = 'none';
             panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
@@ -2014,7 +2297,7 @@
     window.saveErrorRecord = function() {
         const brand = document.getElementById('errBrand').value;
         const prodName = document.getElementById('errProductName').value.trim();
-        const base = document.getElementById('errBase').value;
+        const base = getBaseValue('err');
         const bucket = document.getElementById('errBucketSize').value;
         const qty = parseFloat(document.getElementById('errQuantity').value) || 1;
         const dateVal = document.getElementById('errDate').value;
@@ -2098,6 +2381,7 @@
         const totalLitresEl = document.getElementById('totalErrorLitres');
         const clearBtn = document.getElementById('clearDateFilterBtn');
         const purgeBtn = document.getElementById('btnPurgeErrors');
+        const exportBtn = document.getElementById('btnExportErrors');
         if (!list) return;
         list.innerHTML = '';
 
@@ -2119,7 +2403,11 @@
 
         if (localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable') && errorRecordsList.length > 0) {
             purgeBtn.style.display = 'inline-block';
-        } else purgeBtn.style.display = 'none';
+            exportBtn.style.display = 'inline-block';
+        } else {
+            purgeBtn.style.display = 'none';
+            exportBtn.style.display = 'none';
+        }
 
         if (filtered.length === 0) {
             list.innerHTML = '<div style="text-align:center; padding:15px; color:#9ca3af; font-size:12px;">Aucun enregistrement trouvé.</div>';
@@ -2166,11 +2454,59 @@
         }
     }
 
+    window.exportErrorsCSV = function() {
+        if (errorRecordsList.length === 0) {
+            alert("Aucune erreur à exporter.");
+            return;
+        }
+
+        let csvContent = "Date,Marque,Produit,Base,Capacite,Quantite,Motif,Auteur(Signataire),Cree_par\n";
+        let personStats = {};
+
+        let sorted = [...errorRecordsList].sort((a, b) => b.timestamp - a.timestamp);
+
+        sorted.forEach(item => {
+            let safeProd = `"${(item.productName || "").replace(/"/g, '""')}"`;
+            let safeReason = `"${(item.reason || "").replace(/"/g, '""').replace(/\n/g, " ")}"`;
+            let safeSig = `"${(item.signature || "").replace(/"/g, '""')}"`;
+            let safeBase = `"${(item.base || "").replace(/"/g, '""')}"`;
+            let safeCreator = `"${(item.creatorUser || "").replace(/"/g, '""')}"`;
+
+            let qte = parseFloat(item.quantity) || 1;
+            let vol = (parseFloat(item.bucketSize) || 1) * qte;
+
+            csvContent += `${item.date},${item.brand},${safeProd},${safeBase},${item.bucketSize},${qte},${safeReason},${safeSig},${safeCreator}\n`;
+
+            let sigKey = item.signature.trim().toUpperCase();
+            if (!personStats[sigKey]) personStats[sigKey] = { name: item.signature, count: 0, volume: 0 };
+            personStats[sigKey].count += qte;
+            personStats[sigKey].volume += vol;
+        });
+
+        csvContent += "\n\n--- BILAN PAR PERSONNE ---\n";
+        csvContent += "Nom,Nombre de Seaux,Volume Total Rate\n";
+
+        for (let key in personStats) {
+            let p = personStats[key];
+            csvContent += `"${p.name}",${p.count},"${p.volume.toFixed(2)} L / KG"\n`;
+        }
+
+        let blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Bilan_Erreurs_Teinte_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     window.saveResaleRecord = function() {
         const brand = document.getElementById('resBrand').value;
         const prodName = document.getElementById('resProductName').value.trim();
         const colorCode = document.getElementById('resColorCode').value.trim().toUpperCase();
-        const base = document.getElementById('resBase').value;
+        const base = getBaseValue('res');
         const bucket = document.getElementById('resBucketSize').value;
         const qty = parseInt(document.getElementById('resQuantity').value) || 1;
 
@@ -2368,6 +2704,41 @@
                 setTimeout(() => forceCleanReload(), 2000);
             }
         } catch (err) { showAlert(`❌ Erreur : ${err.message}`); }
+    }
+
+    async function autoSyncPalettes() {
+        let addedCount = 0;
+        let tempDatabase = [];
+        
+        for (let file of filesToSync) {
+            try {
+                // Fetch forté sans cache
+                const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${file}?v=${CURRENT_APP_VERSION}&t=${Date.now()}`, { cache: "no-store" });
+                if (res.ok) {
+                    const data = await res.json();
+                    data.forEach(item => {
+                        if (item.code) {
+                            tempDatabase.push(item);
+                            addedCount++;
+                        }
+                    });
+                }
+            } catch (e) { console.warn("Erreur chargement: ", file); }
+        }
+        
+        if (addedCount > 0) {
+            let merged = [...customDatabase]; 
+            tempDatabase.forEach(tempItem => {
+                const existingIndex = merged.findIndex(c => c.code === tempItem.code && c.palette === tempItem.palette);
+                if (existingIndex >= 0) merged[existingIndex] = tempItem; 
+                else merged.push(tempItem); 
+            });
+            customDatabase = merged; 
+            saveToStorage(); 
+            filterColors(); 
+            updateTargetPaletteDropdown();
+        }
+        renderFoldersOverview();
     }
 
     window.clearSystemCache = function() {
