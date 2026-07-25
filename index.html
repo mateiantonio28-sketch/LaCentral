@@ -2756,27 +2756,58 @@
     }
 
     window.applySingleCollabUpdate = function(updateId, code, palette, encodedBases) {
-        const newBases = JSON.parse(decodeURIComponent(encodedBases));
-        const itemIndex = customDatabase.findIndex(c => c.code.toUpperCase() === code.toUpperCase() && c.palette.toUpperCase() === palette.toUpperCase());
-        if (itemIndex >= 0) { customDatabase[itemIndex].bases = newBases; saveToStorage(); filterColors(); filterDedicatedPalette(); }
-        dismissedUpdateIds.push(updateId);
-        localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
-        pendingCollabUpdates = pendingCollabUpdates.filter(u => u.id !== updateId);
-        updateCollabBadge();
-        renderCollabNotifications();
-        showAlert(`✅ Mise à jour appliquée pour ${code} !`, true);
+        try {
+            const newBases = JSON.parse(decodeURIComponent(encodedBases));
+            const safeCode = code.trim().toUpperCase();
+            const safePalette = palette.trim().toUpperCase();
+            
+            let itemIndex = customDatabase.findIndex(c => c.code.toUpperCase() === safeCode && c.palette.toUpperCase() === safePalette);
+            
+            if (itemIndex >= 0) { 
+                customDatabase[itemIndex].bases = newBases; 
+            } else {
+                customDatabase.push({ code: safeCode, palette: palette, hex: "#cbd5e1", bases: newBases });
+            }
+            
+            saveToStorage(); 
+            if (typeof filterColors === 'function') filterColors(); 
+            if (typeof filterDedicatedPalette === 'function') filterDedicatedPalette();
+            if (typeof renderFoldersOverview === 'function') renderFoldersOverview();
+            
+            dismissedUpdateIds.push(updateId);
+            localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
+            pendingCollabUpdates = pendingCollabUpdates.filter(u => u.id !== updateId);
+            
+            updateCollabBadge();
+            renderCollabNotifications();
+            showAlert(`✅ Mise à jour appliquée pour ${code} !`, true);
+        } catch(e) { console.error(e); }
     }
 
     window.acceptAllCollabUpdates = function() {
         if (pendingCollabUpdates.length === 0) return;
+        
         pendingCollabUpdates.forEach(upd => {
-            const itemIndex = customDatabase.findIndex(c => c.code.toUpperCase() === upd.code.toUpperCase() && c.palette.toUpperCase() === upd.palette.toUpperCase());
-            if (itemIndex >= 0) customDatabase[itemIndex].bases = upd.bases;
+            const safeCode = upd.code.trim().toUpperCase();
+            const safePalette = upd.palette.trim().toUpperCase();
+            let itemIndex = customDatabase.findIndex(c => c.code.toUpperCase() === safeCode && c.palette.toUpperCase() === safePalette);
+            
+            if (itemIndex >= 0) {
+                customDatabase[itemIndex].bases = upd.bases;
+            } else {
+                customDatabase.push({ code: safeCode, palette: upd.palette, hex: "#cbd5e1", bases: upd.bases });
+            }
             dismissedUpdateIds.push(upd.id);
         });
-        saveToStorage(); filterColors(); filterDedicatedPalette();
+        
+        saveToStorage(); 
+        if (typeof filterColors === 'function') filterColors(); 
+        if (typeof filterDedicatedPalette === 'function') filterDedicatedPalette();
+        if (typeof renderFoldersOverview === 'function') renderFoldersOverview();
+        
         localStorage.setItem('central_dismissed_updates', JSON.stringify(dismissedUpdateIds));
         pendingCollabUpdates = [];
+        
         updateCollabBadge();
         renderCollabNotifications();
         showAlert(`⚡ Toutes les modifications appliquées !`, true);
