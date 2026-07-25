@@ -824,9 +824,20 @@
 
         <button class="collapsible-btn" onclick="toggleCollapse('backupGitForm')">💾 Créer / Restaurer Backup (Git) <span>▼</span></button>
         <div id="backupGitForm" class="collapsible-content" style="border:1px dashed #10b981;">
-            <p style="font-size:12px; margin-top:0;">Sauvegardez ou restaurez l'état complet de votre base de données.</p>
-            <button class="btn btn-save" style="background-color:#059669; width:100%; margin-bottom:8px;" onclick="createSystemBackup()">📦 Sauvegarder la Base de Données</button>
-            <button class="btn btn-save" style="background-color:#0284c7; width:100%;" onclick="restoreSystemBackup()">📥 Restaurer depuis Backup (GitHub)</button>
+            <p style="font-size:12px; margin-top:0;">Sauvegardez l'état actuel ou restaurez une version antérieure.</p>
+            <button class="btn btn-save" style="background-color:#059669; width:100%; margin-bottom:12px;" onclick="createSystemBackup()">📦 Créer un Backup (Version Actuelle)</button>
+            
+            <div style="background:#111827; padding:10px; border-radius:6px; border:1px solid var(--border);">
+                <label style="margin-top:0;">📥 Piste des Backups Disponibles :</label>
+                <div style="display:flex; gap:6px; margin-bottom:8px;">
+                    <button class="btn btn-admin-discrete" style="flex:1;" onclick="fetchBackupList()">🔄 Charger la liste GitHub</button>
+                </div>
+                <select id="backupListSelect" style="width:100%; padding:10px; border-radius:6px; background:#1f2937; color:#fff; border:1px solid var(--border); margin-bottom:8px;">
+                    <option value="">-- Sélectionnez un backup --</option>
+                </select>
+                <button class="btn btn-save" style="background-color:#0284c7; width:100%; padding:10px; font-size:12px;" onclick="restoreSystemBackup()">⚠️ Restaurer le Backup Sélectionné</button>
+            </div>
+            <div id="backupAdminStatus" style="margin-top:10px; font-size:12px; font-weight:bold; display:none;"></div>
         </div>
 
         <button class="collapsible-btn" onclick="toggleCollapse('updateAppForm')">🚀 Forcer la Mise à jour Générale <span>▼</span></button>
