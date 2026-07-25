@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- CONFIGURARE PWA PENTRU MOBIL -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    <meta name="theme-color" content="#111827">
+
+    <title>Tools Administrativ - Patcher</title>
+    
+    <style>
+        :root {
+            --primary: #f8fafc;
+            --accent: #3b82f6;
+            --ai-color: #8b5cf6;
+            --bg: #111827;
+            --panel-bg: #1f2937;
+            --border: #374151;
+            --text: #f3f4f6;
+            --success: #16a34a;
+            --danger: #ef4444;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
+        .container { max-width: 600px; margin: 0 auto; display: none; }
+
+        /* ECRAN DE LOGIN / LOCK */
+        .lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 99999; display: flex;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .lock-card {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .lock-card h2 { margin: 0 0 6px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
+        .lock-card p { margin: 0 0 16px 0; font-size: 12px; color: #9ca3af; }
+        .lock-card input {
+            width: 100%; padding: 12px; margin-bottom: 12px;
+            border: 1px solid var(--border); border-radius: 8px;
+            background: #111827; color: #fff; font-size: 14px; text-align: center;
+        }
+
+        .header { text-align: center; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
+        .header h1 { margin: 0; font-size: 20px; color: var(--primary); text-transform: uppercase; }
+        .header p { margin: 4px 0 0 0; font-size: 11px; color: #9ca3af; }
+
+        .panel {
+            background: var(--panel-bg); padding: 16px; border-radius: 12px;
+            margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        }
+        .panel h3 { margin-top: 0; font-size: 14px; text-transform: uppercase; color: var(--primary); }
+
+        label { font-size: 12px; color: #9ca3af; font-weight: bold; display: block; margin-bottom: 4px; margin-top: 10px; }
+        textarea, input {
+            width: 100%; padding: 10px; background: #111827; color: #fff; border: 1px solid var(--border);
+            border-radius: 8px; font-family: monospace; font-size: 12px;
+        }
+        textarea { resize: vertical; }
+
+        .btn { 
+            width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; 
+            font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px;
+        }
+        .btn-save { background-color: var(--success); color: white; }
+        .btn-token { background-color: #0284c7; color: white; text-decoration: none; display: block; margin-bottom: 10px; font-size: 13px; padding: 10px; border-radius: 8px;}
+        .btn-logout { background-color: #7f1d1d; color: #fca5a5; font-size: 11px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; margin-top: 10px;}
+
+        .status { 
+            padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; 
+            text-align: center; display: none; margin-bottom: 12px; 
+        }
+        .status.success { background-color: #14532d; color: #dcfce7; border: 1px solid #15803d; display: block; }
+        .status.error { background-color: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; display: block; }
+        .status.loading { background-color: #1e3a8a; color: #bfdbfe; border: 1px solid #3b82f6; display: block; }
+
+        .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    </style>
+</head>
+<body>
+
+<!-- ECRAN DE LOGARE ADMIN -->
+<div id="adminLockScreen" class="lock-screen">
+    <div class="lock-card">
+        <h2>Tools Administrativ</h2>
+        <p>Introduceți datele de acces</p>
+        
+        <input type="text" id="adminUser" placeholder="Utilizator (ADMIN)">
+        <input type="password" id="adminPass" placeholder="Parolă (Olimpus)">
+        
+        <button class="btn btn-save" onclick="validateAdminLogin()">Se autentifica</button>
+    </div>
+</div>
+
+<!-- INTERFAȚA PRINCIPALĂ ADMIN -->
+<div class="container" id="adminMainContainer">
+    <div class="header">
+        <h1>Tools Administrativ</h1>
+        <p>Patcher Parțial Cod Sursă — Direct pe Git</p>
+        <button class="btn-logout" onclick="logoutAdmin()">🔒 Blocare / Deconectare</button>
+    </div>
+
+    <div id="statusBox" class="status"></div>
+
+    <div class="panel" style="border-color: var(--ai-color);">
+        <h3 style="color: var(--ai-color);">1. Configurare GitHub</h3>
+        
+        <a href="https://github.com/settings/tokens/new?description=Tools-Administrativ&scopes=repo" target="_blank" class="btn-token">
+            🔗 1. Generează Token GitHub (Dacă nu ai unul)
+        </a>
+
+        <label>🔑 Token Access GitHub (ghp_...):</label>
+        <input type="password" id="ghToken" placeholder="Lipește token-ul aici">
+        
+        <div class="two-cols">
+            <div>
+                <label>📂 Repository:</label>
+                <input type="text" id="ghRepo" value="mateiantonio28-sketch/LaCentral">
+            </div>
+            <div>
+                <label>📄 Fișier țintă:</label>
+                <input type="text" id="ghFile" value="index.html">
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3 style="color: var(--accent);">2. Update Parțial (Fără rescriere totală)</h3>
+        
+        <label>🔍 Caută exact linia de cod veche:</label>
+        <textarea id="searchCode" rows="3" placeholder='ex: const CURRENT_APP_VERSION = "v1.18";'></textarea>
+
+        <label>✍️ Noul cod (Cu ce o înlocuiești):</label>
+        <textarea id="replaceCode" rows="3" placeholder='ex: const CURRENT_APP_VERSION = "v1.19";'></textarea>
+
+        <label>📝 Mesaj Commit:</label>
+        <input type="text" id="commitMessage" value="Update parțial din Tools Administrativ">
+
+        <button class="btn btn-save" onclick="applyGithubPatch()" id="btnApply">🚀 Trimite Modificarea în Git</button>
+    </div>
+</div>
+
+<script>
+    // Verificăm sesiunea la pornire
+    document.addEventListener("DOMContentLoaded", () => {
+        const isAuth = localStorage.getItem('admin_tools_auth');
+        if (isAuth === 'true') {
+            openAdminPanel();
+        }
+        const savedToken = localStorage.getItem('admin_tools_github_token');
+        if (savedToken) document.getElementById('ghToken').value = savedToken;
+    });
+
+    function validateAdminLogin() {
+        const u = document.getElementById('adminUser').value.trim();
+        const p = document.getElementById('adminPass').value.trim();
+
+        if (u === "ADMIN" && p === "Olimpus") {
+            localStorage.setItem('admin_tools_auth', 'true');
+            openAdminPanel();
+        } else {
+            alert("❌ Utilizator sau parolă incorectă! Folosiți ADMIN și Olimpus.");
+        }
+    }
+
+    function openAdminPanel() {
+        document.getElementById('adminLockScreen').style.display = 'none';
+        document.getElementById('adminMainContainer').style.display = 'block';
+    }
+
+    function logoutAdmin() {
+        localStorage.removeItem('admin_tools_auth');
+        document.getElementById('adminMainContainer').style.display = 'none';
+        document.getElementById('adminLockScreen').style.display = 'flex';
+        document.getElementById('adminUser').value = '';
+        document.getElementById('adminPass').value = '';
+    }
+
+    async function applyGithubPatch() {
+        const token = document.getElementById('ghToken').value.trim();
+        const repo = document.getElementById('ghRepo').value.trim();
+        const filePath = document.getElementById('ghFile').value.trim();
+        const searchStr = document.getElementById('searchCode').value;
+        const replaceStr = document.getElementById('replaceCode').value;
+        const commitMsg = document.getElementById('commitMessage').value.trim();
+
+        if (!token || !repo || !filePath || !searchStr) {
+            showStatus('Eroare: Toate câmpurile (în afară de codul nou) sunt obligatorii!', 'error');
+            return;
+        }
+
+        localStorage.setItem('admin_tools_github_token', token);
+
+        const btn = document.getElementById('btnApply');
+        btn.disabled = true;
+        showStatus('⏳ 1/3 Se descarcă fișierul curent de pe GitHub...', 'loading');
+
+        try {
+            const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+            
+            const getRes = await fetch(apiUrl, {
+                headers: { "Authorization": `token ${token}` }
+            });
+
+            if (!getRes.ok) throw new Error("Nu s-a putut accesa fișierul. Verifică Token-ul și repository-ul.");
+            
+            const fileData = await getRes.json();
+            const currentContentDecoded = decodeURIComponent(escape(atob(fileData.content)));
+
+            if (!currentContentDecoded.includes(searchStr)) {
+                throw new Error("Codul căutat nu a fost găsit în fișier. Verifică spațiile și formatarea!");
+            }
+
+            showStatus('⚙️ 2/3 Se aplică modificarea parțială...', 'loading');
+
+            const newContentStr = currentContentDecoded.replace(searchStr, replaceStr);
+            const newContentBase64 = btoa(unescape(encodeURIComponent(newContentStr)));
+
+            showStatus('🚀 3/3 Se trimite update-ul către GitHub...', 'loading');
+
+            const putRes = await fetch(apiUrl, {
+                method: "PUT",
+                headers: { 
+                    "Authorization": `token ${token}`,
+                    "Content-Type": "application/json" 
+                },
+                body: JSON.stringify({
+                    message: commitMsg,
+                    content: newContentBase64,
+                    sha: fileData.sha
+                })
+            });
+
+            if (!putRes.ok) throw new Error("Eroare la salvarea pe GitHub.");
+
+            showStatus('✅ Update realizat cu succes! Codul a fost modificat parțial în Git.', 'success');
+            document.getElementById('searchCode').value = '';
+            document.getElementById('replaceCode').value = '';
+
+        } catch (error) {
+            console.error(error);
+            showStatus(`❌ ${error.message}`, 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function showStatus(message, type) {
+        const box = document.getElementById('statusBox');
+        box.textContent = message;
+        box.className = `status ${type}`;
+    }
+</script>
+
+</body>
+</html>
