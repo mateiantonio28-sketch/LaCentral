@@ -3041,7 +3041,7 @@
     window.fetchBackupList = async function() {
         const token = document.getElementById('ghTokenInput').value.trim() || localStorage.getItem('central_github_token');
         const sel = document.getElementById('backupListSelect');
-        if(!token) return alert("Token GitHub requis (dans la section Update App) !");
+        if(!token) return alert("Token GitHub requis ! Veuillez l'entrer ci-dessus.");
         sel.innerHTML = '<option value="">⏳ Chargement...</option>';
         try {
             const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/backups`, { headers: { "Authorization": `token ${token}` } });
