@@ -541,14 +541,14 @@
         </div>
     </div>
 
-    <!-- SECTION TEINTES REVENDABLES (AVEC FORMULAIRE INTÉGRÉ) -->
+    <!-- SECTION TEINTES REVENDABLES (HAUT) -->
     <div id="sectionRevendablesContent" style="display: none;">
-        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
-                <h3 style="margin:0; color:#10b981; font-size:17px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
-                <p style="margin:4px 0 0 0; font-size:12px; color:#9ca3af;">Gérez et consultez les seaux préparés en plus disponibles à la vente.</p>
+                <h3 style="margin:0; color:#10b981; font-size:16px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Gérez et consultez les seaux préparés en plus disponibles à la vente.</p>
             </div>
-            <button class="btn btn-save" style="width:auto; margin-top:0; padding:12px 18px; background-color:#10b981;" onclick="toggleResaleForm()">➕ Ajouter une Teinte</button>
+            <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#10b981;" onclick="toggleResaleForm()">➕ Ajouter une Teinte</button>
         </div>
 
         <!-- FORMULAIRE INTÉGRÉ RE-VENDABLE -->
@@ -596,23 +596,23 @@
             </div>
         </div>
 
-        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:14px;">
+        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:12px;">
 
         <div id="resaleRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
             <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune teinte re-vendable en stock.</div>
         </div>
     </div>
 
-    <!-- SECTION ERREURS DE TEINTE (AVEC FORMULAIRE INTÉGRÉ) -->
+    <!-- SECTION ERREURS DE TEINTE (BAS) AVEC CALENDRIER -->
     <div id="sectionErreursContent" style="display: none;">
-        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
-                <h3 style="margin:0; color:#ef4444; font-size:17px;">⚠️ Registre des Erreurs de Teinte</h3>
-                <p style="margin:4px 0 0 0; font-size:12px; color:#9ca3af;">Suivi transparent et calendrier des rebuts de fabrication.</p>
+                <h3 style="margin:0; color:#ef4444; font-size:16px;">⚠️ Registre des Erreurs de Teinte</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Suivi transparent et calendrier des rebuts de fabrication.</p>
             </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn btn-save" style="width:auto; margin-top:0; padding:12px 18px; background-color:#ef4444;" onclick="toggleErrorForm()">➕ Déclarer une Erreur</button>
-                <button id="btnPurgeErrors" class="btn btn-danger" style="display:none; width:auto; margin-top:0; padding:12px 14px; background-color:#7f1d1d;" onclick="purgeAllErrors()">🗑️ Vider tout</button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 14px; background-color:#ef4444;" onclick="toggleErrorForm()">➕ Déclarer</button>
+                <button id="btnPurgeErrors" class="btn btn-danger" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:#7f1d1d;" onclick="purgeAllErrors()">🗑️ Vider tout</button>
             </div>
         </div>
 
@@ -670,11 +670,11 @@
         <!-- CALENDRIER INTERACTIF -->
         <div class="mini-calendar" id="errorMiniCalendar"></div>
 
-        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:14px;">
+        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
         
-        <div id="errorStatsBox" style="background:var(--panel-bg); padding:12px; border-radius:8px; margin-bottom:14px; font-size:13px; color:#9ca3af; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <div id="errorStatsBox" style="background:var(--panel-bg); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#9ca3af; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
             <span>Total erreurs : <b id="totalErrorsCount" style="color:#fff;">0</b> | Volume raté : <b id="totalErrorLitres" style="color:#ef4444;">0 L / KG</b></span>
-            <button id="clearDateFilterBtn" style="display:none; background:none; border:none; color:var(--accent); font-size:12px; cursor:pointer; font-weight:bold;" onclick="resetDateFilter()">🔄 Afficher tout</button>
+            <button id="clearDateFilterBtn" style="display:none; background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; font-weight:bold;" onclick="resetDateFilter()">🔄 Afficher tout</button>
         </div>
 
         <div id="errorRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
@@ -793,10 +793,10 @@
             <button class="btn btn-guide" style="width:100%; margin-bottom:10px; background-color:#0284c7;" onclick="openTokenModal()">🔑 API Token Manager</button>
 
             <label style="font-size:11px; color:#9ca3af;">Nouvelle Version (Code) :</label>
-            <input type="text" id="newVersionInput" value="v1.14" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="newVersionInput" value="v1.15" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
 
             <label style="font-size:11px; color:#9ca3af;">Message de nouveautés pour les utilisateurs :</label>
-            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.14 : Remplacement des pop-ups par des formulaires verticaux intégrés.</textarea>
+            <textarea id="newChangelogInput" rows="2" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">Mise à jour v1.15 : Stabilité de connexion (Enter) et formulaires directs pour la gestion du stock.</textarea>
 
             <label style="font-size:11px; color:#9ca3af; margin-top:8px;">Token Access GitHub :</label>
             <input type="password" id="ghTokenInput" placeholder="Collez votre Token (ghp_...)" inputmode="none" onfocus="this.blur();">
@@ -819,145 +819,12 @@
 
     <div class="app-version-footer">
         <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
-        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.14</span></div>
-    </div>
-</div>
-
-<!-- MODALS SECONDAIRES -->
-<div id="historyModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>📜 Historique du Jour (06:00 - 19:00)</h3>
-            <button class="btn-close-modal" onclick="closeHistoryModal()">✕</button>
-        </div>
-        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activités et modifications enregistrées aujourd'hui :</p>
-        <div id="historyLogsList" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée.</div>
-        </div>
-    </div>
-</div>
-
-<div id="collabModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>👥 Notifications d'Équipe</h3>
-            <button class="btn-close-modal" onclick="closeCollabModal()">✕</button>
-        </div>
-        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activité de l'équipe :</p>
-        
-        <div id="acceptAllContainer" style="display:none; margin-bottom: 10px;">
-            <button class="btn btn-save" style="background-color: var(--accent); padding: 8px; font-size: 12px;" onclick="acceptAllCollabUpdates()">⚡ Tout accepter d'un coup</button>
-        </div>
-
-        <div id="collabNotificationsList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>
-        </div>
-    </div>
-</div>
-
-<div id="onlineUsersModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>🟢 Utilisateurs Connectés en Ligne</h3>
-            <button class="btn-close-modal" onclick="document.getElementById('onlineUsersModal').style.display='none'">✕</button>
-        </div>
-        <div id="onlineUsersModalList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-            <div style="text-align:center; padding:15px; color:#9ca3af;">Chargement...</div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL MISE A JOUR FORCÉE -->
-<div id="forcedUpdateModal">
-    <div class="modal-content" style="text-align:center; border: 2px solid var(--accent);">
-        <h3 style="color:var(--accent); margin-top:0; font-size:18px;">🚀 Mise à jour système disponible !</h3>
-        <p style="font-size:13px; color:#9ca3af;">L'administrateur a publié une nouvelle version de l'application.</p>
-        <div style="background:#111827; padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:14px; text-align:left;">
-            <p style="font-size:12px; font-weight:bold; color:#10b981; margin:0 0 6px 0;">Détails des nouveautés :</p>
-            <p id="forcedUpdateText" style="font-size:12px; color:#f3f4f6; margin:0; line-height:1.4;">Chargement...</p>
-        </div>
-        <button class="btn btn-save" style="width:100%; padding:14px; font-size:14px; background-color:var(--accent);" onclick="applyForcedUpdate()">Mettre à jour & Redémarrer</button>
-    </div>
-</div>
-
-<div id="tokenModalOverlay" class="modal-overlay">
-    <div class="modal-content" style="text-align:center;">
-        <div class="modal-header">
-            <h3>🔑 API Token GitHub Manager</h3>
-            <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
-        </div>
-        <a href="https://github.com/settings/tokens/new?description=La-Centrale-App&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">🔗 Générer le Token GitHub</a>
-        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-        <button class="btn btn-save" onclick="saveTokenFromModal()">💾 Enregistrer</button>
-    </div>
-</div>
-
-<div id="editModalOverlay" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modalEditTitle">Modifier les bases</h3>
-            <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
-        </div>
-        <input type="hidden" id="fullEditIndex">
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; margin-top: 10px;">
-            <div style="display: flex; flex-direction: column;">
-                <label class="section-label" style="margin: 0 0 6px 0;">Trimetal</label>
-                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label class="section-label" style="margin: 0 0 6px 0;">Herbol</label>
-                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label class="section-label" style="margin: 0 0 6px 0;">Sikkens</label>
-                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label class="section-label" style="margin: 0 0 6px 0;">Unikalo</label>
-                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
-            </div>
-        </div>
-
-        <button class="btn btn-save" onclick="saveFullEdit()">Enregistrer les modifications</button>
-    </div>
-</div>
-
-<!-- CLAVIER VIRTUEL AZERTY STANDARD -->
-<div class="virtual-keyboard" id="virtualKeyboard">
-    <div class="vk-row">
-        <div class="vk-key" onclick="vKey('1', this)">1</div>
-        <div class="vk-key" onclick="vKey('2', this)">2</div>
-        <div class="vk-key" onclick="vKey('3', this)">3</div>
-        <div class="vk-key" onclick="vKey('4', this)">4</div>
-        <div class="vk-key" onclick="vKey('5', this)">5</div>
-        <div class="vk-key" onclick="vKey('6', this)">6</div>
-        <div class="vk-key" onclick="vKey('7', this)">7</div>
-        <div class="vk-key" onclick="vKey('8', this)">8</div>
-        <div class="vk-key" onclick="vKey('9', this)">9</div>
-        <div class="vk-key" onclick="vKey('0', this)">0</div>
-    </div>
-    <div class="vk-row" id="vkRow1"></div>
-    <div class="vk-row" id="vkRow2"></div>
-    <div class="vk-row" id="vkRow3"></div>
-    <div class="vk-row">
-        <div class="vk-key vk-shift" id="vkShiftBtn" onclick="toggleShift()">CAPS</div>
-        <div class="vk-key" onclick="vKey('-', this)">-</div>
-        <div class="vk-key" onclick="vKey('.', this)">.</div>
-        <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
-        <div class="vk-key vk-wide" 
-             onmousedown="startVDel(this, event)" 
-             onmouseup="stopVDel(event)" 
-             onmouseleave="stopVDel(event)" 
-             ontouchstart="startVDel(this, event)" 
-             ontouchend="stopVDel(event)" 
-             ontouchcancel="stopVDel(event)">⌫</div>
-        <div class="vk-key vk-close" onclick="vClose()">✕</div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.15</span></div>
     </div>
 </div>
 
 <script>
-    const CURRENT_APP_VERSION = "v1.14"; 
+    const CURRENT_APP_VERSION = "v1.15"; 
     const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
@@ -1367,7 +1234,7 @@
             localStorage.setItem('central_github_token', t);
             document.getElementById('ghTokenInput').value = t;
             closeTokenModal();
-            showAlert("Token GitHub API sauvegardé avec succès !", true);
+            showAlert("Token GitHub API sauvegardé !", true);
         } else alert("Token invalide !");
     }
 
@@ -1758,7 +1625,7 @@
                 }
             });
 
-            const isAdminDevice = localStorage.getItem('central_is_admin_device'] === 'true' || isAuthenticated;
+            const isAdminDevice = localStorage.getItem('central_is_admin_device') === 'true' || isAuthenticated;
             if (isAdminDevice && previousPendingCount >= 0 && pendingCount > previousPendingCount) {
                 playPersistentAlarm();
                 showAlert(`🔔 Nouvel utilisateur en attente d'approbation (${pendingCount}) !`, true);
@@ -1946,6 +1813,29 @@
                 else if (status === null && localUser && isInApp) { alert("🗑️ Compte supprimé."); logoutUserSession(); }
             });
         }
+
+        const teinteurAlarmsRef = window.FB_ref(window.FB_db, 'teinteur_alarms');
+        window.FB_onValue(teinteurAlarmsRef, (snapshot) => {
+            const data = snapshot.val();
+            if(!data) return;
+            const keys = Object.keys(data);
+            const latestKey = keys[keys.length - 1];
+            const latestAlarm = data[latestKey];
+
+            if(initialLoadAlarm) {
+                lastProcessedAlarmId = latestKey;
+                initialLoadAlarm = false;
+                return;
+            }
+
+            if (latestKey !== lastProcessedAlarmId) {
+                lastProcessedAlarmId = latestKey;
+                if (localUser && localUser.role === 'Teinteur' && (Date.now() - latestAlarm.timestamp < 30000)) {
+                    playPersistentAlarm();
+                    showAlert(`❗ ALARME MAGASIN : ${latestAlarm.sender} a une commande !`, false);
+                }
+            }
+        });
 
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
