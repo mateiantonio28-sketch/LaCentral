@@ -3065,6 +3065,9 @@
     }
 
     window.openAdminAuth = function() {
+        document.body.appendChild(document.getElementById('authPanel'));
+        document.body.appendChild(document.getElementById('adminPanel'));
+        
         if (isAuthenticated) { 
             document.getElementById('adminPanel').style.display = 'block'; 
             renderAdminUsersList(cachedAuthUsersData);
