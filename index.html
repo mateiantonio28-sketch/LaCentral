@@ -3085,6 +3085,30 @@
         
         if (isAuthenticated) { 
             document.getElementById('adminPanel').style.display = 'block'; 
+            
+            // NOU: Buton de Refresh injectat automat deasupra listei de utilizatori
+            const listContainer = document.getElementById('adminUsersList');
+            if (listContainer && !document.getElementById('btnRefreshUsers')) {
+                const btn = document.createElement('button');
+                btn.id = 'btnRefreshUsers';
+                btn.innerHTML = '🔄 Rafraîchir la liste';
+                btn.style.cssText = 'background:#2563eb; color:white; border:none; padding:8px 12px; border-radius:6px; font-size:12px; font-weight:bold; margin-bottom:12px; cursor:pointer; width:100%; box-shadow:0 4px 6px rgba(0,0,0,0.3);';
+                btn.onclick = function() {
+                    btn.innerHTML = '⏳ Rafraîchissement en cours...';
+                    
+                    // Forțăm recitirea datelor din Firebase
+                    if (typeof initFirebaseListeners === 'function') initFirebaseListeners();
+                    
+                    // Așteptăm puțin să vină datele noi, apoi redesenăm
+                    setTimeout(() => {
+                        renderAdminUsersList(cachedAuthUsersData);
+                        btn.innerHTML = '✅ Liste Actualisée';
+                        setTimeout(() => btn.innerHTML = '🔄 Rafraîchir la liste', 2000);
+                    }, 800);
+                };
+                listContainer.parentNode.insertBefore(btn, listContainer);
+            }
+
             renderAdminUsersList(cachedAuthUsersData);
         } else { 
             document.getElementById('authUser').value = '';
