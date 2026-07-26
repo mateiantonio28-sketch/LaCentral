@@ -1849,7 +1849,6 @@
         
         document.getElementById('authPanel').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
-        document.getElementById('adminPanel').scrollIntoView({ behavior: 'smooth' });
         
         const token = getSavedToken();
         if (token) document.getElementById('ghTokenInput').value = token;
