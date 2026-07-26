@@ -1638,6 +1638,7 @@
         const subtitle = document.getElementById('lockSubtitle');
         const userInput = document.getElementById('regUser');
         const roleInput = document.getElementById('regRole');
+        const switchBtn = document.getElementById('btnSwitchUser');
         
         if (localUser) {
             subtitle.innerHTML = `Bienvenue, <strong>${localUser.name}</strong> !<br><span style="color:#60a5fa; font-weight:bold; font-size:12px; margin-top:4px; display:inline-block;">Poste : ${localUser.role}</span>`;
@@ -1645,6 +1646,7 @@
             userInput.style.display = 'none';
             if(localUser.role) roleInput.value = localUser.role;
             roleInput.style.display = 'none'; 
+            if(switchBtn) switchBtn.style.display = 'block';
         } else {
             subtitle.textContent = "Créer un profil local (PIN ou Mot de passe)";
             userInput.value = "";
@@ -1652,8 +1654,19 @@
             userInput.style.display = 'block';
             roleInput.disabled = false;
             roleInput.style.display = 'block';
+            if(switchBtn) switchBtn.style.display = 'none';
         }
     }
+
+    window.switchUserAccount = function() {
+        if (confirm("Voulez-vous vraiment vous déconnecter et oublier cet appareil ? Vous devrez demander l'accès à nouveau pour un autre compte.")) {
+            localStorage.removeItem('central_app_user_account');
+            localStorage.removeItem('central_device_id');
+            localUser = null;
+            document.getElementById('regPin').value = '';
+            initUserScreen();
+        }
+    };
 
     window.handleUserAuth = async function() {
         const name = document.getElementById('regUser').value.trim();
