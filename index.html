@@ -774,6 +774,35 @@
             <h3 style="margin:0; color:var(--danger);">Panneau d'Administration</h3>
             <button class="btn-close-modal" style="font-size: 20px; padding: 5px 10px;" onclick="closeAdminPanel()">✕</button>
         </div>
+        
+        <style>
+            /* Design premium si compact pentru butoanele de actiune utilizatori */
+            #adminUsersList div[style*="display: flex"], 
+            #adminUsersList div[style*="display:flex"] {
+                gap: 8px !important;
+                flex-wrap: wrap !important;
+                margin-top: 12px !important;
+                justify-content: flex-start !important;
+            }
+            
+            #adminUsersList button {
+                flex: 0 1 auto !important; /* Impiedica butoanele sa se intinda pe tot ecranul */
+                padding: 6px 14px !important;
+                font-size: 11px !important;
+                border-radius: 6px !important;
+                margin: 0 !important;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+                font-weight: 600 !important;
+                letter-spacing: 0.5px !important;
+                transition: transform 0.1s ease, filter 0.2s ease !important;
+            }
+            
+            #adminUsersList button:active {
+                transform: scale(0.92) !important;
+                filter: brightness(1.2) !important;
+            }
+        </style>
 
         <button class="collapsible-btn" onclick="toggleCollapse('manageUsersForm')" style="background-color:#1e3a8a; border-color:#3b82f6;">
             👥 Gestion des Accès Utilisateurs <span id="adminPendingBadgePanel" class="admin-badge-inline">0</span> <span>▼</span>
