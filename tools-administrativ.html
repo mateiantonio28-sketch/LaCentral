@@ -10,7 +10,7 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
     <meta name="theme-color" content="#111827">
 
-    <title>Tools Administrativ - Patcher Inteligent</title>
+    <title>Tools Administrativ - Patcher</title>
     
     <style>
         :root {
@@ -27,7 +27,7 @@
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
-        .container { max-width: 600px; margin: 0 auto; display: none; }
+        .container { max-width: 600px; margin: 0 auto; display: none; position: relative; }
 
         .lock-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -47,7 +47,7 @@
         }
 
         .header { text-align: center; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
-        .header h1 { margin: 0; font-size: 20px; color: var(--primary); text-transform: uppercase; }
+        .header h1 { margin: 0; font-size: 20px; color: var(--primary); text-transform: uppercase; padding-right: 30px; }
         .header p { margin: 4px 0 0 0; font-size: 11px; color: #9ca3af; }
 
         .panel {
@@ -96,6 +96,8 @@
 </div>
 
 <div class="container" id="adminMainContainer">
+    <button onclick="exitTools()" style="position:absolute; top:0px; right:0px; background:transparent; border:none; color:#9ca3af; font-size:24px; cursor:pointer; font-weight:bold;" title="Fermer et retourner">✕</button>
+    
     <div class="header">
         <h1>Tools Administrativ</h1>
         <p>Patcher Inteligent — Lipește doar codul generat</p>
@@ -109,10 +111,22 @@
         <a href="https://github.com/settings/tokens/new?description=Tools-Administrativ&scopes=repo" target="_blank" class="btn-token">
             🔗 Generează Token GitHub
         </a>
-        <input type="password" id="ghToken" placeholder="Lipește Token Access (ghp_...) aici" style="margin-bottom:10px;">
+        
+        <label>🔑 Token Access (ghp_...):</label>
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <input type="password" id="ghToken" placeholder="Lipește Token-ul aici..." style="flex:1; margin-top:0;">
+            <button class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px;" onclick="saveTokenPermanently()">💾 Salvează</button>
+        </div>
+        
         <div class="two-cols">
-            <input type="text" id="ghRepo" value="mateiantonio28-sketch/LaCentral" placeholder="Repository">
-            <input type="text" id="ghFile" value="index.html" placeholder="Fișier țintă">
+            <div>
+                <label>📂 Repository:</label>
+                <input type="text" id="ghRepo" value="mateiantonio28-sketch/LaCentral" placeholder="Repository">
+            </div>
+            <div>
+                <label>📄 Fișier țintă:</label>
+                <input type="text" id="ghFile" value="index.html" placeholder="Fișier țintă">
+            </div>
         </div>
     </div>
 
@@ -133,6 +147,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         const isAuth = localStorage.getItem('admin_tools_auth');
         if (isAuth === 'true') openAdminPanel();
+        
         const savedToken = localStorage.getItem('admin_tools_github_token');
         if (savedToken) document.getElementById('ghToken').value = savedToken;
     });
@@ -141,7 +156,6 @@
         const u = document.getElementById('adminUser').value.trim().toUpperCase();
         const p = document.getElementById('adminPass').value.trim().toUpperCase();
         
-        // Verifică dacă există o parolă nouă setată, altfel folosește "OLIMPUS"
         const savedPass = localStorage.getItem('admin_tools_custom_pass') || "OLIMPUS";
 
         if (u === "ADMIN" && p === savedPass) {
@@ -153,12 +167,11 @@
     }
 
     function resetAdminPassword() {
-        const pin = prompt("Introduceți codul PIN de securitate pentru resetare:");
+        const pin = prompt("Introduceți codul PIN de securitate pour la réinitialisation:");
         
         if (pin === "2805") {
             const newPass = prompt("Cod PIN corect! Introduceți noua parolă pentru ADMIN:");
             if (newPass && newPass.trim() !== "") {
-                // Salvăm noua parolă forțând-o să fie cu majuscule
                 localStorage.setItem('admin_tools_custom_pass', newPass.trim().toUpperCase());
                 alert("✅ Parola a fost resetată cu succes! Vă puteți autentifica.");
             } else {
@@ -182,6 +195,24 @@
         document.getElementById('adminPass').value = '';
     }
 
+    function exitTools() {
+        if (window.opener) {
+            window.close();
+        } else {
+            window.location.href = 'index.html';
+        }
+    }
+
+    function saveTokenPermanently() {
+        const token = document.getElementById('ghToken').value.trim();
+        if (token) {
+            localStorage.setItem('admin_tools_github_token', token);
+            showStatus('✅ Token GitHub salvat permanent în dispozitiv!', 'success');
+        } else {
+            showStatus('❌ Introduceți un token valid înainte de a salva.', 'error');
+        }
+    }
+
     async function processAndPatch() {
         const token = document.getElementById('ghToken').value.trim();
         const repo = document.getElementById('ghRepo').value.trim();
@@ -191,7 +222,7 @@
 
         if (!token) return showStatus('❌ Lipsește Token-ul GitHub!', 'error');
         if (!rawAiCode.includes('[CAUTĂ]') || !rawAiCode.includes('[ÎNLOCUIEȘTE]')) {
-            return showStatus('❌ Format invalid! Lipește tot blocul care conține [CAUTĂ] și [ÎNLOCUIEȘTE].', 'error');
+            return showStatus('❌ Format invalid! Lipește tot blocul care conține [CAUTĂ] et [ÎNLOCUIEȘTE].', 'error');
         }
 
         const parts = rawAiCode.split('[ÎNLOCUIEȘTE]');
@@ -250,6 +281,7 @@
         const box = document.getElementById('statusBox');
         box.textContent = message;
         box.className = `status ${type}`;
+        setTimeout(() => { box.style.display = 'none'; }, 6000);
     }
 </script>
 
