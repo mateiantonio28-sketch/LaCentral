@@ -769,8 +769,8 @@
         <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
     </div>
 
-    <div id="adminPanel" class="panel" style="border: 2px solid var(--danger);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+    <div id="adminPanel" style="display:none; position: fixed; top: 5vh; left: 50%; transform: translateX(-50%); width: 95%; max-width: 600px; max-height: 90vh; overflow-y: auto; z-index: 99999999; background: var(--panel-bg); border: 2px solid var(--danger); box-shadow: 0 15px 35px rgba(0,0,0,0.9); border-radius: 12px; padding: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; position:sticky; top:0; background:var(--panel-bg); z-index:10; padding-bottom:10px; border-bottom:1px solid var(--border);">
             <h3 style="margin:0; color:var(--danger);">Panneau d'Administration</h3>
             <button class="btn-close-modal" onclick="closeAdminPanel()">✕</button>
         </div>
