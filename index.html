@@ -341,6 +341,44 @@
         .job-card.completed { border-left-color: var(--success); opacity: 0.8; }
         .job-timer { font-family: monospace; font-size: 16px; font-weight: bold; color: var(--accent); background: #111827; padding: 4px 8px; border-radius: 4px; display: inline-block; }
     </style>
+<style>
+        /* Design ultra-compact: Butoane mici asezate langa informatiile utilizatorului */
+        #adminUsersList > div {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            padding: 10px 14px !important;
+        }
+        
+        #adminUsersList > div > div:first-child {
+            flex: 1 1 auto !important;
+            min-width: 200px !important;
+        }
+
+        #adminUsersList div {
+            width: auto !important;
+        }
+
+        #adminUsersList button, 
+        #adminUsersList .btn {
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 6px 12px !important;
+            font-size: 11px !important;
+            border-radius: 6px !important;
+            margin: 0 4px 4px 0 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.5px !important;
+        }
+    </style>
 </head>
 <body>
 
