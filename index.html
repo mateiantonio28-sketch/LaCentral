@@ -1757,12 +1757,17 @@
         if (localUser) {
             const role = localUser.role;
             const bStock = document.getElementById('btnSecStock');
+            const patcherBtn = document.getElementById('btnPatcherTool');
             
             if (bStock) {
                 bStock.style.display = 'block'; 
                 if (role === 'Vendeur' || role === 'Teinteur') {
                     bStock.style.display = 'none';
                 }
+            }
+            
+            if (patcherBtn) {
+                patcherBtn.style.display = (role === 'Master Admin') ? 'block' : 'none';
             }
         }
         document.getElementById('sectionSelectorModal').style.display = 'flex';
