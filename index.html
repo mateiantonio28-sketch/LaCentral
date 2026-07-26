@@ -3067,12 +3067,9 @@
 
     window.openAdminAuth = function() {
         if (isAuthenticated) { 
-            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
             document.getElementById('adminPanel').style.display = 'block'; 
-            document.getElementById('adminPanel').scrollIntoView({ behavior: 'smooth' });
             renderAdminUsersList(cachedAuthUsersData);
         } else { 
-            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
             document.getElementById('authUser').value = '';
             document.getElementById('authPass').value = '';
             document.getElementById('authPanel').style.display = 'block'; 
