@@ -2002,6 +2002,7 @@
     }
 
     function applySectionView() {
+        if(document.getElementById('globalCornerButtons')) document.getElementById('globalCornerButtons').style.display = 'none';
         document.getElementById('mainContainer').style.display = 'block';
         document.getElementById('welcomeUser').textContent = `${localUser.name} (${localUser.role})`;
         
