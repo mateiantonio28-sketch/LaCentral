@@ -2399,6 +2399,13 @@
             renderTeinteurJobs();
         });
 
+        // KPI Teinteur History Listener
+        const tHistRef = window.FB_ref(window.FB_db, 'teinteur_history');
+        window.FB_onValue(tHistRef, (snapshot) => {
+            const data = snapshot.val();
+            window.teinteurHistoryList = data ? Object.values(data) : [];
+        });
+
         const updatesRef = window.FB_ref(window.FB_db, 'color_updates');
         window.FB_onValue(updatesRef, (snapshot) => {
             const data = snapshot.val();
