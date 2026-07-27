@@ -1665,9 +1665,10 @@
     }
 
     function updateTeinteurJobTimers(nowTime) {
-        document.querySelectorAll('.teinteur-job-timer').forEach(el => {
+        document.querySelectorAll('.kds-timer[data-start-time]').forEach(el => {
             const st = parseInt(el.getAttribute('data-start-time'));
-            if (st) {
+            const isCompleted = el.hasAttribute('data-completed');
+            if (st && !isCompleted) {
                 const diff = nowTime - st;
                 const m = Math.floor(diff / 60000).toString().padStart(2, '0');
                 const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
@@ -1675,16 +1676,16 @@
             }
         });
 
-        // AUTO-TIMEOUT LOGIC (5 mins en attente, 20 mins en cours)
         if (typeof activeTeinteurJobs !== 'undefined' && activeTeinteurJobs.length > 0 && window.FB_db) {
             activeTeinteurJobs.forEach(job => {
-                if (job.status === 'pending' && (nowTime - job.timestamp > 300000)) {
-                    job.status = 'completed'; // Previne trimiterea multiplă
-                    window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${job.id}/teinteur`), 'Système Auto');
-                    window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${job.id}/status`), 'completed');
+                // Auto-delete comenzi terminate dupa 5 minute
+                if (job.status === 'completed' && job.completionTime && (nowTime - job.completionTime > 300000)) {
+                    window.FB_remove(window.FB_ref(window.FB_db, `teinteur_jobs/${job.id}`));
                 }
+                // Daca cineva uita comanda "in progress" mai mult de 20 minute, se auto-finalizeaza
                 if (job.status === 'in_progress' && job.startTime && (nowTime - job.startTime > 1200000)) {
-                    job.status = 'completed'; // Previne trimiterea multiplă
+                    job.status = 'completed'; 
+                    window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${job.id}/completionTime`), Date.now());
                     window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${job.id}/status`), 'completed');
                 }
             });
