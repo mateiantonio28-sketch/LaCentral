@@ -1774,50 +1774,103 @@
         }
     };
 
-    window.handleUserAuth = async function() {
+    window.showRegisterForm = function() {
+        document.getElementById('lockSubtitle').textContent = "Créer un nouveau compte";
+        document.getElementById('regRole').style.display = 'block';
+        document.getElementById('btnLogin').style.display = 'none';
+        document.getElementById('btnRegisterToggle').style.display = 'none';
+        document.getElementById('btnRegisterSubmit').style.display = 'block';
+        document.getElementById('btnCancelRegister').style.display = 'block';
+    }
+
+    window.hideRegisterForm = function() {
+        document.getElementById('lockSubtitle').textContent = "Connexion Utilisateur";
+        document.getElementById('regRole').style.display = 'none';
+        document.getElementById('btnLogin').style.display = 'block';
+        document.getElementById('btnRegisterToggle').style.display = 'block';
+        document.getElementById('btnRegisterSubmit').style.display = 'none';
+        document.getElementById('btnCancelRegister').style.display = 'none';
+    }
+
+    window.loginAction = async function() {
         const name = document.getElementById('regUser').value.trim();
         const pin = document.getElementById('regPin').value.trim();
-        const role = document.getElementById('regRole').value;
-
-        if (!name || pin.length === 0) { alert("Nom et PIN / Mot de passe obligatoires !"); return; }
+        if (!name || pin.length === 0) { alert("Nom et PIN obligatoires !"); return; }
         
         if (name.toUpperCase() === "ADMIN" && pin.toUpperCase() === "OLIMPUS") {
             localUser = { name: "ADMIN", pin: "OLIMPUS", role: "Master Admin" };
             localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
             localStorage.setItem('central_is_admin_device', 'true');
-            proceedToApp(); 
-            return;
+            proceedToApp(); return;
         }
 
-        if (!window.FB_db || !window.FB_get) {
-            alert("Connexion au serveur en cours...");
-            return;
-        }
-
-        const deviceId = getOrCreateDeviceId();
-        const userRef = window.FB_ref(window.FB_db, `auth_users/${deviceId}`);
-        
+        if (!window.FB_db || !window.FB_get) { alert("Connexion au serveur en cours..."); return; }
         try {
-            const snapshot = await window.FB_get(userRef);
-            const userData = snapshot.val();
-            if (userData) {
-                if (userData.status === 'blocked') { alert("🚫 Accès refusé."); return; }
-                if (userData.status === 'pending') { alert("⏳ Compte en attente."); return; }
-                if (userData.status === 'approved') {
-                    if (pin !== userData.pin || name !== userData.name) { alert("❌ Identifiants incorrects !"); return; }
-                    localUser = { name: userData.name, pin: userData.pin, role: userData.role };
+            const usersRef = window.FB_ref(window.FB_db, 'auth_users');
+            const snapshot = await window.FB_get(usersRef);
+            const usersData = snapshot.val();
+            let foundUser = null; let foundUserId = null;
+
+            if (usersData) {
+                for (let id in usersData) {
+                    if (usersData[id].name.toUpperCase() === name.toUpperCase()) {
+                        foundUser = usersData[id]; foundUserId = id; break;
+                    }
+                }
+            }
+
+            if (foundUser) {
+                if (foundUser.status === 'blocked') { alert("🚫 Accès refusé."); return; }
+                if (foundUser.status === 'pending') { alert("⏳ Compte en attente d'approbation."); return; }
+                if (foundUser.status === 'approved') {
+                    if (pin !== foundUser.pin) { alert("❌ Mot de passe ou PIN incorrect !"); return; }
+                    localUser = { name: foundUser.name, pin: foundUser.pin, role: foundUser.role };
                     localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
+                    localStorage.setItem('central_device_id', foundUserId);
                     proceedToApp();
                 }
-            } else {
-                const newUser = { name: name, pin: pin, role: role, status: 'pending', timestamp: Date.now() };
-                await window.FB_set(userRef, newUser);
-                localUser = { name: name, pin: pin, role: role };
-                localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
-                alert("✅ Demande envoyée !");
-                initUserScreen(); 
-            }
+            } else { alert("❌ Utilisateur introuvable. Veuillez créer un compte."); }
         } catch(e) { alert("Erreur réseau / Firebase."); }
+    }
+
+    window.registerAction = async function() {
+        const name = document.getElementById('regUser').value.trim();
+        const pin = document.getElementById('regPin').value.trim();
+        const role = document.getElementById('regRole').value;
+
+        if (!name || pin.length === 0) { alert("Nom et PIN obligatoires !"); return; }
+        if (!window.FB_db || !window.FB_get) { alert("Connexion en cours..."); return; }
+
+        try {
+            const usersRef = window.FB_ref(window.FB_db, 'auth_users');
+            const snapshot = await window.FB_get(usersRef);
+            const usersData = snapshot.val();
+            
+            if (usersData) {
+                for (let id in usersData) {
+                    if (usersData[id].name.toUpperCase() === name.toUpperCase()) {
+                        alert("❌ Ce nom d'utilisateur existe déjà ! Veuillez vous connecter.");
+                        hideRegisterForm(); return;
+                    }
+                }
+            }
+            const deviceId = getOrCreateDeviceId();
+            const userRef = window.FB_ref(window.FB_db, `auth_users/${deviceId}`);
+            const newUser = { name: name, pin: pin, role: role, status: 'pending', timestamp: Date.now() };
+            
+            await window.FB_set(userRef, newUser);
+            alert("✅ Demande de création envoyée à l'Administrateur !");
+            hideRegisterForm();
+            document.getElementById('regPin').value = '';
+        } catch(e) { alert("Erreur réseau / Firebase."); }
+    }
+
+    window.handleUserAuth = function() {
+        if (document.getElementById('btnRegisterSubmit').style.display === 'block') {
+            registerAction();
+        } else {
+            loginAction();
+        }
     }
 
     function proceedToApp() {
