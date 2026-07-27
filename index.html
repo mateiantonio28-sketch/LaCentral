@@ -807,23 +807,100 @@
 
     <div id="alertBanner" class="alert-box"></div>
 
-    <div id="guidePanel" class="panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <h3 style="margin:0;">Équivalences des Bases</h3>
-            <button class="btn-close-modal" onclick="togglePanel('guidePanel')">✕</button>
+    <div id="guidePanel" class="modal-overlay">
+        <div class="modal-content" style="max-width: 680px;">
+            <div class="modal-header">
+                <h3>📖 Wiki & Guide Complet - La Centrale ProShop</h3>
+                <button class="btn-close-modal" onclick="togglePanel('guidePanel')">✕</button>
+            </div>
+            
+            <div style="max-height: 70vh; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 14px;">
+                
+                <!-- CATEGORIE 1 -->
+                <div style="background: #111827; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px;">
+                    <h4 style="margin: 0 0 6px 0; color: #60a5fa; font-size: 14px;">🎨 1. Consulter les Bases & Nuanciers</h4>
+                    <p style="margin: 0; font-size: 12px; color: #d1d5db; line-height: 1.5;">
+                        <b>Description :</b> Moteur de recherche globale et consultation complète des nuanciers professionnels (RAL, NCS, 5051, Flamant, Farrow & Ball).<br>
+                        • <b>Recherche Rapide :</b> Tapez une teinte (ex: RAL 9001) pour voir immédiatement les bases associées.<br>
+                        • <b>Dossiers Nuanciers :</b> Accédez directement aux catalogues de dossiers organisés.<br>
+                        • <b>Équivalences des Bases :</b> Visualisez les correspondances entre Trimetal, Herbol, Sikkens et Unikalo.
+                    </p>
+                </div>
+
+                <!-- CATEGORIE 2 -->
+                <div style="background: #111827; border: 1px solid var(--border); border-left: 4px solid var(--success); border-radius: 8px; padding: 12px;">
+                    <h4 style="margin: 0 0 6px 0; color: #4ade80; font-size: 14px;">📦 2. Passer Commande Interne (Stock)</h4>
+                    <p style="margin: 0; font-size: 12px; color: #d1d5db; line-height: 1.5;">
+                        <b>Description :</b> Module de communication directe avec le magasinier pour le réapprovisionnement du rayon.<br>
+                        • <b>Demande Simple :</b> Envoi immédiat pour un besoin urgent d'un seau spécifique avec emplacement (ex: AA01A).<br>
+                        • <b>Demande Liste :</b> Constituez un panier complet de produits par rayon avant l'envoi global.<br>
+                        • <b>Suivi & Ruptures :</b> Suivez les demandes en cours et consultez les articles signalés « Out of Stock ».
+                    </p>
+                </div>
+
+                <!-- CATEGORIE 3 -->
+                <div style="background: #111827; border: 1px solid var(--border); border-left: 4px solid #10b981; border-radius: 8px; padding: 12px;">
+                    <h4 style="margin: 0 0 6px 0; color: #34d399; font-size: 14px;">🔄 3. Teintes Re-vendables (Stock Disponible)</h4>
+                    <p style="margin: 0; font-size: 12px; color: #d1d5db; line-height: 1.5;">
+                        <b>Description :</b> Gestion optimisée des seaux teintés en supplément ou non récupérés par les clients.<br>
+                        • <b>Valorisation :</b> Enregistrez la marque, la nuance, la base et la contenance pour remettre le pot en vente.<br>
+                        • <b>Recherche Prioritaire :</b> Consultez ce stock avant toute nouvelle teinte afin de réduire les pertes financières.
+                    </p>
+                </div>
+
+                <!-- CATEGORIE 4 -->
+                <div style="background: #111827; border: 1px solid var(--border); border-left: 4px solid var(--danger); border-radius: 8px; padding: 12px;">
+                    <h4 style="margin: 0 0 6px 0; color: #f87171; font-size: 14px;">⚠️ 4. Registre des Erreurs de Teinte</h4>
+                    <p style="margin: 0; font-size: 12px; color: #d1d5db; line-height: 1.5;">
+                        <b>Description :</b> Suivi et traçabilité des erreurs de dosage, mauvaises bases ou problèmes de formule.<br>
+                        • <b>Déclaration :</b> Enregistrement avec motif, contenance, date et signature du responsable.<br>
+                        • <b>Calendrier Interactif :</b> Repérage visuel des jours impactés pour analyser les tendances d'erreurs.<br>
+                        • <b>Export Bilan :</b> Calcul automatique des pertes en Litres/Kg et export en fichier CSV.
+                    </p>
+                </div>
+
+                <!-- CATEGORIE 5 -->
+                <div style="background: #111827; border: 1px solid var(--border); border-left: 4px solid var(--ai-color); border-radius: 8px; padding: 12px;">
+                    <h4 style="margin: 0 0 6px 0; color: #a78bfa; font-size: 14px;">📋 5. File d'Attente Teinteur (KDS & Alarme)</h4>
+                    <p style="margin: 0; font-size: 12px; color: #d1d5db; line-height: 1.5;">
+                        <b>Description :</b> Écran de production en temps réel pour le préparateur / teinteur en laboratoire.<br>
+                        • <b>Chronomètre Dynamique :</b> Mesure précise du temps de préparation par commande.<br>
+                        • <b>Statuts :</b> Passage des commandes d'En attente ➔ En cours ➔ Terminé.<br>
+                        • <b>Alarme & Volume :</b> Déclenchement d'avertisseurs sonores avec réglage du volume audio.<br>
+                        • <b>Statistiques KPI :</b> Export des performances de préparation en document PDF.
+                    </p>
+                </div>
+
+                <!-- CATEGORIE 6 -->
+                <div style="background: #111827; border: 1px solid var(--border); border-left: 4px solid var(--warning); border-radius: 8px; padding: 12px;">
+                    <h4 style="margin: 0 0 6px 0; color: #fbbf24; font-size: 14px;">🔒 6. Administration & Sécurité</h4>
+                    <p style="margin: 0; font-size: 12px; color: #d1d5db; line-height: 1.5;">
+                        <b>Description :</b> Espace réservé à la gestion des accès et à la maintenance applicative.<br>
+                        • <b>Gestion Accès :</b> Approbation, blocage et gestion des droits des comptes utilisateurs.<br>
+                        • <b>Synchro GitHub & Backups :</b> Restauration et sauvegarde instantanée de l'état du système.<br>
+                        • <b>Mise à jour forcée :</b> Déploiement des nouvelles versions de l'application en un clic.
+                    </p>
+                </div>
+
+                <!-- TABLEAU EQUIVALENCES DES BASES -->
+                <div style="background: #111827; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-top: 6px;">
+                    <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px; text-transform: uppercase; text-align: center;">📊 Équivalences des Bases Techniques</h4>
+                    <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Ton</th>
+                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Trimetal</th>
+                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Herbol</th>
+                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Sikkens</th>
+                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Unikalo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guideTableBody"></tbody>
+                    </table>
+                </div>
+
+            </div>
         </div>
-        <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
-            <thead>
-                <tr>
-                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Ton</th>
-                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Trimetal</th>
-                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Herbol</th>
-                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Sikkens</th>
-                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Unikalo</th>
-                </tr>
-            </thead>
-            <tbody id="guideTableBody"></tbody>
-        </table>
     </div>
 
     <div id="authPanel" class="panel" style="display:none; border-color: var(--accent);">
