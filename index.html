@@ -2201,6 +2201,7 @@
         }).then(() => {
             showAlert("🚨 Fiche envoyée au Teinteur !", true);
             logDailyHistory(`🚨 Fiche envoyée au teinteur`);
+            openTeinteurJobsModal(); // Deschide automat KDS-ul cand vanzatorul trimite cererea
         });
     }
 
