@@ -2559,6 +2559,7 @@
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="font-size:13px; color:#60a5fa; font-weight:bold;">📦 Commande de ${req.author}</span>
+                    ${(localUser && (localUser.name === req.author || localUser.role === 'Master Admin' || localUser.role === 'Responsable' || localUser.role === 'Teinteur')) ? `<button class="btn btn-danger" style="background-color:#7f1d1d; padding:4px 8px; font-size:10px; min-width:auto; margin:0;" onclick="cancelStockRequest('${req.id}')">✕ Annuler</button>` : ''}
                 </div>
                 <div style="margin:4px 0;">${itemsHtml}</div>
                 ${isMagasinier ? `
