@@ -1201,11 +1201,13 @@
                     el.dataset.origFocus = el.getAttribute('onfocus');
                 }
                 el.removeAttribute('onfocus');
+                el.onfocus = null; // Elimină forțat blocajul tastaturii fizice (blur)
                 el.removeAttribute('inputmode');
                 el.addEventListener('focus', handleNormalFocus);
             } else {
                 if (el.dataset.origFocus) {
                     el.setAttribute('onfocus', el.dataset.origFocus);
+                    el.onfocus = new Function(el.dataset.origFocus); // Restaurează corect modul tactil
                 }
                 el.setAttribute('inputmode', 'none');
                 el.removeEventListener('focus', handleNormalFocus);
