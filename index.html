@@ -1806,6 +1806,7 @@
     }
 
     function initUserScreen() {
+        if(document.getElementById('globalCornerButtons')) document.getElementById('globalCornerButtons').style.display = 'block';
         const subtitle = document.getElementById('lockSubtitle');
         const userInput = document.getElementById('regUser');
         const roleInput = document.getElementById('regRole');
