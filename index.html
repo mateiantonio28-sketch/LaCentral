@@ -1248,8 +1248,19 @@
     };
 
     let filesToSync = JSON.parse(localStorage.getItem('central_synced_files')) || ['ral.json', 'ncs.json', '5051.json', 'flamant.json', 'farrowball.json'];
-    document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
+    if(document.getElementById('footerVersionText')) document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
     if(document.getElementById('loginVersionDisplay')) document.getElementById('loginVersionDisplay').textContent = "Version " + CURRENT_APP_VERSION;
+    if(document.getElementById('mainVersionText')) document.getElementById('mainVersionText').textContent = CURRENT_APP_VERSION;
+
+    window.togglePanel = function(panelId) {
+        const el = document.getElementById(panelId);
+        if (!el) return;
+        if (el.style.display === 'block' || el.style.display === 'flex') {
+            el.style.display = 'none';
+        } else {
+            el.style.display = el.classList.contains('modal-overlay') ? 'flex' : 'block';
+        }
+    };
     if(document.getElementById('floatingVersionText')) document.getElementById('floatingVersionText').textContent = CURRENT_APP_VERSION;
 
     let isAuthenticated = false;
