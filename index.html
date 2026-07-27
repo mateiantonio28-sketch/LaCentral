@@ -3691,5 +3691,51 @@
         </div>
     </div>
 </div>
+<!-- PATCH DE PERFORMANȚĂ EXTREMĂ (NATIVE APP FEEL) -->
+    <style>
+        /* 1. Anulează complet delay-ul de 300ms la atingere (Meniurile se deschid INSTANT) */
+        *, button, .section-btn, .btn, a {
+            touch-action: manipulation !important; 
+            -webkit-tap-highlight-color: transparent !important; 
+        }
+
+        /* 2. Forțează placa video (GPU) să randeze meniurile pentru 0 latență și fluiditate maximă */
+        .modal-overlay, .modal-content, .panel, #guidePanel {
+            will-change: transform, opacity;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        /* 3. Oferă butoanelor efect tactil de "aplicație nativă" la apăsare (răspuns vizual instantaneu) */
+        button, .section-btn, .btn {
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease !important;
+        }
+        button:active, .section-btn:active, .btn:active {
+            transform: scale(0.94) !important;
+        }
+
+        /* 4. Animații de tip Pop-up super-fine, fără sacadări (evită trecerea bruscă on/off) */
+        .modal-overlay[style*="display: flex"],
+        .modal-overlay[style*="display: block"],
+        #guidePanel[style*="display: flex"],
+        #guidePanel[style*="display: block"] {
+            animation: fadeInModal 0.15s ease-out forwards;
+        }
+        
+        .modal-content,
+        .panel {
+            animation: scaleInModal 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+        }
+
+        @keyframes fadeInModal { 
+            0% { opacity: 0; } 
+            100% { opacity: 1; } 
+        }
+        @keyframes scaleInModal { 
+            0% { transform: scale(0.96); opacity: 0; } 
+            100% { transform: scale(1); opacity: 1; } 
+        }
+    </style>
 </body>
 </html>
