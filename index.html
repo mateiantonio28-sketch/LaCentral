@@ -2626,6 +2626,15 @@
         window.FB_set(window.FB_ref(window.FB_db, `stock_requests/${reqId}/status`), 'completed').then(() => showAlert("✅ Stock validé !", true));
     }
 
+    window.cancelStockRequest = function(reqId) {
+        if (confirm("Voulez-vous vraiment annuler et supprimer cette commande ?")) {
+            if (!window.FB_db) return;
+            window.FB_remove(window.FB_ref(window.FB_db, `stock_requests/${reqId}`)).then(() => {
+                showAlert("🗑️ Commande annulée avec succès !", true);
+            });
+        }
+    }
+
     // --- FORMULAIRES INTÉGRÉS DIRECTS (REMPLACANT LES POP-UPS) ---
     window.toggleErrorForm = function() {
         const panel = document.getElementById('errorFormPanel');
