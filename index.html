@@ -2480,8 +2480,11 @@
                     btnHtml = `<div style="text-align:center; font-size:11px; color:rgba(255,255,255,0.7);">En cours par ${job.teinteur}</div>`;
                 }
             } else if (job.status === 'completed') {
-                if (isMine || canProcess) {
-                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="deleteTeinteurJob('${job.id}')">COMMANDE RÉCUPÉRÉE (EFFACER)</button>`;
+                // Doar Vanzatorul care a trimis-o poate confirma recuperarea manual
+                if (isMine) {
+                    btnHtml = `<button class="kds-btn" style="background:#065f46;" onclick="deleteTeinteurJob('${job.id}')">🛍️ COMMANDE RÉCUPÉRÉE (EFFACER)</button>`;
+                } else {
+                    btnHtml = `<div style="text-align:center; font-size:12px; color:rgba(255,255,255,0.7); padding:8px;">En attente de récupération par ${job.sender}...</div>`;
                 }
             }
 
