@@ -2450,23 +2450,23 @@
 
             if (job.status === 'pending') {
                 if (canProcess) {
-                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="acceptTeinteurJob('${job.id}')">👨‍🎨 PRENDRE EN CHARGE</button>`;
+                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="acceptTeinteurJob('${job.id}')">PRENDRE EN CHARGE</button>`;
                 } else if (isMine) {
                     btnHtml = `<button class="kds-btn" style="background:#7f1d1d;" onclick="deleteTeinteurJob('${job.id}')">✕ ANNULER MA COMMANDE</button>`;
                 }
             } else if (job.status === 'in_progress') {
                 if (job.teinteur === (localUser ? localUser.name : '')) {
-                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="finishTeinteurJob('${job.id}')">🏁 MARQUER COMME TERMINÉE</button>`;
+                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="finishTeinteurJob('${job.id}')">MARQUER COMME TERMINÉE</button>`;
                 } else {
                     btnHtml = `<div style="text-align:center; font-size:11px; color:rgba(255,255,255,0.7);">En cours par ${job.teinteur}</div>`;
                 }
             } else if (job.status === 'completed') {
                 if (isMine || canProcess) {
-                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="deleteTeinteurJob('${job.id}')">🛍️ J'AI RÉCUPÉRÉ (EFFACER)</button>`;
+                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="deleteTeinteurJob('${job.id}')">COMMANDE RÉCUPÉRÉE (EFFACER)</button>`;
                 }
             }
 
-            let teinteurInfo = job.status !== 'pending' ? `<div class="kds-teinteur-info">👨‍🎨 Par : ${job.teinteur}</div>` : `<div></div>`;
+            let teinteurInfo = job.status !== 'pending' ? `<div class="kds-teinteur-info">Préparé par : ${job.teinteur}</div>` : `<div></div>`;
             let timerHtml = job.status === 'completed' 
                 ? `<div class="kds-timer" data-completed="true">DONE</div>`
                 : `<div class="kds-timer" data-start-time="${timerStart}">00:00</div>`;
