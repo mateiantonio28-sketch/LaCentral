@@ -1743,20 +1743,21 @@
     function updateAlarmButtonVisibility() {
         const btnAlarm = document.getElementById('btnTeinteurAlarm');
         const btnJobs = document.getElementById('btnOpenTeinteurJobs');
+        const kdsInnerAlarmBtn = document.getElementById('kdsInnerAlarmBtn');
         
         if (!localUser) return;
         
+        // Vanzatorii, Responsabilii si Adminii pot trimite alarme (atat pe pagina principala cat si in interiorul File d'attente)
         if (localUser.role === 'Vendeur' || localUser.role === 'Responsable' || localUser.role === 'Master Admin') {
-            btnAlarm.style.display = 'block';
+            if (btnAlarm) btnAlarm.style.display = 'block';
+            if (kdsInnerAlarmBtn) kdsInnerAlarmBtn.style.display = 'block';
         } else {
-            btnAlarm.style.display = 'none';
+            if (btnAlarm) btnAlarm.style.display = 'none';
+            if (kdsInnerAlarmBtn) kdsInnerAlarmBtn.style.display = 'none';
         }
 
-        if (localUser.role === 'Teinteur' || localUser.role === 'Responsable' || localUser.role === 'Master Admin') {
-            btnJobs.style.display = 'block';
-        } else {
-            btnJobs.style.display = 'none';
-        }
+        // Toata lumea poate vedea oricand File d'Attente
+        if (btnJobs) btnJobs.style.display = 'block';
     }
 
     function checkActiveSession() {
