@@ -1250,8 +1250,24 @@
     window.flashKey = function(el) {
         if (!el) return;
         el.classList.add('key-flash');
-        setTimeout(() => el.classList.remove('key-flash'), 150);
+        // Fluiditate ultra-rapida: 30ms in loc de 150ms
+        setTimeout(() => el.classList.remove('key-flash'), 30);
     }
+
+    // Optimizare Kernel Tactil - Bypass lag de 300ms pe ecrane touch
+    (function optimizeTouchKeyboard() {
+        setTimeout(() => {
+            document.querySelectorAll('.vk-key:not(.vk-optimized), .pin-key:not(.vk-optimized)').forEach(key => {
+                key.classList.add('vk-optimized');
+                key.addEventListener('touchstart', function(e) {
+                    if (this.hasAttribute('onclick') && !isDeleting && !isPinDeleting) {
+                        e.preventDefault(); 
+                        this.click(); 
+                    }
+                }, { passive: false });
+            });
+        }, 1500);
+    })();
 
     window.loginPinKey = function(val, el) {
         if (el) flashKey(el);
