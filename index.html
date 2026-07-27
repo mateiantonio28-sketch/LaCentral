@@ -1762,6 +1762,11 @@
 
         // Toata lumea poate vedea oricand File d'Attente
         if (btnJobs) btnJobs.style.display = 'block';
+
+        const btnKpi = document.getElementById('btnKpiStats');
+        if (btnKpi && localUser) {
+            btnKpi.style.display = (localUser.role === 'Master Admin' || localUser.role === 'Responsable') ? 'block' : 'none';
+        }
     }
 
     function checkActiveSession() {
