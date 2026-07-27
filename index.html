@@ -1412,7 +1412,12 @@
         const locInput = document.getElementById(prefix + 'Location');
         if (brand && prodName) {
             const key = `${brand}_${prodName}`.replace(/[\.\#\$\[\]]/g, ''); 
-            if (learnedLocations[key]) { locInput.value = learnedLocations[key]; locInput.style.borderColor = "#10b981"; }
+            if (learnedLocations[key]) { 
+                if (locInput.value !== learnedLocations[key]) {
+                    locInput.value = learnedLocations[key]; 
+                }
+                locInput.style.borderColor = "#10b981"; 
+            }
             else locInput.style.borderColor = "var(--border)";
         } else locInput.style.borderColor = "var(--border)";
     }
