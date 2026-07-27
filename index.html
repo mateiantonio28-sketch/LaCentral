@@ -418,7 +418,7 @@
                  style="background:#475569;">⌫</div>
         </div>
 
-        <select id="regRole">
+        <select id="regRole" style="display:none;">
             <option value="Teinteur">Teinteur</option>
             <option value="Vendeur">Vendeur</option>
             <option value="Magasinier">Magasinier</option>
@@ -426,7 +426,12 @@
             <option value="Préparateur de commande">Préparateur de commande</option>
         </select>
 
-        <button class="btn btn-save" onclick="handleUserAuth()">Accéder / Demander l'accès</button>
+        <button id="btnLogin" class="btn btn-save" onclick="loginAction()">Se connecter</button>
+        <button id="btnRegisterToggle" class="btn" style="background:transparent; color:#60a5fa; border:1px solid #3b82f6; margin-top:12px; font-size:12px;" onclick="showRegisterForm()">📝 Créer un nouveau compte</button>
+        
+        <button id="btnRegisterSubmit" class="btn btn-save" style="display:none; background-color:#10b981; margin-top:12px;" onclick="registerAction()">Envoyer la demande</button>
+        <button id="btnCancelRegister" class="btn" style="display:none; background:transparent; color:#9ca3af; margin-top:8px; font-size:12px;" onclick="hideRegisterForm()">Annuler</button>
+
         <button id="btnSwitchUser" class="btn" style="background:transparent; color:#ef4444; border:1px solid #7f1d1d; margin-top:12px; display:none; font-size:12px;" onclick="switchUserAccount()">🔄 Changer d'utilisateur (Déconnexion totale)</button>
     </div>
 </div>
