@@ -882,21 +882,45 @@
                     </p>
                 </div>
 
-                <!-- TABLEAU EQUIVALENCES DES BASES -->
-                <div style="background: #111827; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-top: 6px;">
-                    <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px; text-transform: uppercase; text-align: center;">📊 Équivalences des Bases Techniques</h4>
-                    <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
-                        <thead>
-                            <tr>
-                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Ton</th>
-                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Trimetal</th>
-                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Herbol</th>
-                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Sikkens</th>
-                                <th style="border:1px solid var(--border); padding:6px; background:#1f2937;">Unikalo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="guideTableBody"></tbody>
-                    </table>
+                </div>
+        </div>
+    </div>
+
+    <!-- MODAL ISTORIC VERSIUNI (NOU) -->
+    <div id="versionsModal" class="modal-overlay" style="display:none; z-index:99999;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>🔄 Historique des Versions</h3>
+                <button class="btn-close-modal" onclick="togglePanel('versionsModal')">✕</button>
+            </div>
+            
+            <div style="max-height: 70vh; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 14px;">
+                
+                <!-- VERSIUNEA 1.19 -->
+                <div style="background: #111827; border: 1px solid var(--accent); border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px;">
+                    <h4 style="margin: 0 0 6px 0; color: #60a5fa; font-size: 15px; display:flex; justify-content:space-between; align-items:center;">
+                        <span>🚀 Version 1.19 (Actuelle)</span>
+                        <span style="font-size:11px; color:#9ca3af; background:#1f2937; padding:2px 6px; border-radius:4px;">Nouveau</span>
+                    </h4>
+                    <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #d1d5db; line-height: 1.6;">
+                        <li><b>Performances GPU :</b> Accélération matérielle des menus pour une fluidité native (zéro latence).</li>
+                        <li><b>Touch-Action :</b> Suppression du délai de 300ms sur les écrans tactiles.</li>
+                        <li><b>Historique :</b> Ajout du journal détaillé interactif des versions.</li>
+                        <li><b>Wiki & Guide :</b> Nettoyage du panneau et suppression du tableau des bases obsolète.</li>
+                    </ul>
+                </div>
+
+                <!-- VERSIUNEA 1.18 -->
+                <div style="background: #111827; border: 1px solid var(--border); border-left: 4px solid #9ca3af; border-radius: 8px; padding: 12px;">
+                    <h4 style="margin: 0 0 6px 0; color: #d1d5db; font-size: 14px; display:flex; justify-content:space-between;">
+                        <span>📦 Version 1.18</span>
+                        <span style="font-size:12px; color:#6b7280;">Stable</span>
+                    </h4>
+                    <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #9ca3af; line-height: 1.6;">
+                        <li>Amélioration de l'interface des résultats de recherche globale.</li>
+                        <li>Mise à jour du système d'alarmes KDS pour le teinteur.</li>
+                        <li>Optimisation du chargement des palettes et du DOM.</li>
+                    </ul>
                 </div>
 
             </div>
