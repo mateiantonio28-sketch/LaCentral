@@ -1971,6 +1971,7 @@
     }
 
     window.showSectionSelector = function() {
+        if(document.getElementById('globalCornerButtons')) document.getElementById('globalCornerButtons').style.display = 'block';
         if(document.activeElement) document.activeElement.blur(); 
         updateAlarmButtonVisibility();
         
