@@ -1415,6 +1415,13 @@
         } else locInput.style.borderColor = "var(--border)";
     }
 
+    window.saveLearnedLocation = function(brand, prodName, loc) {
+        if (!window.FB_db || !brand || !prodName || !loc) return;
+        const key = `${brand}_${prodName.trim().toUpperCase()}`.replace(/[\.\#\$\[\]]/g, '');
+        window.FB_set(window.FB_ref(window.FB_db, `product_locations/${key}`), loc.trim().toUpperCase());
+        learnedLocations[key] = loc.trim().toUpperCase();
+    }
+
     let guideBasesData = JSON.parse(localStorage.getItem('central_guide_bases_table')) || {
         clair: { Trimetal: "AW", Herbol: "DU1", Sikkens: "W05", Unikalo: "Blanc" },
         moyen: { Trimetal: "M0", Herbol: "DU2", Sikkens: "M00", Unikalo: "Moyen" },
