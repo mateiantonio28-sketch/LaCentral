@@ -3465,5 +3465,87 @@
     autoSyncPalettes(); // Cauta actualizari din sursa externa in fundal
 </script>
 
+<!-- BUTOANE FIXE COLTURI -->
+<div style="position:fixed; bottom:16px; left:16px; z-index:99990;">
+    <button onclick="document.getElementById('wikiModal').style.display='flex'" style="background:var(--accent); color:#fff; width:40px; height:40px; border-radius:10px; border:none; font-weight:bold; font-size:18px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">ℹ️</button>
+</div>
+<div style="position:fixed; bottom:16px; right:16px; z-index:99990;">
+    <button onclick="document.getElementById('versionsModal').style.display='flex'" style="background:#374151; color:#fff; width:40px; height:40px; border-radius:10px; border:none; font-weight:bold; font-size:16px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; border:1px solid var(--border);">v</button>
+</div>
+
+<!-- MODAL WIKI -->
+<div id="wikiModal" class="modal-overlay">
+    <div class="modal-content" style="max-width:500px; border:2px solid var(--accent);">
+        <div class="modal-header">
+            <h3 style="color:var(--accent);">ℹ️ Wiki & Guide d'Utilisation</h3>
+            <button class="btn-close-modal" onclick="document.getElementById('wikiModal').style.display='none'">✕</button>
+        </div>
+        <div style="font-size:13px; color:#d1d5db; line-height:1.6; max-height:400px; overflow-y:auto; padding-right:10px;">
+            <h4 style="color:#60a5fa; margin:0 0 4px 0;">1. Vérification des Bases</h4>
+            <p style="margin-top:0;">Recherchez un code couleur pour trouver instantanément la base correspondante selon la marque (Trimetal, Sikkens, etc.).</p>
+            
+            <h4 style="color:#60a5fa; margin:12px 0 4px 0;">2. Gestion du Stock</h4>
+            <p style="margin-top:0;">Demandez un réapprovisionnement urgent (Seau simple) ou créez une liste pour le Magasinier. Le magasinier validera ou marquera en "Out of Stock".</p>
+
+            <h4 style="color:#60a5fa; margin:12px 0 4px 0;">3. File d'Attente (KDS Teinteur)</h4>
+            <p style="margin-top:0;">Les vendeurs envoient une alarme. Les commandes apparaissent sur le panneau. Le Teinteur clique sur "PRENDRE EN CHARGE" puis "TERMINÉE". Le vendeur récupère sa commande et l'efface du tableau.</p>
+
+            <h4 style="color:#60a5fa; margin:12px 0 4px 0;">4. Teintes Re-vendables</h4>
+            <p style="margin-top:0;">Ajoutez les seaux préparés en trop. Tous les vendeurs peuvent les consulter et les déduire du stock lors d'une vente.</p>
+
+            <h4 style="color:#60a5fa; margin:12px 0 4px 0;">5. Erreurs de Teinte</h4>
+            <p style="margin-top:0;">Déclarez les erreurs de préparation. Les responsables peuvent consulter le calendrier et exporter un bilan CSV.</p>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL VERSIONS -->
+<div id="versionsModal" class="modal-overlay">
+    <div class="modal-content" style="max-width:400px;">
+        <div class="modal-header">
+            <h3>🔄 Historique des Mises à Jour</h3>
+            <button class="btn-close-modal" onclick="document.getElementById('versionsModal').style.display='none'">✕</button>
+        </div>
+        <div style="font-size:12px; color:#d1d5db; max-height:400px; overflow-y:auto;">
+            <div style="margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+                <strong style="color:var(--accent);">v1.19 - File d'Attente Pro (Actuelle)</strong>
+                <ul style="margin:4px 0; padding-left:16px;">
+                    <li>Refonte totale du panneau Teinteur.</li>
+                    <li>Ajout de l'historique d'état (En attente, Préparation, Terminée).</li>
+                    <li>Nettoyage automatique des commandes (5 mins).</li>
+                </ul>
+            </div>
+            <div style="margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+                <strong style="color:var(--accent);">v1.18 - Optimisation Clavier & Login</strong>
+                <ul style="margin:4px 0; padding-left:16px;">
+                    <li>Séparation claire entre Connexion et Inscription.</li>
+                    <li>Résolution du bug clavier sur Mode PC.</li>
+                    <li>Fluidité tactile augmentée.</li>
+                </ul>
+            </div>
+            <div style="margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+                <strong style="color:var(--accent);">v1.17 - Interface Compacte</strong>
+                <ul style="margin:4px 0; padding-left:16px;">
+                    <li>Design ultra-compact pour le panneau Admin.</li>
+                    <li>Rétrécissement des boutons d'action.</li>
+                </ul>
+            </div>
+            <div style="margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+                <strong style="color:var(--accent);">v1.16 - Corrections Bugs</strong>
+                <ul style="margin:4px 0; padding-left:16px;">
+                    <li>Réparation du bouton d'ajout liste de stock.</li>
+                    <li>Ajout du bouton "Annuler ma commande" pour le stock.</li>
+                </ul>
+            </div>
+            <div style="margin-bottom:12px;">
+                <strong style="color:var(--accent);">v1.15 - Sécurité & Rôles</strong>
+                <ul style="margin:4px 0; padding-left:16px;">
+                    <li>Restriction des droits d'écriture pour Magasiniers.</li>
+                    <li>Sécurisation des ajouts (Erreurs & Revendables).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
