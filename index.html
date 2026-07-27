@@ -2655,7 +2655,13 @@
             document.getElementById('errBase').innerHTML = '<option value="">Base</option>';
             document.getElementById('errBucketSize').innerHTML = '<option value="">Capacité (L / KG)</option>';
             document.getElementById('errQuantity').value = "1";
-            document.getElementById('errDate').value = new Date().toISOString().split('T')[0];
+            
+            if (typeof selectedErrorDateFilter !== 'undefined' && selectedErrorDateFilter) {
+                document.getElementById('errDate').value = selectedErrorDateFilter;
+            } else {
+                document.getElementById('errDate').value = new Date().toISOString().split('T')[0];
+            }
+            
             document.getElementById('errReason').value = "";
             document.getElementById('errSignature').value = localUser ? localUser.name : "";
             document.getElementById('errBaseCustom').style.display = 'none';
