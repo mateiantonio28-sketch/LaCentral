@@ -1004,15 +1004,15 @@
 
 <!-- KDS: FAST FOOD STYLE DISPLAY -->
 <div id="teinteurJobsModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; z-index: 99999999; background: #0f172a; padding: 16px; box-sizing: border-box;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; position:sticky; top:0; background:#0f172a; z-index:10; padding-bottom:10px; border-bottom:2px solid var(--border);">
-        <div>
-            <h2 style="margin:0; color:#fff; font-size:18px; text-transform:uppercase; letter-spacing:1px;">📋 FILE D'ATTENTE - TEINTEUR</h2>
-            <p style="margin:2px 0 0 0; color:#9ca3af; font-size:11px;">Tableau de bord des commandes en temps réel</p>
+    <div style="position:sticky; top:0; background:#0f172a; z-index:10; padding-bottom:12px; border-bottom:2px solid var(--border); margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+                <h2 style="margin:0; color:#fff; font-size:18px; text-transform:uppercase; letter-spacing:1px;">📋 FILE D'ATTENTE - TEINTEUR</h2>
+                <p style="margin:2px 0 0 0; color:#9ca3af; font-size:11px;">Tableau de bord des commandes en temps réel</p>
+            </div>
+            <button class="btn-close-modal" style="font-size: 12px; font-weight:bold; padding: 8px 14px; background:#1e293b; border-radius:8px; border:1px solid var(--border); color:#fff; cursor:pointer;" onclick="closeTeinteurJobsModal()">✕ Fermer</button>
         </div>
-        <div style="display:flex; gap:8px;">
-            <button id="kdsInnerAlarmBtn" style="font-size: 12px; font-weight:bold; padding: 8px 12px; background:var(--danger); border-radius:8px; border:none; color:#fff; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.4);" onclick="triggerTeinteurAlarm()">❗ NOUVELLE ALARME</button>
-            <button class="btn-close-modal" style="font-size: 12px; font-weight:bold; padding: 8px 12px; background:#1e293b; border-radius:8px; border:1px solid var(--border); color:#fff; cursor:pointer;" onclick="closeTeinteurJobsModal()">✕ Fermer</button>
-        </div>
+        <button id="kdsInnerAlarmBtn" style="width: 100%; display: block; font-size: 14px; font-weight:900; padding: 10px; background:var(--danger); border-radius:8px; border:none; color:#fff; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5); text-transform:uppercase; letter-spacing: 1px;" onclick="triggerTeinteurAlarm()">❗ NOUVELLE ALARME</button>
     </div>
     
     <style>
