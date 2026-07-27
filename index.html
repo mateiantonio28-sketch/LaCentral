@@ -2460,9 +2460,10 @@
         });
     }
 
-    // --- LOGICĂ FICHES TEINTEUR ---
+    // --- LOGICĂ KDS FAST-FOOD TEINTEUR ---
     window.openTeinteurJobsModal = function() {
-        document.getElementById('teinteurJobsModal').style.display = 'flex';
+        document.body.appendChild(document.getElementById('teinteurJobsModal'));
+        document.getElementById('teinteurJobsModal').style.display = 'block';
         renderTeinteurJobs();
     }
     window.closeTeinteurJobsModal = function() {
@@ -2474,44 +2475,74 @@
         if (!list) return;
         list.innerHTML = '';
         
-        let visibleJobs = activeTeinteurJobs.filter(j => j.status === 'pending' || j.status === 'in_progress');
-        
-        if (visibleJobs.length === 0) {
-            list.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune commande en attente.</div>';
+        if (activeTeinteurJobs.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:40px; color:#9ca3af; font-size:16px; grid-column: 1 / -1; font-weight:bold;">Aucune commande en cours. La piste est libre !</div>';
             return;
         }
 
-        visibleJobs.sort((a,b) => b.timestamp - a.timestamp).forEach(job => {
+        activeTeinteurJobs.sort((a,b) => a.timestamp - b.timestamp).forEach(job => {
             const div = document.createElement('div');
-            let isPending = job.status === 'pending';
-            div.className = `job-card ${isPending ? '' : 'in_progress'}`;
             
-            let btnHtml = '';
-            if (isPending) {
-                btnHtml = `<button class="btn btn-save" style="background-color:var(--accent); padding:8px 12px; margin:0;" onclick="acceptTeinteurJob('${job.id}')">✅ Prendre en charge</button>`;
-            } else if (job.teinteur === (localUser ? localUser.name : '')) {
-                btnHtml = `<button class="btn btn-save" style="background-color:var(--success); padding:8px 12px; margin:0;" onclick="finishTeinteurJob('${job.id}')">🏁 Terminée</button>`;
-            } else {
-                btnHtml = `<span style="font-size:11px; color:#9ca3af; font-style:italic;">En cours par ${job.teinteur}</span>`;
+            let statusClass = 'kds-pending';
+            let statusText = 'En Attente';
+            let timerStart = job.timestamp;
+            let timerLabel = 'Attente';
+            
+            if (job.status === 'in_progress') {
+                statusClass = 'kds-progress';
+                statusText = 'En Préparation';
+                timerStart = job.startTime;
+                timerLabel = 'Préparation';
+            } else if (job.status === 'completed') {
+                statusClass = 'kds-completed';
+                statusText = 'Terminée';
+                timerStart = job.completionTime || Date.now();
+                timerLabel = 'Prête';
             }
 
-            let statusHtml = isPending 
-                ? `<span style="color:#f59e0b; font-weight:bold; text-align:right;">En attente<br><span class="teinteur-job-timer" data-start-time="${job.timestamp}" style="font-size:11px; color:#9ca3af; font-weight:normal;">00:00</span></span>` 
-                : `<span style="color:var(--accent); font-weight:bold;">Prise en charge</span>`;
-                
-            let timerHtml = isPending 
-                ? '<div></div>' 
-                : `<div class="job-timer teinteur-job-timer" data-start-time="${job.startTime}">00:00</div>`;
+            div.className = `kds-card ${statusClass}`;
+            let dateObj = new Date(job.timestamp);
+            let timeSentStr = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+            let btnHtml = '';
+            let isMine = (localUser && localUser.name === job.sender);
+            let canProcess = (localUser && ['Teinteur', 'Responsable', 'Master Admin'].includes(localUser.role));
+
+            if (job.status === 'pending') {
+                if (canProcess) {
+                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="acceptTeinteurJob('${job.id}')">👨‍🎨 PRENDRE EN CHARGE</button>`;
+                } else if (isMine) {
+                    btnHtml = `<button class="kds-btn" style="background:#7f1d1d;" onclick="deleteTeinteurJob('${job.id}')">✕ ANNULER MA COMMANDE</button>`;
+                }
+            } else if (job.status === 'in_progress') {
+                if (job.teinteur === (localUser ? localUser.name : '')) {
+                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="finishTeinteurJob('${job.id}')">🏁 MARQUER COMME TERMINÉE</button>`;
+                } else {
+                    btnHtml = `<div style="text-align:center; font-size:11px; color:rgba(255,255,255,0.7);">En cours par ${job.teinteur}</div>`;
+                }
+            } else if (job.status === 'completed') {
+                if (isMine || canProcess) {
+                    btnHtml = `<button class="kds-btn" style="background:rgba(0,0,0,0.4);" onclick="deleteTeinteurJob('${job.id}')">🛍️ J'AI RÉCUPÉRÉ (EFFACER)</button>`;
+                }
+            }
+
+            let teinteurInfo = job.status !== 'pending' ? `<div class="kds-teinteur-info">👨‍🎨 Par : ${job.teinteur}</div>` : `<div></div>`;
+            let timerHtml = job.status === 'completed' 
+                ? `<div class="kds-timer" data-completed="true">DONE</div>`
+                : `<div class="kds-timer" data-start-time="${timerStart}">00:00</div>`;
 
             div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <span style="font-size:14px; font-weight:bold; color:#fff;">Fiche de: <span style="color:#60a5fa;">${job.sender}</span></span>
-                    ${statusHtml}
+                <div class="kds-header">
+                    <div class="kds-sender">${job.sender}</div>
+                    <div class="kds-status-badge">${statusText}</div>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                <div style="font-size:12px; color:rgba(255,255,255,0.8); font-weight:bold;">Envoyée à ${timeSentStr}</div>
+                <div class="kds-time-box">
+                    <div class="kds-time-label">Temps de ${timerLabel}</div>
                     ${timerHtml}
-                    ${btnHtml}
                 </div>
+                <div class="kds-footer">${teinteurInfo}</div>
+                <div style="margin-top:4px;">${btnHtml}</div>
             `;
             list.appendChild(div);
         });
@@ -2527,6 +2558,12 @@
     window.finishTeinteurJob = function(jobId) {
         if (!window.FB_db) return;
         window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/status`), 'completed');
+        window.FB_set(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}/completionTime`), Date.now());
+    }
+    
+    window.deleteTeinteurJob = function(jobId) {
+        if (!window.FB_db) return;
+        window.FB_remove(window.FB_ref(window.FB_db, `teinteur_jobs/${jobId}`));
     }
 
     // --- ENVOI COMMANDES ---
