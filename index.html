@@ -3268,45 +3268,7 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    // --- SISTEM DINAMIC VERSIUNI (MAX 5) ---
-    let appVersionHistory = JSON.parse(localStorage.getItem('central_version_history')) || [
-        { version: "v1.19", title: "🚀 Version 1.19 (Actuelle)", isNew: true, changes: ["Performances GPU : Accélération matérielle.", "Touch-Action : Suppression du délai tactile.", "Wiki & Guide : Optimisation."] },
-        { version: "v1.18", title: "📦 Version 1.18", isNew: false, changes: ["Amélioration de l'interface de recherche globale.", "Mise à jour de l'alarme KDS pour le teinteur."] },
-        { version: "v1.17", title: "📱 Version 1.17", isNew: false, changes: ["Design ultra-compact pour le panneau Admin."] }
-    ];
-
-    window.addNewVersion = function(versionId, title, changesArray) {
-        appVersionHistory.forEach(v => v.isNew = false);
-        appVersionHistory.unshift({ version: versionId, title: title, isNew: true, changes: changesArray });
-        if (appVersionHistory.length > 5) appVersionHistory.pop();
-        localStorage.setItem('central_version_history', JSON.stringify(appVersionHistory));
-        renderVersionsHistory();
-    };
-
-    function renderVersionsHistory() {
-        const container = document.getElementById('versionsModalContentList');
-        if (!container) return;
-        container.innerHTML = '';
-        appVersionHistory.forEach(v => {
-            let badge = v.isNew ? `<span style="font-size:11px; color:#9ca3af; background:#1f2937; padding:2px 6px; border-radius:4px;">Nouveau</span>` : `<span style="font-size:12px; color:#6b7280;">Stable</span>`;
-            let borderCol = v.isNew ? `var(--accent)` : `#374151`;
-            let titleCol = v.isNew ? `#60a5fa` : `#d1d5db`;
-            let bgCol = v.isNew ? `#111827` : `#1f2937`;
-            let lis = v.changes.map(c => `<li>${c}</li>`).join('');
-            container.innerHTML += `
-                <div style="background: ${bgCol}; border: 1px solid ${borderCol}; border-left: 4px solid ${borderCol}; border-radius: 8px; padding: 12px;">
-                    <h4 style="margin: 0 0 6px 0; color: ${titleCol}; font-size: 14px; display:flex; justify-content:space-between; align-items:center;">
-                        <span>${v.title}</span>
-                        ${badge}
-                    </h4>
-                    <ul style="margin: 0; padding-left: 18px; font-size: 12px; color: #d1d5db; line-height: 1.5;">
-                        ${lis}
-                    </ul>
-                </div>`;
-        });
-    }
     
-    document.addEventListener("DOMContentLoaded", renderVersionsHistory);
 
     initVolumeUI();
     renderGuideTable();
