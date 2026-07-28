@@ -1231,12 +1231,17 @@
     const DEFAULT_GITHUB_TOKEN = ""; 
 
     window.openSafeWiki = function() {
+        // Ascunde complet secțiunea de lucru (dacă era deschisă în fundal)
+        document.getElementById('mainContainer').style.display = 'none';
+        // Ascunde meniul
         document.getElementById('sectionSelectorModal').style.display = 'none';
+        // Afișează exclusiv Wiki
         document.getElementById('guidePanel').style.display = 'flex';
     };
 
     window.closeSafeWiki = function() {
         document.getElementById('guidePanel').style.display = 'none';
+        // Te întoarce fix pe meniul principal, fără alte secțiuni în fundal
         document.getElementById('sectionSelectorModal').style.display = 'flex';
     };
 
