@@ -1258,6 +1258,16 @@
     const GITHUB_FILE_PATH = "index.html";
     const DEFAULT_GITHUB_TOKEN = ""; 
 
+    window.openSafeWiki = function() {
+        document.getElementById('sectionSelectorModal').style.display = 'none';
+        document.getElementById('guidePanel').style.display = 'flex';
+    };
+
+    window.closeSafeWiki = function() {
+        document.getElementById('guidePanel').style.display = 'none';
+        document.getElementById('sectionSelectorModal').style.display = 'flex';
+    };
+
     const BRANDS_DATA = {
         "Trimetal": { bases: ["AW", "AC"], sizes: ["0.5L", "1L", "2.5L", "5L", "10L", "12.5L"] },
         "Herbol": { bases: ["DU1", "DU3", "LA1", "LA3", "LA4", "LU1", "LU3", "LU4"], sizes: ["1L", "2.5L", "5L", "12.5L"] },
