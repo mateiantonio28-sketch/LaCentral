@@ -2657,7 +2657,7 @@
                     <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
                         <button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Valider</button>
                         <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1;" onclick="markOutOfStock('${req.id}')">❌ Out of Stock</button>
-                        <button class="btn btn-save" style="background-color:#0284c7; padding:6px; font-size:11px; flex:100%; min-width:100%; margin-top:2px;" onclick="printStockRequestPDF('${req.id}')">🖨️ Télécharger / Imprimer PDF</button>
+                        <button class="btn btn-save" style="background-color:#0284c7; padding:6px; font-size:11px; flex:100%; min-width:100%; margin-top:2px;" onclick="downloadStockRequestTXT('${req.id}')">🖨️ Télécharger Fiche (TXT)</button>
                     </div>
                 ` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation...</div>`}
             `;
