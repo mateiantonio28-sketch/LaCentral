@@ -2728,6 +2728,78 @@
         }
     }
 
+    window.printStockRequestPDF = function(reqId) {
+        const req = stockRequestsList.find(r => r.id === reqId);
+        if (!req) return;
+
+        const printDiv = document.createElement('div');
+        printDiv.style.padding = "20px";
+        printDiv.style.fontFamily = "sans-serif";
+        printDiv.style.color = "#000";
+        printDiv.style.background = "#fff";
+        printDiv.style.width = "800px"; // Lățime optimă pentru format A4 (Portret)
+
+        const dateStr = new Date(req.timestamp).toLocaleString('fr-FR');
+        
+        let itemsHtml = `
+            <table style="width:100%; border-collapse: collapse; margin-top:20px;">
+                <thead>
+                    <tr style="background-color: #f3f4f6; border-bottom: 2px solid #000;">
+                        <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db;">Emplacement</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db;">Produit</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db;">Spécifications</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Qté</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Fait</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        req.items.forEach(it => {
+            let dispBase = it.base ? `Base: ${it.base}, ` : '';
+            itemsHtml += `
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #d1d5db; font-weight: bold; font-size:14px;">${it.location || '-'}</td>
+                    <td style="padding: 10px; border: 1px solid #d1d5db; font-size:14px;">${it.product}</td>
+                    <td style="padding: 10px; border: 1px solid #d1d5db; font-size:12px;">${dispBase}${it.bucketSize}</td>
+                    <td style="padding: 10px; border: 1px solid #d1d5db; text-align: center; font-weight: bold; font-size:16px;">${it.quantity}</td>
+                    <td style="padding: 10px; border: 1px solid #d1d5db; text-align: center;"><div style="width:20px; height:20px; border:2px solid #000; margin:0 auto; border-radius:4px;"></div></td>
+                </tr>
+            `;
+        });
+
+        itemsHtml += `</tbody></table>`;
+
+        printDiv.innerHTML = `
+            <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 10px;">
+                <h1 style="margin: 0; font-size: 24px; text-transform: uppercase;">BON DE PRÉPARATION (STOCK)</h1>
+                <p style="margin: 5px 0 0 0; font-size: 14px; color: #4b5563;">La Centrale ProShop - Commande Interne</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px;">
+                <div><strong>Demandeur :</strong> ${req.author}</div>
+                <div><strong>Date :</strong> ${dateStr}</div>
+                <div><strong>Réf :</strong> #${req.id.substring(1, 8).toUpperCase()}</div>
+            </div>
+            ${itemsHtml}
+            <div style="margin-top: 50px; display: flex; justify-content: space-between; font-size: 14px;">
+                <div><strong>Signature Magasinier :</strong><br><br>____________________</div>
+                <div><strong>Signature Réception :</strong><br><br>____________________</div>
+            </div>
+        `;
+
+        const opt = {
+            margin:       10,
+            filename:     `Commande_Stock_${req.author}_${new Date().toISOString().split('T')[0]}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, backgroundColor: '#ffffff' },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(printDiv).save().then(() => {
+            showAlert("✅ PDF généré avec succès !", true);
+        });
+    }
+
     // --- FORMULAIRES INTÉGRÉS DIRECTS (REMPLACANT LES POP-UPS) ---
     window.toggleErrorForm = function() {
         const panel = document.getElementById('errorFormPanel');
