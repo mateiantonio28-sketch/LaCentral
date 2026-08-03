@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA MANIFEST -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    
+    <!-- SYSTEME ANTI-CACHE FORCE -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title>La Centrale ProShop</title>
+    
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    <meta name="theme-color" content="#111827">
+
+    <!-- FIREBASE SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove, get, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtphQCRQRkBA6gcb4nqTKhmf8ti1XH2w",
+            authDomain: "lacentral-b79a9.firebaseapp.com",
+            databaseURL: "https://lacentral-b79a9-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "lacentral-b79a9",
+            storageBucket: "lacentral-b79a9.appspot.com",
+            messagingSenderId: "187334069854",
+            appId: "1:187334069854:web:1892c8a3fb826341c52ecf",
+            measurementId: "G-QL335MPN5L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.FB_db = db;
+        window.FB_ref = ref;
+        window.FB_set = set;
+        window.FB_onValue = onValue;
+        window.FB_push = push;
+        window.FB_remove = remove;
+        window.FB_get = get;
+        window.FB_onDisconnect = onDisconnect;
+
+        isSupported().then((supported) => {
+            if (supported) {
+                window.FB_messaging = getMessaging(app);
+                window.FB_getToken = getToken;
+                
+                onMessage(window.FB_messaging, (payload) => {
+                    if (payload && payload.notification) {
+                        if (typeof window.playPersistentAlarm === 'function') {
+                            window.playPersistentAlarm();
+                        }
+                    }
+                });
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./firebase-messaging-sw.js').catch((err) => {});
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #f8fafc;
+            --accent: #3b82f6;
+            --ai-color: #8b5cf6;
+            --bg: #111827;
+            --panel-bg: #1f2937;
+            --border: #374151;
+            --text: #f3f4f6;
+            --danger: #ef4444;
+            --success: #16a34a;
+            --warning: #f59e0b;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+            touch-action: manipulation; 
+        }
+        
+        body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
+        .container { max-width: 720px; margin: 0 auto; display: none; }
+
+        .lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 99999; display: flex;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .lock-card {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .lock-card h2 { margin: 0 0 4px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
+        .lock-card p { margin: 0 0 16px 0; font-size: 11px; color: #9ca3af; line-height: 1.4; }
+        .lock-card input, .lock-card select {
+            width: 100%; padding: 12px; margin-bottom: 10px;
+            border: 1px solid var(--border); border-radius: 8px;
+            background: #111827; color: #fff; font-size: 14px; text-align: center;
+        }
+
+        input.active-input, textarea.active-input {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .key-flash {
+            background-color: var(--accent) !important;
+            transform: scale(0.92);
+            transition: transform 0.02s ease-out, background-color 0.02s !important;
+        }
+
+        .pin-key {
+            background: #334155; color: #fff; border: 1px solid #475569;
+            border-radius: 6px; padding: 12px 0; font-size: 16px; font-weight: bold;
+            cursor: pointer; text-align: center; user-select: none;
+            transition: background 0.02s, transform 0.02s;
+            will-change: transform, background-color;
+        }
+        
+        .vk-key {
+            background: #334155; color: #fff; border: 1px solid #475569;
+            border-radius: 6px; padding: 12px 0; font-size: 15px; font-weight: bold;
+            cursor: pointer; flex: 1; text-align: center; user-select: none;
+            transition: background 0.02s, transform 0.02s;
+            will-change: transform, background-color;
+        }
+
+        .online-dot {
+            display: inline-block; width: 10px; height: 10px;
+            background-color: #10b981; border-radius: 50%;
+            box-shadow: 0 0 6px #10b981;
+            animation: pulse-green 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
+
+        .section-selector-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 99998; display: none;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .section-selector-card {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .section-btn {
+            background: #374151; color: white; border: 1px solid var(--border);
+            padding: 14px; border-radius: 8px; font-size: 14px; font-weight: bold;
+            cursor: pointer; width: 100%; margin-bottom: 10px; transition: background 0.2s; position: relative;
+        }
+        .section-btn:hover { background: var(--accent); }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 12px; padding: 3px 8px; font-size: 11px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .top-left-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        
+        .collab-btn { background-color: var(--panel-bg); border: 1px solid var(--border); color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; position: relative; }
+        .collab-badge { position: absolute; top: -4px; right: -4px; background: var(--danger); color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 10px; display: none; font-weight: bold; }
+
+        .app-volume-select {
+            background-color: #1e293b; color: #fff; border: 1px solid var(--border);
+            border-radius: 6px; padding: 6px 8px; font-size: 12px; font-weight: bold; cursor: pointer;
+            appearance: none; -webkit-appearance: none; text-align: center;
+        }
+
+        .admin-badge-inline {
+            background: var(--danger); color: #fff; font-size: 10px; padding: 2px 6px;
+            border-radius: 10px; font-weight: bold; margin-left: 4px; display: none;
+        }
+
+        .header { text-align: center; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
+        .header h1 { margin: 0; font-size: 22px; color: var(--primary); text-transform: uppercase; }
+        .header p { margin: 4px 0 0 0; font-size: 12px; color: #9ca3af; }
+
+        .live-timer-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1f2937; border: 1px solid var(--border); border-radius: 8px;
+            padding: 8px 12px; margin-top: 10px; font-size: 11px; color: #9ca3af;
+        }
+
+        .search-box {
+            width: 100%; padding: 14px; font-size: 16px; font-weight: 600;
+            border: 2px solid var(--border); border-radius: 10px; outline: none;
+            background: #1f2937; color: #fff; transition: border-color 0.2s;
+        }
+        .search-box:focus { border-color: var(--accent); }
+
+        .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #9ca3af; margin: 14px 0 6px 2px; }
+
+        .actions-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .btn { flex: 1; min-width: 110px; padding: 10px; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.2s ease; }
+        .btn-admin-discrete { background: transparent; border: 1px solid var(--border); color: #6b7280; padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; }
+        .btn-admin-discrete:hover { color: #fff; border-color: var(--accent); }
+        .refresh-btn-discrete { background: transparent; border: 1px solid var(--border); color: #ef4444; padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; }
+        .refresh-btn-discrete:hover { color: #fff; border-color: var(--danger); }
+
+        .btn-ai { background-color: var(--ai-color); color: #fff; }
+        .btn-guide { background-color: #0284c7; color: #fff; }
+        .btn-danger { background-color: var(--danger); color: #fff; }
+        .btn-logout { background-color: #7f1d1d; color: #fca5a5; font-size: 11px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-back { background-color: transparent; border: 1px solid var(--border); color: #9ca3af; font-size: 12px; padding: 8px 12px; cursor: pointer; border-radius: 6px; margin-bottom: 12px; }
+
+        .panel {
+            display: none; background: var(--panel-bg); padding: 20px; border-radius: 12px;
+            margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        }
+        .panel h3 { margin-top: 0; font-size: 15px; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; }
+        .panel label { font-size: 12px; color: #9ca3af; font-weight: bold; display: block; margin-bottom: 4px; margin-top: 10px; }
+        .panel input, .panel select, .panel textarea {
+            width: 100%; padding: 12px; margin-bottom: 4px; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 14px; background: #111827; color: #fff;
+        }
+        .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 14px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; font-size: 15px; text-align: center; display: block; margin-top: 16px; }
+
+        #authPanel {
+            position: fixed; top: 15vh; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; z-index: 99999999; background: var(--panel-bg);
+            border: 2px solid var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            border-radius: 12px;
+        }
+
+        .collapsible-btn {
+            width: 100%; text-align: left; background-color: #374151; color: #fff;
+            padding: 12px; border: 1px solid var(--border); border-radius: 6px; 
+            font-size: 13px; font-weight: bold; cursor: pointer; margin-bottom: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .collapsible-btn:hover { background-color: #4b5563; }
+        .collapsible-content {
+            display: none; padding: 12px; background: #111827; 
+            border: 1px solid var(--border); border-radius: 6px; margin-bottom: 14px;
+        }
+
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px);
+            z-index: 99999; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-content {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            width: 100%; max-width: 480px; padding: 22px; box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .modal-header h3 { margin: 0; font-size: 16px; color: var(--primary); text-transform: uppercase; }
+        .btn-close-modal { background: none; border: none; color: #9ca3af; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        .palette-group { margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: var(--panel-bg); border: 1px solid var(--border); }
+        .palette-header { padding: 10px 14px; background-color: #374151; color: var(--primary); font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .palette-count { background-color: #1f2937; color: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+        .palette-content { display: none; padding: 8px; background-color: #1f2937; }
+
+        .folders-overview-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+
+        .app-version-footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-top: 10px; border-top: 1px dashed var(--border); margin-bottom: 80px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .alert-box { display: none; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; font-weight: 600; text-align: center; }
+
+        .stock-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+        .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: #111827; color: #9ca3af; font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
+        .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* Style Calendar Mini */
+        .mini-calendar { background: #111827; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 14px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; font-size: 12px; }
+        .cal-cell { padding: 8px 0; background: #1f2937; border-radius: 6px; color: #d1d5db; cursor: pointer; transition: background 0.15s; }
+        .cal-cell:hover { background: #374151; }
+        .cal-cell.has-error { background: #7f1d1d; color: #fca5a5; font-weight: bold; border: 1px solid #ef4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
+        .cal-cell.selected { border: 2px solid var(--accent); }
+
+        /* CLAVIER VIRTUEL FLUIDE */
+        .virtual-keyboard {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #1e293b; padding: 10px 4px 20px 4px; z-index: 100000;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.9); border-top: 2px solid #334155;
+            user-select: none;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            visibility: hidden;
+            display: block; 
+        }
+        .virtual-keyboard.active {
+            transform: translateY(0);
+            visibility: visible;
+        }
+        .vk-row { display: flex; justify-content: center; margin-bottom: 6px; gap: 4px; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .vk-key {
+            background: #334155; color: #fff; border: 1px solid #475569;
+            border-radius: 6px; padding: 12px 0; font-size: 15px; font-weight: bold;
+            cursor: pointer; flex: 1; text-align: center; user-select: none;
+            transition: background 0.1s, transform 0.1s;
+        }
+        .vk-key.vk-space { flex: 4; font-size: 12px; background: #475569; }
+        .vk-key.vk-wide { flex: 1.5; font-size: 11px; background: #7f1d1d; }
+
+        #forcedUpdateModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
+            z-index: 9999999; align-items: center; justify-content: center; padding: 16px;
+        }
+    </style>
+<style>
+        #adminUsersList > div {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            padding: 10px 14px !important;
+        }
+        
+        #adminUsersList > div > div:first-child {
+            flex: 1 1 auto !important;
+            min-width: 200px !important;
+        }
+
+        #adminUsersList div {
+            width: auto !important;
+        }
+
+        #adminUsersList button, 
+        #adminUsersList .btn {
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 6px 12px !important;
+            font-size: 11px !important;
+            border-radius: 6px !important;
+            margin: 0 4px 4px 0 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.5px !important;
+        }
+    </style>
+</head>
+<body>
+
+<div id="userLockScreen" class="lock-screen">
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000000;">
+        <button onclick="toggleComputerMode()" id="loginBtnComputerMode" style="background:#1f2937; border:1px solid var(--border); color:#fff; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:bold; cursor:pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">📱 Tactile</button>
+    </div>
+
+    <div class="lock-card">
+        <h2>La Centrale ProShop</h2>
+        <div id="loginVersionDisplay" style="font-size:11px; color:var(--accent); font-weight:bold; margin-top:-4px; margin-bottom:12px;"></div>
+        <p id="lockSubtitle">Connexion Utilisateur</p>
+        
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
+        <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
+        
+        <div class="login-pin-pad">
+            <div class="pin-key" onclick="loginPinKey('1', this)">1</div>
+            <div class="pin-key" onclick="loginPinKey('2', this)">2</div>
+            <div class="pin-key" onclick="loginPinKey('3', this)">3</div>
+            <div class="pin-key" onclick="loginPinKey('4', this)">4</div>
+            <div class="pin-key" onclick="loginPinKey('5', this)">5</div>
+            <div class="pin-key" onclick="loginPinKey('6', this)">6</div>
+            <div class="pin-key" onclick="loginPinKey('7', this)">7</div>
+            <div class="pin-key" onclick="loginPinKey('8', this)">8</div>
+            <div class="pin-key" onclick="loginPinKey('9', this)">9</div>
+            <div class="pin-key" onclick="loginPinKey('C', this)" style="background:#7f1d1d;">C</div>
+            <div class="pin-key" onclick="loginPinKey('0', this)">0</div>
+            <div class="pin-key" 
+                 onmousedown="startPinDel(this, event)" 
+                 onmouseup="stopPinDel(event)" 
+                 onmouseleave="stopPinDel(event)" 
+                 ontouchstart="startPinDel(this, event)" 
+                 ontouchend="stopPinDel(event)" 
+                 ontouchcancel="stopPinDel(event)" 
+                 style="background:#475569;">⌫</div>
+        </div>
+
+        <select id="regRole" style="display:none;">
+            <option value="Teinteur">Teinteur</option>
+            <option value="Vendeur">Vendeur</option>
+            <option value="Magasinier">Magasinier</option>
+            <option value="Responsable">Responsable</option>
+            <option value="Préparateur de commande">Préparateur de commande</option>
+        </select>
+
+        <button id="btnLogin" class="btn btn-save" onclick="loginAction()">Se connecter</button>
+        <button id="btnRegisterToggle" class="btn" style="background:transparent; color:#60a5fa; border:1px solid #3b82f6; margin-top:12px; font-size:12px;" onclick="showRegisterForm()">📝 Créer un nouveau compte</button>
+        
+        <button id="btnRegisterSubmit" class="btn btn-save" style="display:none; background-color:#10b981; margin-top:12px;" onclick="registerAction()">Envoyer la demande</button>
+        <button id="btnCancelRegister" class="btn" style="display:none; background:transparent; color:#9ca3af; margin-top:8px; font-size:12px;" onclick="hideRegisterForm()">Annuler</button>
+
+        <button id="btnSwitchUser" class="btn" style="background:transparent; color:#ef4444; border:1px solid #7f1d1d; margin-top:12px; display:none; font-size:12px;" onclick="switchUserAccount()">🔄 Changer d'utilisateur (Déconnexion totale)</button>
+    </div>
+</div>
+
+<div id="sectionSelectorModal" class="section-selector-overlay">
+    <div style="position:absolute; top:20px; left:20px; z-index:99999; display:flex; flex-direction:column; gap:8px;">
+        <button class="btn-admin-discrete" style="background:#1f2937; color:#f3f4f6; border:1px solid #4b5563; padding:8px 12px; font-size:11px; border-radius:6px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5);" onclick="openAdminAuth()">
+            🔒 Admin Panel <span id="btnAdminBadge" class="admin-badge-inline">0</span>
+        </button>
+        <button id="btnPatcherTool" style="display:none; background:var(--ai-color); color:#fff; border:none; padding:8px 12px; font-size:11px; border-radius:6px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5);" onclick="window.open('tools-administrativ.html', '_blank')">
+            ⚙️ Smart Patcher
+        </button>
+    </div>
+    <button class="btn-logout" style="position:absolute; top:20px; right:20px; margin:0; z-index:99999; padding:10px 16px; font-size:12px; box-shadow:0 4px 10px rgba(0,0,0,0.5);" onclick="confirmLogout()">Déconnexion</button>
+    <div class="section-selector-card">
+        <h2 style="color:var(--primary); margin-top:0;">Choisissez la Section</h2>
+        <p style="font-size:13px; color:#9ca3af; margin-bottom:16px;">Sélectionnez l'activité pour cette session :</p>
+        
+        <button id="btnSecBases" class="section-btn" onclick="selectAppSection('Bases')">🎨 Consulter les bases</button>
+        <button id="btnSecStock" class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Passer commande interne</button>
+        <button id="btnSecRevendables" class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:#059669;">🔄 Teintes Re-vendables</button>
+        <button id="btnSecErreurs" class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:#b91c1c;">⚠️ Erreurs de Teinte</button>
+        
+        <div id="btnSecAlarmsContainer" style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border);">
+            <button id="btnTeinteurAlarm" class="section-btn" style="background-color: transparent; color: var(--danger); border: 2px solid var(--danger);" onclick="triggerTeinteurAlarm()">❗ ALARME TEINTEUR (Vendeur)</button>
+            <button id="btnOpenTeinteurJobs" class="section-btn" style="background-color: #0f172a; border-color: var(--accent); display:none;" onclick="openTeinteurJobsModal()">
+                📋 FILE D'ATTENTE (VOIR COMMANDES)
+                <span id="teinteurJobsBadge" class="notif-badge">0</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
+    
+    <div class="top-bar">
+        <div class="top-left-actions">
+            <button class="collab-btn" onclick="openCollabModal()" title="Notifications Équipe">
+                ⋮ <span id="collabBadge" class="collab-badge">0</span>
+            </button>
+            <button id="btnComputerMode" class="collab-btn" onclick="toggleComputerMode()" style="background-color: #1e293b; border-color: #475569;">
+                📱 Mode Tactile
+            </button>
+            <select id="appVolumeSelect" class="app-volume-select" onchange="changeAppVolume()" title="Volume Alarme">
+                <option value="1">🔊</option>
+                <option value="0.75">🔉</option>
+                <option value="0.5">🔈</option>
+                <option value="0.25">🔈</option>
+                <option value="0">🔇</option>
+            </select>
+        </div>
+        <div style="display:flex; gap:6px; align-items:center;">
+            <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
+        </div>
+    </div>
+
+    <div class="header" style="margin-top: 0;">
+        <h1 id="appHeaderTitle">Vérifie les Bases</h1>
+        <p id="appHeaderSubtitle">Système de Recherche de Couleurs & Bases Techniques</p>
+        
+        <div class="live-timer-bar">
+            <div>📅 <span id="currentDateDisplay">--/--/---- --:--</span></div>
+            
+            <div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:bold; color:#10b981;" title="Utilisateurs en ligne">
+                <span class="online-dot" onclick="openOnlineUsersModal()"></span>
+                En ligne: <span id="onlineUsersCount" style="color:#fff; background:#064e3b; padding:2px 8px; border-radius:10px; cursor:pointer;" onclick="openOnlineUsersModal()">0</span>
+            </div>
+
+            <div>⏱️ Session: <span id="sessionCountdown" style="color:#f59e0b; font-weight:bold;">10:00:00</span></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <div style="font-size:11px; color:#60a5fa;" id="welcomeUser"></div>
+            <div>
+                <button class="btn btn-admin" style="padding:4px 8px; font-size:10px; margin-right:6px;" onclick="showSectionSelector()">⇄ Changer Section</button>
+                <button class="btn-logout" onclick="confirmLogout()">Déconnexion</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION BASES -->
+    <div id="sectionBasesContent">
+        <input type="text" id="searchInput" class="search-box" placeholder="Recherche Générale (ex: RAL 9001)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="debouncedFilterColors()">
+
+        <div class="section-label" id="resultsLabel" style="display:none; margin-top: 14px;">Résultats de Recherche Globale</div>
+        <div id="resultsList" style="margin-bottom: 16px; display:none;"></div>
+
+        <div class="actions-bar">
+            <button class="btn btn-guide" onclick="togglePanel('guidePanel')">📖 Guide des Bases</button>
+        </div>
+
+        <div class="palette-group" style="margin-top: 16px; border: 1px solid var(--accent);">
+            <div class="palette-header" onclick="toggleMainNuancier()" style="background-color: #1e3a8a;">
+                <span>📚 Tous les Nuanciers (Dossiers)</span>
+                <span id="mainNuancierCount" class="palette-count" style="background-color: var(--accent); color: white;">0 couleurs</span>
+            </div>
+            <div id="mainNuancierContent" class="palette-content" style="display:none; padding:12px; background: #111827;">
+                <div id="foldersOverviewList" class="folders-overview-grid"></div>
+            </div>
+        </div>
+
+        <div id="dedicatedSearchPanel" class="panel" style="display:none; border-color: var(--accent); margin-top: 16px;">
+            <button class="btn-back" onclick="closeDedicatedSearch()">← Retour aux Nuanciers</button>
+            <h3 id="dedicatedSearchTitle" style="color: #60a5fa; margin-bottom: 12px; font-size: 16px;">Recherche dans: ...</h3>
+            <input type="text" id="dedicatedSearchInput" class="search-box" style="margin-bottom: 15px;" placeholder="Chercher dans ce catalogue..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterDedicatedPalette()">
+            <div id="dedicatedSearchResults" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- SECTION STOCK -->
+    <div id="sectionStockContent" style="display: none;">
+        <div class="stock-tabs">
+            <button class="stock-tab-btn active" id="tabBtnSingle" onclick="switchStockMode('single')">⚡ Demande simple</button>
+            <button class="stock-tab-btn" id="tabBtnList" onclick="switchStockMode('list')">📋 Demande liste</button>
+        </div>
+
+        <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
+            <h3 style="color:#4ade80;">⚡ Demande Rapide de Seau / Produit</h3>
+            <select id="singleBrand" onchange="updateStockDropdowns('single')" style="background:#1f2937; border-color:var(--border);">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+            <input type="text" id="singleProductName" placeholder="Nom du produit (ex: Rubbol...)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="checkLearnedLocation('single')">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <select id="singleBase" onchange="checkCustomBase('single')" style="width:100%;"><option value="">Base</option></select>
+                    <input type="text" id="singleBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <select id="singleBucketSize"><option value="">Capacité</option></select>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 8px; background:#111827; padding:8px; border-radius:6px; border:1px solid var(--border);">
+                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer; margin-top:0;">
+                    <input type="checkbox" id="singlePallet" style="width:18px; height:18px; margin:0;" onchange="toggleQuantityInput('single')"> Palette complète
+                </label>
+                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" style="flex:1; margin:0;">
+            </div>
+
+            <input type="text" id="singleLocation" placeholder="Emplacement (ex: AA01A, CB05B)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <button class="btn btn-save" style="background-color:var(--success);" onclick="sendSingleStockRequest()">📨 Envoyer la Demande Urgente</button>
+        </div>
+
+        <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
+            <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock (Rayons)</h3>
+            <select id="listBrand" onchange="updateStockDropdowns('list')" style="background:#1f2937; border-color:var(--border);">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+            <input type="text" id="listProductName" placeholder="Nom du produit" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="checkLearnedLocation('list')">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <select id="listBase" onchange="checkCustomBase('list')" style="width:100%;"><option value="">Base</option></select>
+                    <input type="text" id="listBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <select id="listBucketSize"><option value="">Capacité</option></select>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 8px; background:#111827; padding:8px; border-radius:6px; border:1px solid var(--border);">
+                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer; margin-top:0;">
+                    <input type="checkbox" id="listPallet" style="width:18px; height:18px; margin:0;" onchange="toggleQuantityInput('list')"> Palette complète
+                </label>
+                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" style="flex:1; margin:0;">
+            </div>
+
+            <input type="text" id="listLocation" placeholder="Emplacement (AA01A, CB05B)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <button class="btn btn-save" style="background-color:#374151; margin-top:4px;" onclick="addStockItemToList()">➕ Ajouter à la liste</button>
+            
+            <div style="margin-top: 12px; background: #111827; padding: 10px; border-radius: 6px; border:1px solid var(--border);">
+                <h4 style="margin:0 0 8px 0; color:#60a5fa; font-size:12px;">Articles dans la liste en cours :</h4>
+                <div id="stockCartItemsList" style="max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
+                    <div style="text-align:center; color:#6b7280; font-size:11px; padding:6px;">Aucun article ajouté.</div>
+                </div>
+                <button class="btn btn-save" id="sendStockCartBtn" style="background-color:var(--success); display:none; padding:8px; font-size:12px;" onclick="sendFinalStockList()">🚀 Envoyer la Liste Complète au Magasinier</button>
+            </div>
+        </div>
+
+        <div class="section-label">Demandes de stock en cours :</div>
+        <div id="stockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active.</div>
+        </div>
+
+        <div class="section-label" style="color:var(--danger); margin-top:24px;">❌ Produits Out of Stock (En attente de réapprovisionnement) :</div>
+        <div id="outOfStockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:15px; color:#6b7280; font-size:12px;">Aucun produit en rupture de stock.</div>
+        </div>
+    </div>
+
+    <!-- SECTION TEINTES REVENDABLES (HAUT) -->
+    <div id="sectionRevendablesContent" style="display: none;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin:0; color:#10b981; font-size:16px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Gérez et consultez les seaux préparés en plus disponibles à la vente.</p>
+            </div>
+            <button id="btnResaleAdd" class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#10b981;" onclick="toggleResaleForm()">➕ Ajouter une Teinte</button>
+        </div>
+
+        <!-- FORMULAIRE INTÉGRÉ RE-VENDABLE -->
+        <div id="resaleFormPanel" class="panel" style="border-color: #10b981; display: none;">
+            <h3 style="color:#10b981; margin-bottom:14px;">➕ Ajouter une Teinte Re-vendable</h3>
+            
+            <label>Marque :</label>
+            <select id="resBrand" onchange="updateResaleDropdowns()" style="background:#111827; border-color:var(--border);">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+
+            <label>Nom du produit (Optionnel) :</label>
+            <input type="text" id="resProductName" placeholder="ex: Rubbol Azur..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <label>Code Couleur :</label>
+            <input type="text" id="resColorCode" placeholder="ex: RAL 9010 ou NCS S 0502-Y" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Base :</label>
+                    <select id="resBase" onchange="checkCustomBase('res')"><option value="">Base</option></select>
+                    <input type="text" id="resBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <div>
+                    <label>Capacité :</label>
+                    <select id="resBucketSize"><option value="">Capacité (L / KG)</option></select>
+                </div>
+            </div>
+
+            <label>Quantité en stock :</label>
+            <input type="number" id="resQuantity" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-save" style="background-color:#10b981; margin-top:0;" onclick="saveResaleRecord()">💾 Enregistrer la Teinte</button>
+                <button class="btn btn-danger" style="width:120px; background-color:#374151; margin-top:0;" onclick="toggleResaleForm()">Annuler</button>
+            </div>
+        </div>
+
+        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:12px;">
+
+        <div id="resaleRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune teinte re-vendable en stock.</div>
+        </div>
+    </div>
+
+    <!-- SECTION ERREURS DE TEINTE (BAS) AVEC SÉLECTEUR DE MOIS, CALENDRIER ET BOUTON EXPORT -->
+    <div id="sectionErreursContent" style="display: none;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin:0; color:#ef4444; font-size:16px;">⚠️ Registre des Erreurs de Teinte</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Suivi transparent et calendrier des rebuts de fabrication.</p>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button id="btnErrorAdd" class="btn btn-save" style="width:auto; margin-top:0; padding:10px 14px; background-color:#ef4444;" onclick="toggleErrorForm()">➕ Déclarer</button>
+                <button id="btnExportErrors" class="btn btn-save" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:#3b82f6;" onclick="exportErrorsCSV()">📥 Exporter Bilan</button>
+                <button id="btnPurgeErrors" class="btn btn-danger" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:#7f1d1d;" onclick="purgeAllErrors()">🗑️ Vider tout</button>
+            </div>
+        </div>
+
+        <!-- FORMULAIRE INTÉGRÉ ERREUR DE TEINTE -->
+        <div id="errorFormPanel" class="panel" style="border-color: #ef4444; display: none;">
+            <h3 style="color:#ef4444; margin-bottom:14px;">⚠️ Déclarer une Erreur de Teinte</h3>
+            
+            <label>Marque :</label>
+            <select id="errBrand" onchange="updateErrorDropdowns()" style="background:#111827; border-color:var(--border);">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+
+            <label>Nom du produit (si connu) :</label>
+            <input type="text" id="errProductName" placeholder="ex: Alphatex SF..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Base :</label>
+                    <select id="errBase" onchange="checkCustomBase('err')"><option value="">Base</option></select>
+                    <input type="text" id="errBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <div>
+                    <label>Capacité :</label>
+                    <select id="errBucketSize"><option value="">Capacité (L / KG)</option></select>
+                </div>
+            </div>
+
+            <label>Quantité (Nombre de seaux) :</label>
+            <input type="number" id="errQuantity" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <label>Date de l'erreur :</label>
+            <input type="date" id="errDate" style="background:#111827; color:#fff; border:1px solid var(--border); padding:12px; border-radius:8px; width:100%; margin-bottom:8px;">
+
+            <label>Motif de l'erreur :</label>
+            <textarea id="errReason" rows="3" placeholder="ex: mauvaise base, erreur de code..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
+
+            <label>Signature (Responsable) :</label>
+            <input type="text" id="errSignature" placeholder="Nom de la personne" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-save" style="background-color:#ef4444; margin-top:0;" onclick="saveErrorRecord()">💾 Enregistrer l'Erreur</button>
+                <button class="btn btn-danger" style="width:120px; background-color:#374151; margin-top:0;" onclick="toggleErrorForm()">Annuler</button>
+            </div>
+        </div>
+
+        <!-- SÉLECTEUR DE MOIS & ANNÉE POUR LE CALENDRIER DES ERREURS -->
+        <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center; background: var(--panel-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+            <label style="font-size: 12px; color: #9ca3af; margin: 0; font-weight: bold; white-space: nowrap;">📅 Mois à afficher :</label>
+            <select id="errorMonthSelect" onchange="renderErrorCalendar()" style="flex: 2; padding: 10px; background: #111827; color: #fff; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-weight: bold;">
+                <option value="0">Janvier</option>
+                <option value="1">Février</option>
+                <option value="2">Mars</option>
+                <option value="3">Avril</option>
+                <option value="4">Mai</option>
+                <option value="5">Juin</option>
+                <option value="6">Juillet</option>
+                <option value="7">Août</option>
+                <option value="8">Septembre</option>
+                <option value="9">Octobre</option>
+                <option value="10">Novembre</option>
+                <option value="11">Décembre</option>
+            </select>
+            <select id="errorYearSelect" onchange="renderErrorCalendar()" style="flex: 1; padding: 10px; background: #111827; color: #fff; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-weight: bold;">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+            </select>
+        </div>
+
+        <!-- CALENDRIER INTERACTIF -->
+        <div class="mini-calendar" id="errorMiniCalendar"></div>
+
+        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
+        
+        <div id="errorStatsBox" style="background:var(--panel-bg); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#9ca3af; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <span>Total erreurs : <b id="totalErrorsCount" style="color:#fff;">0</b> | Volume raté : <b id="totalErrorLitres" style="color:#ef4444;">0 L / KG</b></span>
+            <button id="clearDateFilterBtn" style="display:none; background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; font-weight:bold;" onclick="resetDateFilter()">🔄 Afficher tout</button>
+        </div>
+
+        <div id="errorRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune erreur enregistrée.</div>
+        </div>
+    </div>
+
+    <div id="alertBanner" class="alert-box"></div>
+
+    <div id="guidePanel" class="panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0;">Équivalences des Bases</h3>
+            <button class="btn-close-modal" onclick="togglePanel('guidePanel')">✕</button>
+        </div>
+        <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
+            <thead>
+                <tr>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Ton</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Trimetal</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Herbol</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Sikkens</th>
+                    <th style="border:1px solid var(--border); padding:6px; background:#111827;">Unikalo</th>
+                </tr>
+            </thead>
+            <tbody id="guideTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="authPanel" class="panel" style="display:none; border-color: var(--accent);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0;">Connexion Master Admin</h3>
+            <button class="btn-close-modal" onclick="togglePanel('authPanel')">✕</button>
+        </div>
+        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="password" id="authPass" placeholder="Mot de passe Master" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
+    </div>
+
+    <div id="adminPanel" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; z-index: 99999999; background: var(--bg); padding: 20px; box-sizing: border-box;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; position:sticky; top:0; background:var(--bg); z-index:10; padding-bottom:10px; padding-top:10px; border-bottom:1px solid var(--border);">
+            <h3 style="margin:0; color:var(--danger);">Panneau d'Administration</h3>
+            <button class="btn-close-modal" style="font-size: 20px; padding: 5px 10px;" onclick="closeAdminPanel()">✕</button>
+        </div>
+        
+        <button class="collapsible-btn" onclick="toggleCollapse('manageUsersForm')" style="background-color:#1e3a8a; border-color:#3b82f6;">
+            👥 Gestion des Accès Utilisateurs <span id="adminPendingBadgePanel" class="admin-badge-inline">0</span> <span>▼</span>
+        </button>
+        <div id="manageUsersForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
+            <p style="font-size:11px; margin-top:0; color:#9ca3af;">Approbation, blocage et suppression des appareils/utilisateurs.</p>
+            <div id="adminUsersList" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="text-align:center; color:#9ca3af; font-size:12px;">Chargement de la liste...</div>
+            </div>
+        </div>
+
+        <button class="collapsible-btn" onclick="toggleCollapse('editGuideForm')">📖 Modifier le Guide des Bases <span>▼</span></button>
+        <div id="editGuideForm" class="collapsible-content">
+            <p style="font-size:11px; color:#60a5fa; margin-top:0; font-weight:bold;">Tons Clairs (Clair) :</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
+                <input type="text" id="guideClairTrimetal" placeholder="Trimetal" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideClairHerbol" placeholder="Herbol" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideClairSikkens" placeholder="Sikkens" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideClairUnikalo" placeholder="Unikalo" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+            
+            <p style="font-size:11px; color:#60a5fa; margin-top:10px; font-weight:bold;">Tons Moyens (Moyen) :</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
+                <input type="text" id="guideMoyenTrimetal" placeholder="Trimetal" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideMoyenHerbol" placeholder="Herbol" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideMoyenSikkens" placeholder="Sikkens" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideMoyenUnikalo" placeholder="Unikalo" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+
+            <p style="font-size:11px; color:#60a5fa; margin-top:10px; font-weight:bold;">Tons Foncés (Foncé) :</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:10px;">
+                <input type="text" id="guideFonceTrimetal" placeholder="Trimetal" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideFonceHerbol" placeholder="Herbol" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideFonceSikkens" placeholder="Sikkens" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                <input type="text" id="guideFonceUnikalo" placeholder="Unikalo" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+            <button class="btn btn-save" onclick="saveGuideTable()">💾 Enregistrer le Guide</button>
+        </div>
+
+        <button class="collapsible-btn" onclick="toggleCollapse('manageSingleForm')">✏️ Ajouter / Modifier / Supprimer Couleur <span>▼</span></button>
+        <div id="manageSingleForm" class="collapsible-content">
+            <select id="targetPaletteSelect" inputmode="none" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid var(--border); border-radius:6px; background:#1f2937; color:#fff;"></select>
+            <input type="text" id="manageCode" placeholder="Code Couleur (ex: RAL 9001)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <input type="text" id="manageHex" placeholder="Couleur HEX (ex: #FDFBF7)" value="#cbd5e1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+                <button class="btn btn-save" style="flex:1;" onclick="saveSingleColorToFolder()">💾 Save / Update</button>
+                <button class="btn btn-danger" style="flex:1;" onclick="deleteSingleColorFromFolder()">🗑️ Supprimer</button>
+            </div>
+            <button class="btn btn-admin" style="width:100%; background-color:#c2410c;" onclick="removeDuplicateColors()">🧹 Supprimer les Doublons</button>
+        </div>
+        
+        <button class="collapsible-btn" onclick="toggleCollapse('syncGitForm')">📂 Sychroniser Nuanciers (Toutes les Couleurs) <span>▼</span></button>
+        <div id="syncGitForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
+            <p style="font-size:11px; color:#9ca3af; margin-top:0;">Forcer la synchronisation des palettes complètes depuis GitHub vers l'application.</p>
+            <button class="btn btn-save" style="background-color:#2563eb; width:100%;" onclick="forceSyncPalettesAdmin()">🔄 Forcer la Sychronisation Complète</button>
+            <div id="syncAdminStatus" style="margin-top:10px; font-size:12px; color:#10b981; font-weight:bold; display:none;"></div>
+        </div>
+
+        <button class="collapsible-btn" onclick="toggleCollapse('backupGitForm')">💾 Créer / Restaurer Backup (Git) <span>▼</span></button>
+        <div id="backupGitForm" class="collapsible-content" style="border:1px dashed #10b981;">
+            <p style="font-size:12px; margin-top:0;">Sauvegardez l'état actuel ou restaurez une version antérieure.</p>
+            
+            <label style="font-size:11px; color:#9ca3af; margin-top:8px;">🔑 Token Access GitHub (ghp_...) :</label>
+            <div style="display:flex; gap:6px; margin-bottom:12px;">
+                <input type="password" id="ghTokenInput" placeholder="Collez votre Token ici..." style="flex:1;" inputmode="none" onfocus="this.blur();">
+                <button class="btn btn-guide" style="width:auto; padding:0 12px; margin:0;" onclick="openTokenModal()">Manager</button>
+            </div>
+
+            <button class="btn btn-save" style="background-color:#059669; width:100%; margin-bottom:12px;" onclick="createSystemBackup()">📦 Créer un Backup (Version Actuelle)</button>
+            
+            <div style="background:#111827; padding:10px; border-radius:6px; border:1px solid var(--border);">
+                <label style="margin-top:0;">📥 Piste des Backups Disponibles :</label>
+                <div style="display:flex; gap:6px; margin-bottom:8px;">
+                    <button class="btn btn-admin-discrete" style="flex:1;" onclick="fetchBackupList()">🔄 Charger la liste GitHub</button>
+                </div>
+                <select id="backupListSelect" style="width:100%; padding:10px; border-radius:6px; background:#1f2937; color:#fff; border:1px solid var(--border); margin-bottom:8px;">
+                    <option value="">-- Sélectionnez un backup --</option>
+                </select>
+                <button class="btn btn-save" style="background-color:#0284c7; width:100%; padding:10px; font-size:12px;" onclick="restoreSystemBackup()">⚠️ Restaurer le Backup Sélectionné</button>
+            </div>
+            <div id="backupAdminStatus" style="margin-top:10px; font-size:12px; font-weight:bold; display:none;"></div>
+        </div>
+
+        <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="lockAdminPanel()">🔒 Verrouiller le Panneau Admin</button>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+        <button class="refresh-btn-discrete" onclick="clearSystemCache()">🔄 Vider Cache</button>
+    </div>
+
+    <div class="app-version-footer">
+        <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.19</span></div>
+    </div>
+</div>
+
+<!-- MODALS SECONDAIRES -->
+<div id="historyModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📜 Historique du Jour (06:00 - 19:00)</h3>
+            <button class="btn-close-modal" onclick="closeHistoryModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activités et modifications enregistrées aujourd'hui :</p>
+        <div id="historyLogsList" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée.</div>
+        </div>
+    </div>
+</div>
+
+<div id="collabModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>👥 Notifications d'Équipe</h3>
+            <button class="btn-close-modal" onclick="closeCollabModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:#9ca3af; margin-top:0;">Activité de l'équipe :</p>
+        
+        <div id="acceptAllContainer" style="display:none; margin-bottom: 10px;">
+            <button class="btn btn-save" style="background-color: var(--accent); padding: 8px; font-size: 12px;" onclick="acceptAllCollabUpdates()">⚡ Tout accepter d'un coup</button>
+        </div>
+
+        <div id="collabNotificationsList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune nouvelle modification.</div>
+        </div>
+    </div>
+</div>
+
+<div id="onlineUsersModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>🟢 Utilisateurs Connectés en Ligne</h3>
+            <button class="btn-close-modal" onclick="document.getElementById('onlineUsersModal').style.display='none'">✕</button>
+        </div>
+        <div id="onlineUsersModalList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+            <div style="text-align:center; padding:15px; color:#9ca3af;">Chargement...</div>
+        </div>
+    </div>
+</div>
+
+<div id="teinteurJobsModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; z-index: 99999999; background: #0f172a; padding: 16px; box-sizing: border-box;">
+    <div style="position:sticky; top:0; background:#0f172a; z-index:10; padding-bottom:12px; border-bottom:2px solid var(--border); margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+                <h2 style="margin:0; color:#fff; font-size:18px; text-transform:uppercase; letter-spacing:1px;">📋 FILE D'ATTENTE - TEINTEUR</h2>
+                <p style="margin:2px 0 0 0; color:#9ca3af; font-size:11px;">Tableau de bord des commandes en temps réel</p>
+            </div>
+            <button class="btn-close-modal" style="font-size: 12px; font-weight:bold; padding: 8px 14px; background:#1e293b; border-radius:8px; border:1px solid var(--border); color:#fff; cursor:pointer;" onclick="closeTeinteurJobsModal()">✕ Fermer</button>
+        </div>
+        <button id="kdsInnerAlarmBtn" style="width: 100%; display: block; font-size: 14px; font-weight:900; padding: 10px; background:var(--danger); border-radius:8px; border:none; color:#fff; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5); text-transform:uppercase; letter-spacing: 1px;" onclick="triggerTeinteurAlarm()">❗ NOUVELLE ALARME</button>
+    </div>
+    <div id="teinteurJobsList">
+        <div style="text-align:center; padding:20px; color:#9ca3af; font-size:14px; grid-column: 1 / -1;">Aucune commande en cours.</div>
+    </div>
+</div>
+
+<div id="forcedUpdateModal">
+    <div class="modal-content" style="text-align:center; border: 2px solid var(--accent);">
+        <h3 style="color:var(--accent); margin-top:0; font-size:18px;">🚀 Mise à jour système disponible !</h3>
+        <p style="font-size:13px; color:#9ca3af;">L'administrateur a publié une nouvelle version de l'application.</p>
+        <div style="background:#111827; padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:14px; text-align:left;">
+            <p style="font-size:12px; font-weight:bold; color:#10b981; margin:0 0 6px 0;">Détails des nouveautés :</p>
+            <p id="forcedUpdateText" style="font-size:12px; color:#f3f4f6; margin:0; line-height:1.4;">Chargement...</p>
+        </div>
+        <button class="btn btn-save" style="width:100%; padding:14px; font-size:14px; background-color:var(--accent);" onclick="applyForcedUpdate()">Mettre à jour & Redémarrer</button>
+    </div>
+</div>
+
+<div id="tokenModalOverlay" class="modal-overlay">
+    <div class="modal-content" style="text-align:center;">
+        <div class="modal-header">
+            <h3>🔑 API Token GitHub Manager</h3>
+            <button class="btn-close-modal" onclick="closeTokenModal()">✕</button>
+        </div>
+        <a href="https://github.com/settings/tokens/new?description=La-Centrale-App&scopes=repo" target="_blank" class="btn btn-save" style="display:block; text-decoration:none; margin-bottom:12px; background-color:#0284c7;">🔗 Générer le Token GitHub</a>
+        <input type="text" id="modalTokenInput" placeholder="Collez votre ghp_... ici" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <button class="btn btn-save" onclick="saveTokenFromModal()">💾 Enregistrer</button>
+    </div>
+</div>
+
+<div id="editModalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalEditTitle">Modifier les bases</h3>
+            <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
+        </div>
+        <input type="hidden" id="fullEditIndex">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; margin-top: 10px;">
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Trimetal</label>
+                <input type="text" id="editBaseTrimetal" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Herbol</label>
+                <input type="text" id="editBaseHerbol" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Sikkens</label>
+                <input type="text" id="editBaseSikkens" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <label class="section-label" style="margin: 0 0 6px 0;">Unikalo</label>
+                <input type="text" id="editBaseUnikalo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #111827; color: #fff; font-size: 13px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            </div>
+        </div>
+
+        <button class="btn btn-save" onclick="saveFullEdit()">Enregistrer les modifications</button>
+    </div>
+</div>
+
+<!-- CLAVIER VIRTUEL AZERTY ALL-CAPS FIXE -->
+<div class="virtual-keyboard" id="virtualKeyboard">
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('1', this)">1</div>
+        <div class="vk-key" onclick="vKey('2', this)">2</div>
+        <div class="vk-key" onclick="vKey('3', this)">3</div>
+        <div class="vk-key" onclick="vKey('4', this)">4</div>
+        <div class="vk-key" onclick="vKey('5', this)">5</div>
+        <div class="vk-key" onclick="vKey('6', this)">6</div>
+        <div class="vk-key" onclick="vKey('7', this)">7</div>
+        <div class="vk-key" onclick="vKey('8', this)">8</div>
+        <div class="vk-key" onclick="vKey('9', this)">9</div>
+        <div class="vk-key" onclick="vKey('0', this)">0</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('A', this)">A</div><div class="vk-key" onclick="vKey('Z', this)">Z</div><div class="vk-key" onclick="vKey('E', this)">E</div><div class="vk-key" onclick="vKey('R', this)">R</div><div class="vk-key" onclick="vKey('T', this)">T</div><div class="vk-key" onclick="vKey('Y', this)">Y</div><div class="vk-key" onclick="vKey('U', this)">U</div><div class="vk-key" onclick="vKey('I', this)">I</div><div class="vk-key" onclick="vKey('O', this)">O</div><div class="vk-key" onclick="vKey('P', this)">P</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('Q', this)">Q</div><div class="vk-key" onclick="vKey('S', this)">S</div><div class="vk-key" onclick="vKey('D', this)">D</div><div class="vk-key" onclick="vKey('F', this)">F</div><div class="vk-key" onclick="vKey('G', this)">G</div><div class="vk-key" onclick="vKey('H', this)">H</div><div class="vk-key" onclick="vKey('J', this)">J</div><div class="vk-key" onclick="vKey('K', this)">K</div><div class="vk-key" onclick="vKey('L', this)">L</div><div class="vk-key" onclick="vKey('M', this)">M</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" style="visibility:hidden; flex:1;"></div>
+        <div class="vk-key" onclick="vKey('W', this)">W</div><div class="vk-key" onclick="vKey('X', this)">X</div><div class="vk-key" onclick="vKey('C', this)">C</div><div class="vk-key" onclick="vKey('V', this)">V</div><div class="vk-key" onclick="vKey('B', this)">B</div><div class="vk-key" onclick="vKey('N', this)">N</div><div class="vk-key" onclick="vKey('\'', this)">'</div>
+        <div class="vk-key vk-wide" 
+             onmousedown="startVDel(this, event)" onmouseup="stopVDel(event)" onmouseleave="stopVDel(event)" 
+             ontouchstart="startVDel(this, event)" ontouchend="stopVDel(event)" ontouchcancel="stopVDel(event)">⌫</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" style="visibility:hidden; flex:1.5;"></div>
+        <div class="vk-key" onclick="vKey(',', this)">,</div>
+        <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
+        <div class="vk-key" onclick="vKey('.', this)">.</div>
+        <div class="vk-key vk-close" onclick="vClose()" style="flex:1.5; background:#10b981;">↵</div>
+    </div>
+</div>
+
+<script>
+    const CURRENT_APP_VERSION = "v1.19"; 
+    const GITHUB_REPO = "mateiantonio28-sketch/LaCentral";
+    const GITHUB_FILE_PATH = "index.html";
+    const DEFAULT_GITHUB_TOKEN = ""; 
+
+    const BRANDS_DATA = {
+        "Trimetal": { bases: ["AW", "AC"], sizes: ["0.5L", "1L", "2.5L", "5L", "10L", "12.5L"] },
+        "Herbol": { bases: ["DU1", "DU3", "LA1", "LA3", "LA4", "LU1", "LU3", "LU4"], sizes: ["1L", "2.5L", "5L", "12.5L"] },
+        "Sikkens": { bases: ["W05", "N00"], sizes: ["1L", "2.5L", "5L", "10L"] },
+        "Unikalo": { bases: ["BLANC", "B+", "C", "D"], sizes: ["0.75L", "3L", "12L", "16kg", "20kg", "22kg"] },
+        "Levis": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L", "10L"] },
+        "Unikatex": { bases: [], sizes: ["22kg"] },
+        "Eurotex": { bases: [], sizes: ["22kg"] },
+        "Mathys": { bases: [], sizes: ["1L", "5L", "10L", "20L"] },
+        "Rust-oleum": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L"] },
+        "Libert": { bases: [], sizes: ["0.5L", "1L", "2.5L"] }
+    };
+
+    let filesToSync = JSON.parse(localStorage.getItem('central_synced_files')) || ['ral.json', 'ncs.json', '5051.json', 'flamant.json', 'farrowball.json'];
+    document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
+    if(document.getElementById('loginVersionDisplay')) document.getElementById('loginVersionDisplay').textContent = "Version " + CURRENT_APP_VERSION;
+
+    let isAuthenticated = false;
+    let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
+    let currentAppSection = localStorage.getItem('central_app_section') || null;
+
+    let activeVirtualInput = null;
+    let learnedLocations = {}; 
+    let onlineUsersMap = {};
+    let errorRecordsList = [];
+    let resaleRecordsList = [];
+    let selectedErrorDateFilter = null;
+    let activeTeinteurJobs = [];
+
+    let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
+
+    function initVolumeUI() {
+        const volSelect = document.getElementById('appVolumeSelect');
+        if(volSelect) volSelect.value = appVolume === 0 ? "0" : appVolume.toString();
+    }
+
+    window.changeAppVolume = function() {
+        const volSelect = document.getElementById('appVolumeSelect');
+        if (volSelect) {
+            appVolume = parseFloat(volSelect.value);
+            localStorage.setItem('central_app_volume', appVolume.toString());
+            if(appVolume > 0) playTestBeep();
+        }
+    }
+
+    function playTestBeep() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.3 * appVolume, audioCtx.currentTime);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+        } catch(e) {}
+    }
+
+    let isComputerMode = localStorage.getItem('central_computer_mode') === 'true';
+
+    window.toggleComputerMode = function() {
+        isComputerMode = !isComputerMode;
+        localStorage.setItem('central_computer_mode', isComputerMode);
+        applyComputerMode();
+        showAlert(isComputerMode ? "💻 Mode Ordinateur activé !" : "📱 Mode Tactile activé !", true);
+    }
+
+    function applyComputerMode() {
+        const btn = document.getElementById('btnComputerMode');
+        const loginBtn = document.getElementById('loginBtnComputerMode');
+        if (btn) {
+            btn.innerHTML = isComputerMode ? '💻 Mode PC' : '📱 Mode Tactile';
+            btn.style.backgroundColor = isComputerMode ? 'var(--accent)' : '#1e293b';
+        }
+        if (loginBtn) {
+            loginBtn.innerHTML = isComputerMode ? '💻 Mode PC' : '📱 Tactile';
+            loginBtn.style.backgroundColor = isComputerMode ? 'var(--accent)' : '#1f2937';
+        }
+
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(el => {
+            if (isComputerMode) {
+                if (el.hasAttribute('onfocus') && !el.dataset.origFocus) {
+                    el.dataset.origFocus = el.getAttribute('onfocus');
+                }
+                el.removeAttribute('onfocus');
+                el.onfocus = null;
+                el.removeAttribute('inputmode');
+                el.addEventListener('focus', handleNormalFocus);
+            } else {
+                if (el.dataset.origFocus) {
+                    el.setAttribute('onfocus', el.dataset.origFocus);
+                    el.onfocus = new Function(el.dataset.origFocus);
+                }
+                el.setAttribute('inputmode', 'none');
+                el.removeEventListener('focus', handleNormalFocus);
+            }
+        });
+        if (isComputerMode) vClose();
+    }
+
+    function handleNormalFocus(e) {
+        document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
+        e.target.classList.add('active-input');
+        activeVirtualInput = e.target;
+    }
+
+    window.flashKey = function(el) {
+        if (!el) return;
+        el.classList.add('key-flash');
+        setTimeout(() => el.classList.remove('key-flash'), 30);
+    };
+
+    setTimeout(() => {
+        document.querySelectorAll('.vk-key:not(.vk-optimized), .pin-key:not(.vk-optimized)').forEach(key => {
+            key.classList.add('vk-optimized');
+            key.addEventListener('touchstart', function(e) {
+                if (this.hasAttribute('onclick') && typeof isDeleting !== 'undefined' && !isDeleting && typeof isPinDeleting !== 'undefined' && !isPinDeleting) {
+                    e.preventDefault(); 
+                    this.click(); 
+                }
+            }, { passive: false });
+        });
+    }, 1500);
+
+    window.loginPinKey = function(val, el) {
+        if (el) flashKey(el);
+        const pinInput = document.getElementById('regPin');
+        if (!pinInput) return;
+        if (val === 'DEL') pinInput.value = pinInput.value.slice(0, -1);
+        else if (val === 'C') pinInput.value = '';
+        else if (pinInput.value.length < 20) pinInput.value += val;
+    }
+
+    window.checkLoginEnter = function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); handleUserAuth(); }
+    }
+
+    let pinDelInterval = null;
+    let pinDelTimeout = null;
+    let isPinDeleting = false;
+
+    window.startPinDel = function(el, e) {
+        if(e && e.cancelable) e.preventDefault();
+        if(isPinDeleting) return;
+        isPinDeleting = true;
+        loginPinKey('DEL', el); 
+        pinDelTimeout = setTimeout(() => {
+            pinDelInterval = setInterval(() => {
+                const pinInput = document.getElementById('regPin');
+                if (pinInput && pinInput.value.length > 0) loginPinKey('DEL', el);
+                else stopPinDel(); 
+            }, 70); 
+        }, 350); 
+    }
+
+    window.stopPinDel = function(e) {
+        clearTimeout(pinDelTimeout);
+        clearInterval(pinDelInterval);
+        isPinDeleting = false;
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!isComputerMode && activeVirtualInput) {
+            const vk = document.getElementById('virtualKeyboard');
+            if (!vk.contains(e.target) && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.closest('.vk-key')) {
+                vClose();
+            }
+        }
+    });
+
+    let vkTouchStartY = 0;
+    document.getElementById('virtualKeyboard').addEventListener('touchstart', e => {
+        vkTouchStartY = e.touches[0].clientY;
+    }, {passive: true});
+    
+    document.getElementById('virtualKeyboard').addEventListener('touchmove', e => {
+        let touchEndY = e.touches[0].clientY;
+        if (touchEndY - vkTouchStartY > 40) vClose();
+    }, {passive: true});
+
+    window.openVirtualKeyboard = function(inputEl) {
+        if(isComputerMode) return; 
+        document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
+        inputEl.classList.add('active-input');
+        activeVirtualInput = inputEl;
+        document.getElementById('virtualKeyboard').classList.add('active');
+    }
+
+    window.vKey = function(char, el) {
+        if (el) flashKey(el);
+        if (!activeVirtualInput) return;
+        activeVirtualInput.value += char;
+        activeVirtualInput.dispatchEvent(new Event('input')); 
+    }
+
+    let delInterval = null;
+    let delTimeout = null;
+    let isDeleting = false;
+
+    window.startVDel = function(el, e) {
+        if(e && e.cancelable) e.preventDefault(); 
+        if(isDeleting) return;
+        isDeleting = true;
+        vDel(el); 
+        delTimeout = setTimeout(() => {
+            delInterval = setInterval(() => {
+                if (activeVirtualInput && activeVirtualInput.value.length > 0) vDel(el);
+                else stopVDel(); 
+            }, 70); 
+        }, 350); 
+    }
+
+    window.stopVDel = function(e) {
+        clearTimeout(delTimeout);
+        clearInterval(delInterval);
+        isDeleting = false;
+    }
+
+    window.vDel = function(el) {
+        if (el) flashKey(el);
+        if (!activeVirtualInput) return;
+        activeVirtualInput.value = activeVirtualInput.value.slice(0, -1);
+        activeVirtualInput.dispatchEvent(new Event('input'));
+    }
+
+    window.vClose = function() {
+        document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
+        document.getElementById('virtualKeyboard').classList.remove('active');
+        if (activeVirtualInput) { activeVirtualInput.blur(); activeVirtualInput = null; }
+    }
+
+    window.checkCustomBase = function(prefix) {
+        const sel = document.getElementById(prefix + 'Base');
+        const cust = document.getElementById(prefix + 'BaseCustom');
+        if (sel && cust) {
+            if (sel.value === 'AUTRE') cust.style.display = 'block';
+            else { cust.style.display = 'none'; cust.value = ''; }
+        }
+    }
+
+    window.updateErrorDropdowns = function() {
+        const brand = document.getElementById('errBrand').value;
+        const baseSelect = document.getElementById('errBase');
+        const sizeSelect = document.getElementById('errBucketSize');
+        baseSelect.innerHTML = '<option value="">Base (Optionnel)</option>';
+        sizeSelect.innerHTML = '<option value="">Capacité (L / KG)</option>';
+        if (BRANDS_DATA[brand]) {
+            BRANDS_DATA[brand].bases.forEach(b => baseSelect.innerHTML += `<option value="${b}">${b}</option>`);
+            BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
+        }
+        baseSelect.innerHTML += `<option value="AUTRE">➕ Autre (Manuelle)...</option>`;
+        checkCustomBase('err');
+    }
+
+    window.toggleCollapse = function(id) {
+        const content = document.getElementById(id);
+        if(content.style.display === "block") content.style.display = "none";
+        else {
+            document.querySelectorAll('.collapsible-content').forEach(c => c.style.display = 'none');
+            content.style.display = "block";
+        }
+    }
+
+    window.toggleMainNuancier = function() {
+        const content = document.getElementById('mainNuancierContent');
+        content.style.display = (content.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Initialisation sélecteur mois/année au chargement
+    window.addEventListener('DOMContentLoaded', () => {
+        initVolumeUI();
+        const now = new Date();
+        const mSel = document.getElementById('errorMonthSelect');
+        const ySel = document.getElementById('errorYearSelect');
+        if(mSel) mSel.value = now.getMonth();
+        if(ySel) ySel.value = now.getFullYear();
+    });
+</script>
+</body>
+</html>
