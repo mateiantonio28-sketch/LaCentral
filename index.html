@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA MANIFEST -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    
+    <!-- SYSTEME ANTI-CACHE FORCE -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("central_theme")||"nocturne");}catch(e){}</script>
+    <title>La Centrale ProShop</title>
+    
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    <meta name="theme-color" content="#0f172a">
+
+    <!-- FIREBASE SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove, get, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtphQCRQRkBA6gcb4nqTKhmf8ti1XH2w",
+            authDomain: "lacentral-b79a9.firebaseapp.com",
+            databaseURL: "https://lacentral-b79a9-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "lacentral-b79a9",
+            storageBucket: "lacentral-b79a9.appspot.com",
+            messagingSenderId: "187334069854",
+            appId: "1:187334069854:web:1892c8a3fb826341c52ecf",
+            measurementId: "G-QL335MPN5L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.FB_db = db;
+        window.FB_ref = ref;
+        window.FB_set = set;
+        window.FB_onValue = onValue;
+        window.FB_push = push;
+        window.FB_remove = remove;
+        window.FB_get = get;
+        window.FB_onDisconnect = onDisconnect;
+
+        isSupported().then((supported) => {
+            if (supported) {
+                window.FB_messaging = getMessaging(app);
+                window.FB_getToken = getToken;
+                
+                onMessage(window.FB_messaging, (payload) => {
+                    if (payload && payload.notification) {
+                        if (typeof window.playPersistentAlarm === 'function') {
+                            window.playPersistentAlarm();
+                        }
+                    }
+                });
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./firebase-messaging-sw.js').catch((err) => {});
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #f8fafc;
+            --accent: #3b82f6;
+            --accent-d: #1d4ed8;
+            --accent-text: #60a5fa;
+            --ai-color: #8b5cf6;
+            --bg: #0f172a;
+            --panel-bg: #1e293b;
+            --surface-2: #0f172a;
+            --surface-3: #334155;
+            --border: #334155;
+            --text: #f8fafc;
+            --text-2: #cbd5e1;
+            --muted: #94a3b8;
+            --danger: #ef4444;
+            --danger-d: #b91c1c;
+            --danger-text: #fca5a5;
+            --success: #16a34a;
+            --ok: #10b981;
+            --warning: #f59e0b;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        html[data-theme="nocturne"] {
+            --bg: #0b0f19;
+            --panel-bg: #151d2a;
+            --surface-2: #0f172a;
+            --surface-3: #222e3e;
+            --border: #2a384c;
+            --text: #f1f5f9;
+            --text-2: #cbd5e1;
+            --muted: #8092a7;
+            --primary: #ffffff;
+            --accent: #3b82f6;
+            --accent-d: #2563eb;
+            --accent-text: #93c5fd;
+            --danger: #dc2626;
+            --danger-d: #991b1b;
+            --danger-text: #fca5a5;
+            --ok: #059669;
+            --success: #16a34a;
+            --warning: #d97706;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            color-scheme: dark;
+        }
+
+        html[data-theme="clair"] {
+            --bg: #e2e8f0;
+            --panel-bg: #ffffff;
+            --surface-2: #f1f5f9;
+            --surface-3: #cbd5e1;
+            --border: #94a3b8;
+            --text: #0f172a;
+            --text-2: #334155;
+            --muted: #64748b;
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-d: #1d4ed8;
+            --accent-text: #1e40af;
+            --danger: #dc2626;
+            --danger-d: #991b1b;
+            --danger-text: #7f1d1d;
+            --ok: #059669;
+            --success: #16a34a;
+            --warning: #b45309;
+            --shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+            color-scheme: light;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+            touch-action: manipulation; 
+        }
+        
+        body { 
+            background-color: var(--bg); 
+            margin: 0; 
+            padding: 16px; 
+            color: var(--text); 
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .svg-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .container { max-width: 720px; margin: 0 auto; display: none; }
+
+        .lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 99999; display: flex;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .lock-card {
+            background: var(--panel-bg); border: 1.5px solid var(--border); border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 380px; text-align: center; box-shadow: var(--shadow);
+            position: relative;
+        }
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            margin: 0 0 2px 0;
+            text-transform: uppercase;
+        }
+        .welcome-user {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        .lock-card h2 { margin: 0 0 4px 0; color: var(--primary); font-size: 18px; text-transform: uppercase; }
+        .lock-card p { margin: 0 0 16px 0; font-size: 11px; color: var(--muted); line-height: 1.4; }
+        .lock-card input, .lock-card select {
+            width: 100%; padding: 12px; margin-bottom: 10px;
+            border: 1.5px solid var(--border); border-radius: 8px;
+            background: var(--surface-2); color: var(--text); font-size: 14px; text-align: center;
+        }
+
+        input, select, textarea {
+            background: var(--surface-2);
+            color: var(--text) !important;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+        }
+
+        input.active-input, textarea.active-input {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .key-flash {
+            background-color: var(--accent) !important;
+            transform: scale(0.92);
+            transition: transform 0.02s ease-out, background-color 0.02s !important;
+        }
+
+        .pin-key {
+            background: var(--surface-3); color: var(--text); border: 1.5px solid var(--border);
+            border-radius: 6px; padding: 12px 0; font-size: 16px; font-weight: bold;
+            cursor: pointer; text-align: center; user-select: none;
+            transition: background 0.02s, transform 0.02s;
+            will-change: transform, background-color;
+        }
+        
+        .vk-key {
+            background: var(--surface-3); color: var(--text); border: 1.5px solid var(--border);
+            border-radius: 6px; padding: 12px 0; font-size: 15px; font-weight: bold;
+            cursor: pointer; flex: 1; text-align: center; user-select: none;
+            transition: background 0.02s, transform 0.02s;
+            will-change: transform, background-color;
+        }
+
+        .online-dot {
+            display: inline-block; width: 10px; height: 10px;
+            background-color: var(--ok); border-radius: 50%;
+            box-shadow: 0 0 6px var(--ok);
+            animation: pulse-green 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
+
+        .section-selector-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 99998; display: none;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .section-selector-card {
+            background: var(--panel-bg); border: 1.5px solid var(--border); border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: var(--shadow);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .section-btn {
+            background: var(--surface-3); color: #ffffff !important; border: 1.5px solid var(--border);
+            padding: 14px; border-radius: 8px; font-size: 14px; font-weight: bold;
+            cursor: pointer; width: 100%; margin-bottom: 10px; transition: background 0.2s; position: relative;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .section-btn:hover { background: var(--accent); }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: #ffffff; border-radius: 12px; padding: 3px 8px; font-size: 11px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .top-left-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        
+        .collab-btn { background-color: var(--panel-bg); border: 1.5px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; position: relative; display: inline-flex; align-items: center; gap: 6px; }
+
+        .app-volume-select {
+            background-color: var(--panel-bg); color: var(--text); border: 1.5px solid var(--border);
+            border-radius: 6px; padding: 6px 8px; font-size: 12px; font-weight: bold; cursor: pointer;
+            appearance: none; -webkit-appearance: none; text-align: center;
+        }
+
+        .btn-back-sections { background: var(--accent); color: #ffffff !important; border: 1.5px solid var(--accent-d); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow); }
+
+        /* ECRAN PARTAGE (MODE PC) */
+        #mainContainer.split-active { max-width: 1500px; }
+        @media (min-width: 900px) {
+            #sectionsSplitWrapper.split-on { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+            #sectionsSplitWrapper.split-on > .split-col { max-height: calc(100vh - 40px); overflow-y: auto; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px; }
+        }
+
+        .admin-badge-inline {
+            background: var(--danger); color: #ffffff; font-size: 10px; padding: 2px 6px;
+            border-radius: 10px; font-weight: bold; margin-left: 4px; display: none;
+        }
+
+        .header { text-align: center; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
+        .header h1 { margin: 0; font-size: 22px; color: var(--primary); text-transform: uppercase; }
+        .header p { margin: 4px 0 0 0; font-size: 12px; color: var(--muted); }
+
+        .live-timer-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--panel-bg); border: 1.5px solid var(--border); border-radius: 8px;
+            padding: 8px 12px; margin-top: 10px; font-size: 11px; color: var(--muted);
+        }
+
+        .search-box {
+            width: 100%; padding: 14px; font-size: 16px; font-weight: 600;
+            border: 1.5px solid var(--border); border-radius: 10px; outline: none;
+            background: var(--panel-bg); color: var(--text); transition: border-color 0.2s;
+        }
+        .search-box:focus { border-color: var(--accent); }
+
+        .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px 2px; }
+
+        .actions-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .btn { 
+            flex: 1; min-width: 110px; padding: 10px; border: none; border-radius: 8px; 
+            font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; 
+            transition: background 0.2s ease, transform 0.1s; display: inline-flex; 
+            align-items: center; justify-content: center; gap: 6px; color: #ffffff !important;
+        }
+        .btn-admin-discrete { background: transparent; border: 1.5px solid var(--border); color: var(--text); padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-admin-discrete:hover { border-color: var(--accent); }
+        .refresh-btn-discrete { background: transparent; border: 1.5px solid var(--border); color: var(--danger); padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+
+        .btn-ai { background-color: var(--ai-color); color: #ffffff !important; }
+        .btn-guide { background-color: var(--accent-d); color: #ffffff !important; }
+        .btn-danger { background-color: var(--danger) !important; color: #ffffff !important; }
+        .btn-logout { background-color: var(--danger-d) !important; color: #ffffff !important; font-size: 11px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-back { background-color: transparent; border: 1.5px solid var(--border); color: var(--muted); font-size: 12px; padding: 8px 12px; cursor: pointer; border-radius: 6px; margin-bottom: 12px; }
+
+        .panel {
+            display: none; background: var(--panel-bg); padding: 20px; border-radius: 12px;
+            margin-bottom: 16px; border: 1.5px solid var(--border); box-shadow: var(--shadow);
+        }
+        .panel h3 { margin-top: 0; font-size: 15px; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .panel label { font-size: 12px; color: var(--muted); font-weight: bold; display: block; margin-bottom: 4px; margin-top: 10px; }
+        .panel input, .panel select, .panel textarea {
+            width: 100%; padding: 12px; margin-bottom: 4px; border: 1.5px solid var(--border);
+            border-radius: 8px; font-size: 14px; background: var(--surface-2); color: var(--text);
+        }
+        .btn-save { background-color: var(--success) !important; color: #ffffff !important; width: 100%; padding: 14px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; font-size: 15px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; }
+
+        #authPanel {
+            position: fixed; top: 15vh; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; z-index: 99999999; background: var(--panel-bg);
+            border: 2px solid var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            border-radius: 12px;
+        }
+
+        .collapsible-btn {
+            width: 100%; text-align: left; background-color: var(--surface-3); color: var(--text);
+            padding: 12px; border: 1.5px solid var(--border); border-radius: 6px; 
+            font-size: 13px; font-weight: bold; cursor: pointer; margin-bottom: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .collapsible-content {
+            display: none; padding: 12px; background: var(--surface-2); 
+            border: 1.5px solid var(--border); border-radius: 6px; margin-bottom: 14px;
+        }
+
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px);
+            z-index: 99999; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-content {
+            background: var(--panel-bg); border: 1.5px solid var(--border); border-radius: 12px;
+            width: 100%; max-width: 480px; padding: 22px; box-shadow: var(--shadow);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; }
+        .modal-header h3 { margin: 0; font-size: 16px; color: var(--primary); text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .btn-close-modal { background: none; border: none; color: var(--muted); font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        .card {
+            background: var(--surface-2); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+            display: flex; flex-direction: column; gap: 8px; border: 1.5px solid var(--border); border-left: 5px solid var(--accent);
+        }
+        .card-header { display: flex; align-items: center; justify-content: space-between; }
+        .card-title-zone { display: flex; align-items: center; gap: 10px; }
+        .color-swatch-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); flex-shrink: 0; box-shadow: inset 0 0 4px rgba(0,0,0,0.5); }
+        .color-code { font-size: 16px; font-weight: 700; color: var(--primary); }
+        .btn-edit { background: var(--surface-3); border: 1px solid var(--border); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; color: var(--text); }
+
+        .app-version-footer { text-align: center; font-size: 11px; color: var(--muted); margin-top: 24px; padding-top: 10px; border-top: 1px dashed var(--border); margin-bottom: 80px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .alert-box { display: none; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; font-weight: 600; text-align: center; }
+        .alert-warning { background-color: var(--danger-d); color: #ffffff; border: 1.5px solid var(--danger); }
+        .alert-success { background-color: var(--ok); color: #ffffff; border: 1.5px solid var(--success); }
+
+        .stock-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+        .stock-tab-btn { flex: 1; padding: 10px; border: 1.5px solid var(--border); background: var(--surface-2); color: var(--muted); font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .stock-tab-btn.active { background: var(--accent); color: #ffffff !important; border-color: var(--accent); }
+
+        /* Style Calendar Mini */
+        .mini-calendar { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 14px; }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; font-size: 12px; }
+        .cal-day-name { color: var(--muted); font-weight: bold; padding-bottom: 4px; }
+        .cal-cell { padding: 8px 0; background: var(--panel-bg); border-radius: 6px; color: var(--text); cursor: pointer; transition: background 0.15s; border: 1px solid var(--border); }
+        .cal-cell:hover { background: var(--surface-3); }
+        .cal-cell.has-error { background: var(--danger-d); color: #ffffff !important; font-weight: bold; border: 1.5px solid var(--danger); }
+        .cal-cell.selected { border: 2px solid var(--accent); }
+        .cal-nav-btn { background: var(--panel-bg); border: 1.5px solid var(--border); color: var(--primary); border-radius: 6px; width: 34px; height: 30px; font-size: 14px; font-weight: bold; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+
+        /* CLAVIER VIRTUEL FLUIDE */
+        .virtual-keyboard {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--panel-bg); padding: 10px 4px 20px 4px; z-index: 100000;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.9); border-top: 2px solid var(--border);
+            user-select: none; transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            visibility: hidden; display: block; 
+        }
+        .virtual-keyboard.active { transform: translateY(0); visibility: visible; }
+        .vk-row { display: flex; justify-content: center; margin-bottom: 6px; gap: 4px; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .vk-key {
+            background: var(--surface-3); color: var(--text); border: 1.5px solid var(--border);
+            border-radius: 6px; padding: 12px 0; font-size: 15px; font-weight: bold;
+            cursor: pointer; flex: 1; text-align: center; user-select: none;
+            transition: background 0.1s, transform 0.1s;
+        }
+        .vk-key.vk-space { flex: 4; font-size: 12px; background: var(--surface-3); }
+        .vk-key.vk-wide { flex: 1.5; font-size: 11px; background: var(--danger-d); color: #ffffff; }
+
+        #adminUsersList > div {
+            display: flex !important; flex-direction: row !important; flex-wrap: wrap !important;
+            align-items: center !important; justify-content: space-between !important;
+            gap: 8px !important; padding: 10px 14px !important; border: 1.5px solid var(--border);
+            border-radius: 8px; margin-bottom: 8px; background: var(--surface-2);
+        }
+        #adminUsersList button {
+            padding: 6px 12px !important; font-size: 11px !important; border-radius: 6px !important;
+            font-weight: 600 !important; color: #ffffff !important; border: none !important; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- SVG ICON SYMBOLS TEMPLATE -->
+<svg style="display:none;">
+    <defs>
+        <g id="icon-moon"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4C12.92 3.04 12.46 3 12 3z"/></g>
+        <g id="icon-sun"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></g>
+        <g id="icon-phone"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></g>
+        <g id="icon-lock"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></g>
+        <g id="icon-gear"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></g>
+        <g id="icon-compass"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.19 12.19L6 18l3.81-8.19L18 6l-3.81 8.19zM12 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/></g>
+        <g id="icon-box"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4c0 1.66-1.34 3-3 3s-3-1.34-3-3H5V5h14v6z"/></g>
+        <g id="icon-refresh"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></g>
+        <g id="icon-alert"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></g>
+        <g id="icon-list"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></g>
+        <g id="icon-volume-high"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></g>
+        <g id="icon-volume-off"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></g>
+        <g id="icon-history"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></g>
+        <g id="icon-calendar"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></g>
+        <g id="icon-clock"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></g>
+        <g id="icon-send"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></g>
+        <g id="icon-plus"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></g>
+        <g id="icon-save"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></g>
+        <g id="icon-download"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></g>
+        <g id="icon-trash"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></g>
+        <g id="icon-users"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></g>
+        <g id="icon-back"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></g>
+        <g id="icon-pencil"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></g>
+    </defs>
+</svg>
+
+<div id="userLockScreen" class="lock-screen">
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000000;">
+        <button onclick="toggleComputerMode()" id="loginBtnComputerMode" style="background:var(--panel-bg); border:1.5px solid var(--border); color:var(--text); border-radius:8px; padding:8px 12px; font-size:12px; font-weight:bold; cursor:pointer; box-shadow: var(--shadow); display:flex; align-items:center; gap:6px;">
+            <svg class="svg-icon"><use href="#icon-phone"></use></svg> Tactile
+        </button>
+    </div>
+
+    <div style="position:absolute; top:20px; left:20px; z-index:1000000;">
+        <select id="themeSelectLogin" class="app-volume-select theme-select" onchange="setTheme(this.value)" title="Thème de l'application">
+            <option value="nocturne">Nocturne</option>
+            <option value="clair">Clair</option>
+        </select>
+    </div>
+
+    <div class="lock-card">
+        <div class="welcome-title">BIENVENUE</div>
+        <div id="loginUserWelcome" class="welcome-user"></div>
+        <h2>La Centrale ProShop</h2>
+        <div id="loginVersionDisplay" style="font-size:11px; color:var(--accent); font-weight:bold; margin-top:-4px; margin-bottom:12px;"></div>
+        <p id="lockSubtitle">Connexion Utilisateur</p>
+        
+        <input type="text" id="regUser" placeholder="Nom d'utilisateur" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
+        <input type="password" id="regPin" placeholder="Code PIN ou Mot de passe" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)">
+        
+        <div class="login-pin-pad">
+            <div class="pin-key" onclick="loginPinKey('1', this)">1</div>
+            <div class="pin-key" onclick="loginPinKey('2', this)">2</div>
+            <div class="pin-key" onclick="loginPinKey('3', this)">3</div>
+            <div class="pin-key" onclick="loginPinKey('4', this)">4</div>
+            <div class="pin-key" onclick="loginPinKey('5', this)">5</div>
+            <div class="pin-key" onclick="loginPinKey('6', this)">6</div>
+            <div class="pin-key" onclick="loginPinKey('7', this)">7</div>
+            <div class="pin-key" onclick="loginPinKey('8', this)">8</div>
+            <div class="pin-key" onclick="loginPinKey('9', this)">9</div>
+            <div class="pin-key" onclick="loginPinKey('C', this)" style="background:var(--danger-d); color:#ffffff;">C</div>
+            <div class="pin-key" onclick="loginPinKey('0', this)">0</div>
+            <div class="pin-key" 
+                 onmousedown="startPinDel(this, event)" 
+                 onmouseup="stopPinDel(event)" 
+                 onmouseleave="stopPinDel(event)" 
+                 ontouchstart="startPinDel(this, event)" 
+                 ontouchend="stopPinDel(event)" 
+                 ontouchcancel="stopPinDel(event)" 
+                 style="background:var(--surface-3);">⌫</div>
+        </div>
+
+        <select id="regRole" style="display:none;">
+            <option value="Teinteur">Teinteur</option>
+            <option value="Vendeur">Vendeur</option>
+            <option value="Magasinier">Magasinier</option>
+            <option value="Responsable">Responsable</option>
+            <option value="Préparateur de commande">Préparateur de commande</option>
+        </select>
+
+        <button id="btnLogin" class="btn btn-save" onclick="loginAction()">Se connecter</button>
+        <button id="btnRegisterToggle" class="btn" style="background:transparent; color:var(--accent-text); border:1.5px solid var(--accent); margin-top:12px; font-size:12px;" onclick="showRegisterForm()">
+            <svg class="svg-icon"><use href="#icon-pencil"></use></svg> Créer un nouveau compte
+        </button>
+        
+        <button id="btnRegisterSubmit" class="btn btn-save" style="display:none; background-color:var(--ok) !important; margin-top:12px;" onclick="registerAction()">Envoyer la demande</button>
+        <button id="btnCancelRegister" class="btn" style="display:none; background:transparent; color:var(--muted); margin-top:8px; font-size:12px;" onclick="hideRegisterForm()">Annuler</button>
+
+        <button id="btnSwitchUser" class="btn" style="background:transparent; color:var(--danger); border:1.5px solid var(--danger-d); margin-top:12px; display:none; font-size:12px;" onclick="switchUserAccount()">
+            <svg class="svg-icon"><use href="#icon-refresh"></use></svg> Changer d'utilisateur (Déconnexion)
+        </button>
+    </div>
+</div>
+
+<div id="sectionSelectorModal" class="section-selector-overlay">
+    <div style="position:absolute; top:20px; left:20px; z-index:99999; display:flex; flex-direction:column; gap:8px;">
+        <button class="btn-admin-discrete" style="background:var(--panel-bg); color:var(--text); border:1.5px solid var(--border); padding:8px 12px; font-size:11px; border-radius:6px; cursor:pointer; box-shadow:var(--shadow);" onclick="openAdminAuth()">
+            <svg class="svg-icon"><use href="#icon-lock"></use></svg> Admin Panel <span id="btnAdminBadge" class="admin-badge-inline">0</span>
+        </button>
+        <button id="btnPatcherTool" style="display:none; background:var(--ai-color); color:#ffffff !important; border:none; padding:8px 12px; font-size:11px; border-radius:6px; cursor:pointer; box-shadow:var(--shadow);" onclick="window.open('tools-administrativ.html', '_blank')">
+            <svg class="svg-icon"><use href="#icon-gear"></use></svg> Smart Patcher
+        </button>
+    </div>
+    <button class="btn-logout" style="position:absolute; top:20px; right:20px; margin:0; z-index:99999; padding:10px 16px; font-size:12px; box-shadow:var(--shadow);" onclick="confirmLogout()">Déconnexion</button>
+    <div class="section-selector-card">
+        <h2 style="color:var(--primary); margin-top:0; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <svg class="svg-icon" style="width:22px; height:22px;"><use href="#icon-compass"></use></svg> Mode de travail
+        </h2>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">Sélectionnez votre espace d'activité</p>
+        
+        <button id="btnSecStock" class="section-btn" onclick="selectAppSection('Stock')" style="background-color:var(--accent-d);">
+            <svg class="svg-icon"><use href="#icon-box"></use></svg> Passer commande interne
+        </button>
+        <button id="btnSecRevendables" class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:var(--ok);">
+            <svg class="svg-icon"><use href="#icon-refresh"></use></svg> Teintes Re-vendables
+        </button>
+        <button id="btnSecErreurs" class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:var(--danger);">
+            <svg class="svg-icon"><use href="#icon-alert"></use></svg> Erreurs de Teinte
+        </button>
+        
+        <div id="btnSecAlarmsContainer" style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border);">
+            <button id="btnTeinteurAlarm" class="section-btn" style="background-color: transparent; color: var(--danger) !important; border: 2px solid var(--danger);" onclick="triggerTeinteurAlarm()">
+                <svg class="svg-icon"><use href="#icon-alert"></use></svg> ALARME TEINTEUR (Vendeur)
+            </button>
+            <button id="btnOpenTeinteurJobs" class="section-btn" style="background-color: var(--surface-2); border-color: var(--accent); display:none;" onclick="openTeinteurJobsModal()">
+                <svg class="svg-icon"><use href="#icon-list"></use></svg> FILE D'ATTENTE (VOIR COMMANDES)
+                <span id="teinteurJobsBadge" class="notif-badge">0</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
+    <div class="top-bar">
+        <div class="top-left-actions">
+            <div style="display:flex; flex-direction:column; gap:6px; align-items:stretch;">
+                <button id="btnComputerMode" class="collab-btn" onclick="toggleComputerMode()">
+                    <svg class="svg-icon"><use href="#icon-phone"></use></svg> Mode Tactile
+                </button>
+            </div>
+            <select id="appVolumeSelect" class="app-volume-select" onchange="changeAppVolume()" title="Volume Alarme">
+                <option value="1">MAX</option>
+                <option value="0.75">MED</option>
+                <option value="0.5">LOW</option>
+                <option value="0">MUT</option>
+            </select>
+            <select id="themeSelect" class="app-volume-select theme-select" onchange="setTheme(this.value)" title="Thème de l'application">
+                <option value="nocturne">Nocturne</option>
+                <option value="clair">Clair</option>
+            </select>
+            <select id="splitSectionSelect" class="app-volume-select split-section-select" onchange="setSplitSection(this.value)" title="Écran partagé (Mode PC)" style="display:none;">
+                <option value="">Écran partagé : aucun</option>
+                <option value="Stock">+ Commande interne</option>
+                <option value="Revendables">+ Re-vendables</option>
+                <option value="Erreurs">+ Erreurs de teinte</option>
+            </select>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+            <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">
+                <svg class="svg-icon"><use href="#icon-history"></use></svg> Historique
+            </button>
+            <button class="btn-logout" onclick="confirmLogout()">Déconnexion</button>
+        </div>
+    </div>
+
+    <div class="header" style="margin-top: 0;">
+        <h1 id="appHeaderTitle">La Centrale ProShop</h1>
+        <p id="appHeaderSubtitle">Gestion interne</p>
+        
+        <div class="live-timer-bar">
+            <div><svg class="svg-icon"><use href="#icon-calendar"></use></svg> <span id="currentDateDisplay">--/--/---- --:--</span></div>
+            
+            <div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:bold; color:var(--ok);" title="Utilisateurs en ligne">
+                <span class="online-dot" onclick="openOnlineUsersModal()"></span>
+                En ligne: <span id="onlineUsersCount" style="color:#ffffff; background:var(--ok); padding:2px 8px; border-radius:10px; cursor:pointer;" onclick="openOnlineUsersModal()">0</span>
+            </div>
+
+            <div><svg class="svg-icon"><use href="#icon-clock"></use></svg> Session: <span id="sessionCountdown" style="color:var(--warning); font-weight:bold;">Permanente</span></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <div style="font-size:11px; color:var(--accent-text);" id="welcomeUser"></div>
+            <div>
+                <button id="btnBackToSections" class="btn-back-sections" onclick="showSectionSelector()" title="Retour au choix du mode de travail">
+                    <svg class="svg-icon"><use href="#icon-back"></use></svg> Retour
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sectionsSplitWrapper">
+    <!-- SECTION STOCK -->
+    <div id="sectionStockContent" style="display: none;">
+        <div class="stock-tabs">
+            <button class="stock-tab-btn active" id="tabBtnSingle" onclick="switchStockMode('single')">⚡ Demande simple</button>
+            <button class="stock-tab-btn" id="tabBtnList" onclick="switchStockMode('list')">
+                <svg class="svg-icon"><use href="#icon-list"></use></svg> Demande liste
+            </button>
+        </div>
+
+        <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--ok); margin-bottom: 16px;">
+            <h3 style="color:var(--ok);">⚡ Demande Rapide de Seau / Produit</h3>
+            <select id="singleBrand" onchange="updateStockDropdowns('single')">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+            <input type="text" id="singleProductName" placeholder="Nom du produit (ex: Rubbol...)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="checkLearnedLocation('single')">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <select id="singleBase" onchange="checkCustomBase('single')" style="width:100%;"><option value="">Base</option></select>
+                    <input type="text" id="singleBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <select id="singleBucketSize"><option value="">Capacité</option></select>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 8px; background:var(--surface-2); padding:8px; border-radius:6px; border:1.5px solid var(--border);">
+                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer; margin-top:0; color:var(--text);">
+                    <input type="checkbox" id="singlePallet" style="width:18px; height:18px; margin:0;" onchange="toggleQuantityInput('single')"> Palette complète
+                </label>
+                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" style="flex:1; margin:0;">
+            </div>
+
+            <input type="text" id="singleLocation" placeholder="Emplacement (ex: AA01A, CB05B)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <button class="btn btn-save" style="background-color:var(--ok) !important;" onclick="sendSingleStockRequest()">
+                <svg class="svg-icon"><use href="#icon-send"></use></svg> Envoyer la Demande Urgente
+            </button>
+        </div>
+
+        <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
+            <h3 style="color:var(--accent-text);">
+                <svg class="svg-icon"><use href="#icon-list"></use></svg> Créer une Liste de Stock (Rayons)
+            </h3>
+            <select id="listBrand" onchange="updateStockDropdowns('list')">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+            <input type="text" id="listProductName" placeholder="Nom du produit" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="checkLearnedLocation('list')">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <select id="listBase" onchange="checkCustomBase('list')" style="width:100%;"><option value="">Base</option></select>
+                    <input type="text" id="listBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <select id="listBucketSize"><option value="">Capacité</option></select>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 8px; background:var(--surface-2); padding:8px; border-radius:6px; border:1.5px solid var(--border);">
+                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer; margin-top:0; color:var(--text);">
+                    <input type="checkbox" id="listPallet" style="width:18px; height:18px; margin:0;" onchange="toggleQuantityInput('list')"> Palette complète
+                </label>
+                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" style="flex:1; margin:0;">
+            </div>
+
+            <input type="text" id="listLocation" placeholder="Emplacement (AA01A, CB05B)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <button class="btn btn-save" style="background-color:var(--surface-3) !important; margin-top:4px;" onclick="addStockItemToList()">
+                <svg class="svg-icon"><use href="#icon-plus"></use></svg> Ajouter à la liste
+            </button>
+            
+            <div style="margin-top: 12px; background: var(--surface-2); padding: 10px; border-radius: 6px; border:1.5px solid var(--border);">
+                <h4 style="margin:0 0 8px 0; color:var(--accent-text); font-size:12px;">Articles dans la liste en cours :</h4>
+                <div id="stockCartItemsList" style="max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
+                    <div style="text-align:center; color:var(--muted); font-size:11px; padding:6px;">Aucun article ajouté.</div>
+                </div>
+                <button class="btn btn-save" id="sendStockCartBtn" style="background-color:var(--ok) !important; display:none; padding:8px; font-size:12px;" onclick="sendFinalStockList()">
+                    <svg class="svg-icon"><use href="#icon-send"></use></svg> Envoyer la Liste Complète au Magasinier
+                </button>
+            </div>
+        </div>
+
+        <div class="section-label">Demandes de stock en cours :</div>
+        <div id="stockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <div style="text-align:center; padding:20px; color:var(--muted); font-size:13px;">Aucune demande active.</div>
+        </div>
+
+        <div class="section-label" style="color:var(--danger); margin-top:24px;">Produits Out of Stock (En attente de réapprovisionnement) :</div>
+        <div id="outOfStockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:15px; color:var(--muted); font-size:12px;">Aucun produit en rupture de stock.</div>
+        </div>
+    </div>
+
+    <!-- SECTION TEINTES REVENDABLES -->
+    <div id="sectionRevendablesContent" style="display: none;">
+        <div style="background: var(--panel-bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin:0; color:var(--ok); font-size:16px; display:flex; align-items:center; gap:8px;">
+                    <svg class="svg-icon"><use href="#icon-refresh"></use></svg> Teintes Re-vendables (Stock Disponible)
+                </h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:var(--muted);">Gérez et consultez les seaux préparés en plus disponibles à la vente.</p>
+            </div>
+            <button id="btnResaleAdd" class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:var(--ok) !important;" onclick="toggleResaleForm()">
+                <svg class="svg-icon"><use href="#icon-plus"></use></svg> Ajouter une Teinte
+            </button>
+        </div>
+
+        <div id="resaleFormPanel" class="panel" style="border-color: var(--ok); display: none;">
+            <h3 style="color:var(--ok); margin-bottom:14px;">
+                <svg class="svg-icon"><use href="#icon-plus"></use></svg> Ajouter une Teinte Re-vendable
+            </h3>
+            
+            <label>Marque :</label>
+            <select id="resBrand" onchange="updateResaleDropdowns()">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+
+            <label>Nom du produit (Optionnel) :</label>
+            <input type="text" id="resProductName" placeholder="ex: Rubbol Azur..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <label>Code Couleur :</label>
+            <input type="text" id="resColorCode" placeholder="ex: RAL 9010 ou NCS S 0502-Y" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Base :</label>
+                    <select id="resBase" onchange="checkCustomBase('res')"><option value="">Base</option></select>
+                    <input type="text" id="resBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <div>
+                    <label>Capacité :</label>
+                    <select id="resBucketSize"><option value="">Capacité (L / KG)</option></select>
+                </div>
+            </div>
+
+            <label>Quantité en stock :</label>
+            <input type="number" id="resQuantity" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-save" style="background-color:var(--ok) !important; margin-top:0;" onclick="saveResaleRecord()">
+                    <svg class="svg-icon"><use href="#icon-save"></use></svg> Enregistrer la Teinte
+                </button>
+                <button class="btn btn-danger" style="width:120px; background-color:var(--surface-3) !important; margin-top:0;" onclick="toggleResaleForm()">Annuler</button>
+            </div>
+        </div>
+
+        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:12px;">
+
+        <div id="resaleRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:var(--muted); font-size:13px;">Aucune teinte re-vendable en stock.</div>
+        </div>
+    </div>
+
+    <!-- SECTION ERREURS DE TEINTE -->
+    <div id="sectionErreursContent" style="display: none;">
+        <div style="background: var(--panel-bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin:0; color:var(--danger); font-size:16px; display:flex; align-items:center; gap:8px;">
+                    <svg class="svg-icon"><use href="#icon-alert"></use></svg> Registre des Erreurs de Teinte
+                </h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:var(--muted);">Suivi transparent et calendrier des rebuts de fabrication.</p>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button id="btnErrorAdd" class="btn btn-save" style="width:auto; margin-top:0; padding:10px 14px; background-color:var(--danger) !important; color:#ffffff !important;" onclick="toggleErrorForm()">
+                    <svg class="svg-icon"><use href="#icon-plus"></use></svg> Déclarer
+                </button>
+                <button id="btnExportErrors" class="btn btn-save" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:var(--accent) !important; color:#ffffff !important;" onclick="exportErrorsCSV()">
+                    <svg class="svg-icon"><use href="#icon-download"></use></svg> Exporter Bilan
+                </button>
+                <button id="btnPurgeErrors" class="btn btn-danger" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:var(--danger-d) !important; color:#ffffff !important;" onclick="purgeAllErrors()">
+                    <svg class="svg-icon"><use href="#icon-trash"></use></svg> Vider tout
+                </button>
+            </div>
+        </div>
+
+        <div id="errorFormPanel" class="panel" style="border-color: var(--danger); display: none;">
+            <h3 style="color:var(--danger);">
+                <svg class="svg-icon"><use href="#icon-alert"></use></svg> Déclarer une Erreur de Teinte
+            </h3>
+            
+            <label>Marque :</label>
+            <select id="errBrand" onchange="updateErrorDropdowns()">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+
+            <label>Nom du produit (si connu) :</label>
+            <input type="text" id="errProductName" placeholder="ex: Alphatex SF..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Base :</label>
+                    <select id="errBase" onchange="checkCustomBase('err')"><option value="">Base</option></select>
+                    <input type="text" id="errBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <div>
+                    <label>Capacité :</label>
+                    <select id="errBucketSize"><option value="">Capacité (L / KG)</option></select>
+                </div>
+            </div>
+
+            <label>Quantité (Nombre de seaux) :</label>
+            <input type="number" id="errQuantity" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <label>Date de l'erreur :</label>
+            <input type="date" id="errDate">
+
+            <label>Motif de l'erreur :</label>
+            <textarea id="errReason" rows="3" placeholder="ex: mauvaise base, erreur de code..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
+
+            <label>Signature (Responsable) :</label>
+            <input type="text" id="errSignature" placeholder="Nom de la personne" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-save" style="background-color:var(--danger) !important; color:#ffffff !important; margin-top:0;" onclick="saveErrorRecord()">
+                    <svg class="svg-icon"><use href="#icon-save"></use></svg> Enregistrer l'Erreur
+                </button>
+                <button class="btn btn-danger" style="width:120px; background-color:var(--surface-3) !important; color:#ffffff !important; margin-top:0;" onclick="toggleErrorForm()">Annuler</button>
+            </div>
+        </div>
+
+        <div class="mini-calendar" id="errorMiniCalendar"></div>
+
+        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
+        
+        <div id="errorStatsBox" style="background:var(--panel-bg); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12px; color:var(--muted); border:1.5px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <span>Total erreurs : <b id="totalErrorsCount" style="color:var(--text);">0</b> | Volume raté : <b id="totalErrorLitres" style="color:var(--danger);">0 L / KG</b></span>
+            <button id="clearDateFilterBtn" style="display:none; background:none; border:none; color:var(--accent-text); font-size:11px; cursor:pointer; font-weight:bold;" onclick="resetDateFilter()">Afficher tout</button>
+        </div>
+
+        <div id="errorRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:var(--muted); font-size:13px;">Aucune erreur enregistrée.</div>
+        </div>
+    </div>
+
+    </div>
+
+    <div id="alertBanner" class="alert-box"></div>
+
+    <div id="authPanel" class="panel" style="display:none; border-color: var(--accent);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0;">Connexion Master Admin</h3>
+            <button class="btn-close-modal" onclick="togglePanel('authPanel')">✕</button>
+        </div>
+        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="password" id="authPass" placeholder="Mot de passe Master" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
+    </div>
+
+    <div id="adminPanel" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; z-index: 99999999; background: var(--bg); padding: 20px; box-sizing: border-box;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; position:sticky; top:0; background:var(--bg); z-index:10; padding-bottom:10px; padding-top:10px; border-bottom:1.5px solid var(--border);">
+            <h3 style="margin:0; color:var(--danger);">Panneau d'Administration</h3>
+            <button class="btn-close-modal" style="font-size: 20px; padding: 5px 10px;" onclick="closeAdminPanel()">✕</button>
+        </div>
+
+        <button class="collapsible-btn" onclick="toggleCollapse('manageUsersForm')" style="background-color:var(--surface-3); border-color:var(--accent);">
+            <span><svg class="svg-icon"><use href="#icon-users"></use></svg> Gestion des Accès Utilisateurs <span id="adminPendingBadgePanel" class="admin-badge-inline">0</span></span> <span>▼</span>
+        </button>
+        <div id="manageUsersForm" class="collapsible-content" style="border:1px dashed var(--accent);">
+            <p style="font-size:11px; margin-top:0; color:var(--muted);">Approbation, blocage et suppression des appareils/utilisateurs.</p>
+            <div id="adminUsersList" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="text-align:center; color:var(--muted); font-size:12px;">Chargement de la liste...</div>
+            </div>
+        </div>
+
+        <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:var(--danger-d) !important;" onclick="lockAdminPanel()">
+            <svg class="svg-icon"><use href="#icon-lock"></use></svg> Verrouiller le Panneau Admin
+        </button>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+        <button class="refresh-btn-discrete" onclick="clearSystemCache()">
+            <svg class="svg-icon"><use href="#icon-refresh"></use></svg> Vider Cache
+        </button>
+    </div>
+
+    <div class="app-version-footer">
+        <div style="color:var(--muted); font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.19</span></div>
+    </div>
+</div>
+
+<!-- MODALS SECONDAIRES -->
+<div id="historyModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><svg class="svg-icon"><use href="#icon-history"></use></svg> Historique du Jour (06:00 - 19:00)</h3>
+            <button class="btn-close-modal" onclick="closeHistoryModal()">✕</button>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:0;">Activités et modifications enregistrées aujourd'hui :</p>
+        <div id="historyLogsList" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:var(--muted); font-size:13px;">Aucune activité enregistrée.</div>
+        </div>
+    </div>
+</div>
+
+<div id="onlineUsersModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><svg class="svg-icon"><use href="#icon-users"></use></svg> Utilisateurs Connectés en Ligne</h3>
+            <button class="btn-close-modal" onclick="document.getElementById('onlineUsersModal').style.display='none'">✕</button>
+        </div>
+        <div id="onlineUsersModalList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+            <div style="text-align:center; padding:15px; color:var(--muted);">Chargement...</div>
+        </div>
+    </div>
+</div>
+
+<div id="teinteurJobsModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; z-index: 99999999; background: var(--bg); padding: 16px; box-sizing: border-box;">
+    <div style="position:sticky; top:0; background:var(--bg); z-index:10; padding-bottom:12px; border-bottom:2px solid var(--border); margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+                <h2 style="margin:0; color:var(--primary); font-size:18px; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:8px;">
+                    <svg class="svg-icon" style="width:20px; height:20px;"><use href="#icon-list"></use></svg> FILE D'ATTENTE - TEINTEUR
+                </h2>
+                <p style="margin:2px 0 0 0; color:var(--muted); font-size:11px;">Tableau de bord des commandes en temps réel</p>
+            </div>
+            <button class="btn-close-modal" style="font-size: 12px; font-weight:bold; padding: 8px 14px; background:var(--panel-bg); border-radius:8px; border:1.5px solid var(--border); color:var(--text); cursor:pointer;" onclick="closeTeinteurJobsModal()">✕ Fermer</button>
+        </div>
+        <button id="kdsInnerAlarmBtn" style="width: 100%; display: flex; align-items:center; justify-content:center; gap:8px; font-size: 14px; font-weight:900; padding: 10px; background:var(--danger) !important; border-radius:8px; border:none; color:#ffffff !important; cursor:pointer; box-shadow:var(--shadow); text-transform:uppercase; letter-spacing: 1px;" onclick="triggerTeinteurAlarm()">
+            <svg class="svg-icon"><use href="#icon-alert"></use></svg> NOUVELLE ALARME
+        </button>
+    </div>
+
+    <div id="teinteurJobsList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding-bottom: 40px;">
+        <div style="text-align:center; padding:20px; color:var(--muted); font-size:14px; grid-column: 1 / -1;">Aucune commande en cours.</div>
+    </div>
+</div>
+
+<div id="forcedUpdateModal">
+    <div class="modal-content" style="text-align:center; border: 2px solid var(--accent);">
+        <h3 style="color:var(--accent); margin-top:0; font-size:18px;">Mise à jour système disponible !</h3>
+        <p style="font-size:13px; color:var(--muted);">L'administrateur a publié une nouvelle version de l'application.</p>
+        <div style="background:var(--surface-2); padding:12px; border-radius:8px; border:1.5px solid var(--border); margin-bottom:14px; text-align:left;">
+            <p style="font-size:12px; font-weight:bold; color:var(--ok); margin:0 0 6px 0;">Détails des nouveautés :</p>
+            <p id="forcedUpdateText" style="font-size:12px; color:var(--text); margin:0; line-height:1.4;">Chargement...</p>
+        </div>
+        <button class="btn btn-save" style="width:100%; padding:14px; font-size:14px; background-color:var(--accent) !important; color:#ffffff !important;" onclick="applyForcedUpdate()">Mettre à jour & Redémarrer</button>
+    </div>
+</div>
+
+<!-- CLAVIER VIRTUEL AZERTY -->
+<div class="virtual-keyboard" id="virtualKeyboard">
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('1', this)">1</div>
+        <div class="vk-key" onclick="vKey('2', this)">2</div>
+        <div class="vk-key" onclick="vKey('3', this)">3</div>
+        <div class="vk-key" onclick="vKey('4', this)">4</div>
+        <div class="vk-key" onclick="vKey('5', this)">5</div>
+        <div class="vk-key" onclick="vKey('6', this)">6</div>
+        <div class="vk-key" onclick="vKey('7', this)">7</div>
+        <div class="vk-key" onclick="vKey('8', this)">8</div>
+        <div class="vk-key" onclick="vKey('9', this)">9</div>
+        <div class="vk-key" onclick="vKey('0', this)">0</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('A', this)">A</div><div class="vk-key" onclick="vKey('Z', this)">Z</div><div class="vk-key" onclick="vKey('E', this)">E</div><div class="vk-key" onclick="vKey('R', this)">R</div><div class="vk-key" onclick="vKey('T', this)">T</div><div class="vk-key" onclick="vKey('Y', this)">Y</div><div class="vk-key" onclick="vKey('U', this)">U</div><div class="vk-key" onclick="vKey('I', this)">I</div><div class="vk-key" onclick="vKey('O', this)">O</div><div class="vk-key" onclick="vKey('P', this)">P</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('Q', this)">Q</div><div class="vk-key" onclick="vKey('S', this)">S</div><div class="vk-key" onclick="vKey('D', this)">D</div><div class="vk-key" onclick="vKey('F', this)">F</div><div class="vk-key" onclick="vKey('G', this)">G</div><div class="vk-key" onclick="vKey('H', this)">H</div><div class="vk-key" onclick="vKey('J', this)">J</div><div class="vk-key" onclick="vKey('K', this)">K</div><div class="vk-key" onclick="vKey('L', this)">L</div><div class="vk-key" onclick="vKey('M', this)">M</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" style="visibility:hidden; flex:1;"></div>
+        <div class="vk-key" onclick="vKey('W', this)">W</div><div class="vk-key" onclick="vKey('X', this)">X</div><div class="vk-key" onclick="vKey('C', this)">C</div><div class="vk-key" onclick="vKey('V', this)">V</div><div class="vk-key" onclick="vKey('B', this)">B</div><div class="vk-key" onclick="vKey('N', this)">N</div><div class="vk-key" onclick="vKey('\'', this)">'</div>
+        <div class="vk-key vk-wide" 
+             onmousedown="startVDel(this, event)" onmouseup="stopVDel(event)" onmouseleave="stopVDel(event)" 
+             ontouchstart="startVDel(this, event)" ontouchend="stopVDel(event)" ontouchcancel="stopVDel(event)">⌫</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" style="visibility:hidden; flex:1.5;"></div>
+        <div class="vk-key" onclick="vKey(',', this)">,</div>
+        <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
+        <div class="vk-key" onclick="vKey('.', this)">.</div>
+        <div class="vk-key vk-close" onclick="vClose()" style="flex:1.5; background:var(--ok); color:#ffffff;">↵</div>
+    </div>
+</div>
+
+<script>
+    const CURRENT_APP_VERSION = "v1.19"; 
+
+    const BRANDS_DATA = {
+        "Trimetal": { bases: ["AW", "AC"], sizes: ["0.5L", "1L", "2.5L", "5L", "10L", "12.5L"] },
+        "Herbol": { bases: ["DU1", "DU3", "LA1", "LA3", "LA4", "LU1", "LU3", "LU4"], sizes: ["1L", "2.5L", "5L", "12.5L"] },
+        "Sikkens": { bases: ["W05", "N00"], sizes: ["1L", "2.5L", "5L", "10L"] },
+        "Unikalo": { bases: ["BLANC", "B+", "C", "D"], sizes: ["0.75L", "3L", "12L", "16kg", "20kg", "22kg"] },
+        "Levis": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L", "10L"] },
+        "Unikatex": { bases: [], sizes: ["22kg"] },
+        "Eurotex": { bases: [], sizes: ["22kg"] },
+        "Mathys": { bases: [], sizes: ["1L", "5L", "10L", "20L"] },
+        "Rust-oleum": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L"] },
+        "Libert": { bases: [], sizes: ["0.5L", "1L", "2.5L"] }
+    };
+
+    document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
+    if(document.getElementById('loginVersionDisplay')) document.getElementById('loginVersionDisplay').textContent = "Version " + CURRENT_APP_VERSION;
+
+    let isAuthenticated = false;
+    let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
+    let currentAppSection = localStorage.getItem('central_app_section') || null;
+
+    let activeVirtualInput = null;
+    let isShiftActive = false; 
+    let previousPendingCount = -1;
+    let cachedAuthUsersData = null; 
+    let learnedLocations = {}; 
+    let onlineUsersMap = {};
+    let errorRecordsList = [];
+    let resaleRecordsList = [];
+    let selectedErrorDateFilter = null;
+
+    // --- THEMES (nocturne / clair) ---
+    window.setTheme = function(theme) {
+        if (!['nocturne', 'clair'].includes(theme)) theme = 'nocturne';
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('central_theme', theme); } catch (e) {}
+        initThemeUI();
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', { nocturne: '#0b0f19', clair: '#e2e8f0' }[theme]);
+    };
+
+    function initThemeUI() {
+        const t = document.documentElement.getAttribute('data-theme') || 'nocturne';
+        ['themeSelect', 'themeSelectLogin'].forEach(id => { const el = document.getElementById(id); if (el) el.value = t; });
+    }
+
+    let splitSection = localStorage.getItem('central_split_section') || '';
+    let errorCalViewYear = new Date().getFullYear();
+    let errorCalViewMonth = new Date().getMonth();
+    let activeTeinteurJobs = [];
+
+    let appVolume = localStorage.getItem('central_app_volume') !== null ? parseFloat(localStorage.getItem('central_app_volume')) : 1.0;
+
+    function initVolumeUI() {
+        const volSelect = document.getElementById('appVolumeSelect');
+        if(volSelect) volSelect.value = appVolume === 0 ? "0" : appVolume.toString();
+    }
+
+    window.changeAppVolume = function() {
+        const volSelect = document.getElementById('appVolumeSelect');
+        if (volSelect) {
+            appVolume = parseFloat(volSelect.value);
+            localStorage.setItem('central_app_volume', appVolume.toString());
+            if(appVolume > 0) playTestBeep();
+        }
+    };
+
+    function playTestBeep() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.3 * appVolume, audioCtx.currentTime);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+        } catch(e) {}
+    }
+
+    function getOrCreateDeviceId() {
+        let id = localStorage.getItem('central_device_id');
+        if (!id) {
+            id = 'dev_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+            localStorage.setItem('central_device_id', id);
+        }
+        return id;
+    }
+
+    let isComputerMode = localStorage.getItem('central_computer_mode') === 'true';
+
+    window.toggleComputerMode = function() {
+        isComputerMode = !isComputerMode;
+        localStorage.setItem('central_computer_mode', isComputerMode);
+        applyComputerMode();
+        showAlert(isComputerMode ? "Mode Ordinateur activé !" : "Mode Tactile activé !", true);
+    };
+
+    function applyComputerMode() {
+        const btn = document.getElementById('btnComputerMode');
+        const loginBtn = document.getElementById('loginBtnComputerMode');
+        if (btn) {
+            btn.innerHTML = isComputerMode ? '<svg class="svg-icon"><use href="#icon-phone"></use></svg> Mode PC' : '<svg class="svg-icon"><use href="#icon-phone"></use></svg> Mode Tactile';
+            btn.style.backgroundColor = isComputerMode ? 'var(--accent)' : 'var(--panel-bg)';
+            btn.style.color = '#ffffff';
+        }
+        if (loginBtn) {
+            loginBtn.innerHTML = isComputerMode ? '<svg class="svg-icon"><use href="#icon-phone"></use></svg> Mode PC' : '<svg class="svg-icon"><use href="#icon-phone"></use></svg> Tactile';
+            loginBtn.style.backgroundColor = isComputerMode ? 'var(--accent)' : 'var(--panel-bg)';
+        }
+
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(el => {
+            if (isComputerMode) {
+                if (el.hasAttribute('onfocus') && !el.dataset.origFocus) {
+                    el.dataset.origFocus = el.getAttribute('onfocus');
+                }
+                el.removeAttribute('onfocus');
+                el.onfocus = null;
+                el.removeAttribute('inputmode');
+                el.addEventListener('focus', handleNormalFocus);
+            } else {
+                if (el.dataset.origFocus) {
+                    el.setAttribute('onfocus', el.dataset.origFocus);
+                    el.onfocus = new Function(el.dataset.origFocus);
+                }
+                el.setAttribute('inputmode', 'none');
+                el.removeEventListener('focus', handleNormalFocus);
+            }
+        });
+        if (isComputerMode) vClose();
+
+        const mainCont = document.getElementById('mainContainer');
+        if (mainCont && mainCont.style.display === 'block' && typeof applySplitView === 'function') applySplitView();
+    }
+
+    function handleNormalFocus(e) {
+        document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('active-input'));
+        e.target.classList.add('active-input');
+        activeVirtualInput = e.target;
+    }
+
+    window.flashKey = function(el) {
+        if (!el) return;
+        el.classList.add('key-flash');
+        setTimeout(() => el.classList.remove('key-flash'), 30);
+    };
+
+    window.openVirtualKeyboard = function(el) {
+        if (isComputerMode) return;
+        activeVirtualInput = el;
+        document.querySelectorAll('input, textarea').forEach(i => i.classList.remove('active-input'));
+        el.classList.add('active-input');
+        const vk = document.getElementById('virtualKeyboard');
+        if (vk) vk.classList.add('active');
+    };
+
+    window.vKey = function(val, el) {
+        if (el) flashKey(el);
+        if (!activeVirtualInput) return;
+        activeVirtualInput.value += val;
+        activeVirtualInput.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+
+    window.vClose = function() {
+        const vk = document.getElementById('virtualKeyboard');
+        if (vk) vk.classList.remove('active');
+        if (activeVirtualInput) activeVirtualInput.classList.remove('active-input');
+    };
+
+    let vDelInterval = null;
+    window.startVDel = function(el, e) {
+        if (e) e.preventDefault();
+        if (el) flashKey(el);
+        deleteLastChar();
+        vDelInterval = setInterval(deleteLastChar, 100);
+    };
+    window.stopVDel = function(e) {
+        if (e) e.preventDefault();
+        if (vDelInterval) clearInterval(vDelInterval);
+    };
+
+    function deleteLastChar() {
+        if (!activeVirtualInput || !activeVirtualInput.value) return;
+        activeVirtualInput.value = activeVirtualInput.value.slice(0, -1);
+        activeVirtualInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // Auto-fill & auto-save credentials
+    function initSavedCredentials() {
+        const savedUser = localStorage.getItem('central_saved_user');
+        const savedPin = localStorage.getItem('central_saved_pin');
+        const regUser = document.getElementById('regUser');
+        const regPin = document.getElementById('regPin');
+        const loginUserWelcome = document.getElementById('loginUserWelcome');
+
+        if (savedUser) {
+            if (regUser) regUser.value = savedUser;
+            if (loginUserWelcome) loginUserWelcome.textContent = savedUser;
+        } else if (loginUserWelcome) {
+            loginUserWelcome.textContent = "Connectez-vous";
+        }
+        if (savedPin && regPin) {
+            regPin.value = savedPin;
+        }
+    }
+
+    window.loginPinKey = function(val, el) {
+        if (el) flashKey(el);
+        const pinInput = document.getElementById('regPin');
+        if (!pinInput) return;
+        if (val === 'C') {
+            pinInput.value = '';
+        } else {
+            pinInput.value += val;
+        }
+    };
+
+    let pinDelInterval = null;
+    window.startPinDel = function(el, e) {
+        if (e) e.preventDefault();
+        if (el) flashKey(el);
+        deletePinChar();
+        pinDelInterval = setInterval(deletePinChar, 100);
+    };
+    window.stopPinDel = function(e) {
+        if (e) e.preventDefault();
+        if (pinDelInterval) clearInterval(pinDelInterval);
+    };
+
+    function deletePinChar() {
+        const pinInput = document.getElementById('regPin');
+        if (!pinInput || !pinInput.value) return;
+        pinInput.value = pinInput.value.slice(0, -1);
+    }
+
+    window.checkLoginEnter = function(e) {
+        if (e.key === 'Enter') loginAction();
+    };
+
+    window.loginAction = function() {
+        const u = document.getElementById('regUser').value.trim();
+        const p = document.getElementById('regPin').value.trim();
+        if (!u || !p) {
+            alert("Veuillez saisir votre nom d'utilisateur et votre code PIN.");
+            return;
+        }
+
+        localStorage.setItem('central_saved_user', u);
+        localStorage.setItem('central_saved_pin', p);
+
+        localUser = { username: u, pin: p, role: "Utilisateur" };
+        localStorage.setItem('central_app_user_account', JSON.stringify(localUser));
+
+        document.getElementById('userLockScreen').style.display = 'none';
+        showSectionSelector();
+        updateWelcomeHeader();
+    };
+
+    function updateWelcomeHeader() {
+        const w = document.getElementById('welcomeUser');
+        if (w && localUser) {
+            w.textContent = "Connecté : " + localUser.username;
+        }
+    }
+
+    window.showSectionSelector = function() {
+        document.getElementById('sectionSelectorModal').style.display = 'flex';
+        document.getElementById('mainContainer').style.display = 'none';
+    };
+
+    window.selectAppSection = function(section) {
+        currentAppSection = section;
+        localStorage.setItem('central_app_section', section);
+        document.getElementById('sectionSelectorModal').style.display = 'none';
+        document.getElementById('mainContainer').style.display = 'block';
+
+        ['sectionStockContent', 'sectionRevendablesContent', 'sectionErreursContent'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+
+        if (section === 'Stock') document.getElementById('sectionStockContent').style.display = 'block';
+        if (section === 'Revendables') document.getElementById('sectionRevendablesContent').style.display = 'block';
+        if (section === 'Erreurs') document.getElementById('sectionErreursContent').style.display = 'block';
+
+        updateHeaderSubtitle(section);
+    };
+
+    function updateHeaderSubtitle(sec) {
+        const sub = document.getElementById('appHeaderSubtitle');
+        if (!sub) return;
+        if (sec === 'Stock') sub.textContent = "Commandes Interne & Stock";
+        else if (sec === 'Revendables') sub.textContent = "Teintes Re-vendables en Stock";
+        else if (sec === 'Erreurs') sub.textContent = "Registre des Erreurs de Teinte";
+    }
+
+    window.confirmLogout = function() {
+        if (confirm("Voulez-vous vraiment vous déconnecter ?")) {
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('sectionSelectorModal').style.display = 'none';
+            document.getElementById('userLockScreen').style.display = 'flex';
+        }
+    };
+
+    window.switchUserAccount = function() {
+        localStorage.removeItem('central_app_user_account');
+        localStorage.removeItem('central_saved_user');
+        localStorage.removeItem('central_saved_pin');
+        document.getElementById('regUser').value = '';
+        document.getElementById('regPin').value = '';
+        document.getElementById('loginUserWelcome').textContent = 'Connectez-vous';
+        alert("Compte réinitialisé.");
+    };
+
+    window.showRegisterForm = function() {
+        document.getElementById('regRole').style.display = 'block';
+        document.getElementById('btnRegisterSubmit').style.display = 'block';
+        document.getElementById('btnCancelRegister').style.display = 'block';
+        document.getElementById('btnLogin').style.display = 'none';
+        document.getElementById('btnRegisterToggle').style.display = 'none';
+    };
+
+    window.hideRegisterForm = function() {
+        document.getElementById('regRole').style.display = 'none';
+        document.getElementById('btnRegisterSubmit').style.display = 'none';
+        document.getElementById('btnCancelRegister').style.display = 'none';
+        document.getElementById('btnLogin').style.display = 'block';
+        document.getElementById('btnRegisterToggle').style.display = 'block';
+    };
+
+    window.registerAction = function() {
+        alert("Demande d'inscription envoyée à l'administrateur !");
+        hideRegisterForm();
+    };
+
+    // Live Timer
+    setInterval(() => {
+        const now = new Date();
+        const el = document.getElementById('currentDateDisplay');
+        if (el) {
+            el.textContent = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR');
+        }
+    }, 1000);
+
+    function showAlert(msg, isSuccess) {
+        const banner = document.getElementById('alertBanner');
+        if (!banner) return;
+        banner.textContent = msg;
+        banner.className = 'alert-box ' + (isSuccess ? 'alert-success' : 'alert-warning');
+        banner.style.display = 'block';
+        setTimeout(() => { banner.style.display = 'none'; }, 4000);
+    }
+
+    // Forms / Panels Logic
+    window.toggleResaleForm = function() {
+        const p = document.getElementById('resaleFormPanel');
+        if (p) p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+    };
+
+    window.toggleErrorForm = function() {
+        const p = document.getElementById('errorFormPanel');
+        if (p) p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+    };
+
+    window.switchStockMode = function(mode) {
+        const single = document.getElementById('stockSinglePanel');
+        const list = document.getElementById('stockListPanel');
+        const btnS = document.getElementById('tabBtnSingle');
+        const btnL = document.getElementById('tabBtnList');
+
+        if (mode === 'single') {
+            single.style.display = 'block'; list.style.display = 'none';
+            btnS.classList.add('active'); btnL.classList.remove('active');
+        } else {
+            single.style.display = 'none'; list.style.display = 'block';
+            btnL.classList.add('active'); btnS.classList.remove('active');
+        }
+    };
+
+    window.updateStockDropdowns = function(prefix) {
+        const brand = document.getElementById(prefix + 'Brand').value;
+        const baseSel = document.getElementById(prefix + 'Base');
+        const sizeSel = document.getElementById(prefix + 'BucketSize');
+
+        baseSel.innerHTML = '<option value="">Base</option>';
+        sizeSel.innerHTML = '<option value="">Capacité</option>';
+
+        if (BRANDS_DATA[brand]) {
+            BRANDS_DATA[brand].bases.forEach(b => {
+                baseSel.innerHTML += `<option value="${b}">${b}</option>`;
+            });
+            BRANDS_DATA[brand].sizes.forEach(s => {
+                sizeSel.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+        }
+    };
+
+    window.checkCustomBase = function(prefix) {
+        const sel = document.getElementById(prefix + 'Base');
+        const custom = document.getElementById(prefix + 'BaseCustom');
+        if (sel && custom) {
+            custom.style.display = (sel.value === 'CUSTOM') ? 'block' : 'none';
+        }
+    };
+
+    window.toggleQuantityInput = function(prefix) {
+        const pallet = document.getElementById(prefix + 'Pallet');
+        const qty = document.getElementById(prefix + 'Quantity');
+        if (pallet && qty) {
+            qty.disabled = pallet.checked;
+            if (pallet.checked) qty.value = 1;
+        }
+    };
+
+    window.checkLearnedLocation = function(prefix) {
+        const pName = document.getElementById(prefix + 'ProductName').value.trim().toUpperCase();
+        const locInput = document.getElementById(prefix + 'Location');
+        if (pName && learnedLocations[pName] && locInput) {
+            locInput.value = learnedLocations[pName];
+        }
+    };
+
+    window.sendSingleStockRequest = function() {
+        alert("Demande de stock transmise avec succès !");
+    };
+
+    window.addStockItemToList = function() {
+        alert("Article ajouté à la liste.");
+    };
+
+    window.sendFinalStockList = function() {
+        alert("Liste complète transmise au magasinier !");
+    };
+
+    window.saveResaleRecord = function() {
+        alert("Teinte re-vendable enregistrée !");
+        toggleResaleForm();
+    };
+
+    window.saveErrorRecord = function() {
+        alert("Erreur de teinte enregistrée !");
+        toggleErrorForm();
+    };
+
+    window.exportErrorsCSV = function() {
+        alert("Export CSV généré.");
+    };
+
+    window.purgeAllErrors = function() {
+        if (confirm("Voulez-vous vraiment vider tout le registre ?")) {
+            alert("Registre réinitialisé.");
+        }
+    };
+
+    window.filterResaleRecords = function() {};
+    window.filterErrorRecords = function() {};
+    window.resetDateFilter = function() {};
+
+    window.triggerTeinteurAlarm = function() {
+        alert("ALARME TEINTEUR DÉCLENCHÉE !");
+    };
+
+    window.openTeinteurJobsModal = function() {
+        document.getElementById('teinteurJobsModal').style.display = 'block';
+    };
+
+    window.closeTeinteurJobsModal = function() {
+        document.getElementById('teinteurJobsModal').style.display = 'none';
+    };
+
+    window.openHistoryModal = function() {
+        document.getElementById('historyModal').style.display = 'flex';
+    };
+
+    window.closeHistoryModal = function() {
+        document.getElementById('historyModal').style.display = 'none';
+    };
+
+    window.openOnlineUsersModal = function() {
+        document.getElementById('onlineUsersModal').style.display = 'flex';
+    };
+
+    window.openAdminAuth = function() {
+        document.getElementById('authPanel').style.display = 'block';
+    };
+
+    window.togglePanel = function(id) {
+        const p = document.getElementById(id);
+        if (p) p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+    };
+
+    window.validateAuth = function() {
+        const u = document.getElementById('authUser').value;
+        const p = document.getElementById('authPass').value;
+        if (u === 'admin' && p === 'admin') {
+            document.getElementById('authPanel').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+        } else {
+            alert("Identifiants admin incorrects.");
+        }
+    };
+
+    window.closeAdminPanel = function() {
+        document.getElementById('adminPanel').style.display = 'none';
+    };
+
+    window.lockAdminPanel = function() {
+        closeAdminPanel();
+    };
+
+    window.toggleCollapse = function(id) {
+        const c = document.getElementById(id);
+        if (c) c.style.display = (c.style.display === 'block') ? 'none' : 'block';
+    };
+
+    window.clearSystemCache = function() {
+        if (confirm("Voulez-vous vraiment vider le cache ?")) {
+            location.reload(true);
+        }
+    };
+
+    window.applyForcedUpdate = function() {
+        location.reload(true);
+    };
+
+    // Initialize App
+    window.addEventListener('DOMContentLoaded', () => {
+        initThemeUI();
+        initVolumeUI();
+        initSavedCredentials();
+        applyComputerMode();
+    });
+</script>
+</body>
+</html>
