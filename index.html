@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Atelier & Magasin</title>
+    <style>
+        /* ==========================================================================
+           SISTEM DE CULORI ZI / NOAPTE (TEMA iOS) & TIPOGRAFIE
+           ========================================================================== */
+        :root {
+            /* Tema Light (Zi) */
+            --bg-main: #F2F2F7;
+            --bg-card: #FFFFFF;
+            --bg-card-secondary: #E5E5EA;
+            --text-primary: #1C1C1E;
+            --text-secondary: #6C6C70;
+            --border-color: #D1D1D6;
+            --accent-blue: #007AFF;
+            --accent-green: #34C759;
+            --accent-orange: #FF9500;
+            --accent-red: #FF3B30;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --pin-btn-bg: #E5E5EA;
+            --pin-btn-text: #000000;
+        }
+
+        [data-theme="dark"] {
+            /* Tema Dark (Noapte) */
+            --bg-main: #000000;
+            --bg-card: #1C1C1E;
+            --bg-card-secondary: #2C2C2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --border-color: #38383A;
+            --accent-blue: #0A84FF;
+            --accent-green: #30D158;
+            --accent-orange: #FF9F0A;
+            --accent-red: #FF453A;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --pin-btn-bg: #2C2C2E;
+            --pin-btn-text: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ==========================================================================
+           HEADER & NAVIGARE
+           ========================================================================== */
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle-btn, .icon-btn {
+            background: var(--bg-card-secondary);
+            border: none;
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.1s ease, background 0.2s;
+        }
+
+        .theme-toggle-btn:active, .icon-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* ==========================================================================
+           ECRAN DE LOGARE (PIN & SELECȚIE UTILIZATOR)
+           ========================================================================== */
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .login-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 32px 28px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        /* Nume utilizator mare */
+        .welcome-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .user-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        /* Chenar PIN mai mic și compact */
+        .pin-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .pin-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background-color: transparent;
+            transition: all 0.2s ease;
+        }
+
+        .pin-dot.filled {
+            background-color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        /* Tastatură PIN compactă */
+        .pin-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 260px;
+            margin: 0 auto 24px auto;
+        }
+
+        .pin-key {
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--pin-btn-bg);
+            color: var(--pin-btn-text);
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.15s, transform 0.1s;
+            margin: 0 auto;
+            width: 52px;
+        }
+
+        .pin-key:active {
+            transform: scale(0.92);
+            background-color: var(--border-color);
+        }
+
+        .pin-key.clear-key {
+            font-size: 13px;
+            font-weight: 700;
+            background-color: transparent;
+            color: var(--accent-red);
+        }
+
+        /* Buton CONNECTER mare */
+        .btn-connect {
+            width: 100%;
+            height: 52px;
+            background-color: var(--accent-blue);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .btn-connect:active {
+            transform: scale(0.98);
+        }
+
+        .auto-login-option {
+            margin-top: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .auto-login-option input {
+            accent-color: var(--accent-blue);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* ==========================================================================
+           PANOU PRINCIPAL & MODULE (TEINTE, MAGASINIER, VENDEUR)
+           ========================================================================== */
+        main {
+            flex: 1;
+            padding: 24px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .role-selector-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            background-color: var(--bg-card);
+            padding: 6px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .role-tab.active {
+            background-color: var(--accent-blue);
+            color: #FFFFFF;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ==========================================================================
+           SISTEM DE ALARME / NOTIFICĂRI ÎNTRE DEPARTAMENTE
+           ========================================================================== */
+        .alarm-banner {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            left: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: var(--accent-red);
+            color: #FFFFFF;
+            padding: 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(255, 59, 48, 0.4);
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2000;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alarm-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .alarm-title {
+            font-weight: 800;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+        }
+
+        .alarm-msg {
+            font-size: 13px;
+            opacity: 0.95;
+        }
+
+        .btn-ack {
+            background-color: #FFFFFF;
+            color: var(--accent-red);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-alarm-trigger {
+            background-color: var(--accent-orange);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* SVG Icon Helpers */
+        .svg-icon {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <!-- BANDA DE ALARMĂ INTER-DEPARTAMENTE -->
+    <div id="alarmBanner" class="alarm-banner">
+        <div class="alarm-info">
+            <span class="alarm-title" id="alarmSource">ALERTE REÇUE</span>
+            <span class="alarm-msg" id="alarmMessage">Action requise immédiatement.</span>
+        </div>
+        <button class="btn-ack" onclick="dismissAlarm()">ACQUITTER</button>
+    </div>
+
+    <!-- HEADER APLICAȚIE -->
+    <header>
+        <div class="header-title">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span>ATELIER CENTRAL</span>
+        </div>
+        <div class="header-controls">
+            <button class="theme-toggle-btn" onclick="toggleTheme()">
+                <svg class="svg-icon" viewBox="0 0 24 24" id="themeIcon"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <span id="themeLabel">MODE NUIT</span>
+            </button>
+            <button class="icon-btn" onclick="logoutSession()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                <span>DÉCONNEXION</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ECRAN DE LOGARE (PIN & USER) -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card">
+            <div class="welcome-title" id="welcomeUser">BIENVENUE, TEINTE</div>
+            <div class="user-subtitle">Veuillez saisir votre code PIN</div>
+
+            <!-- CHENAR INDICATOR PIN COMPACT -->
+            <div class="pin-display">
+                <div class="pin-dot" id="dot0"></div>
+                <div class="pin-dot" id="dot1"></div>
+                <div class="pin-dot" id="dot2"></div>
+                <div class="pin-dot" id="dot3"></div>
+            </div>
+
+            <!-- TASTATURĂ COMPACTĂ -->
+            <div class="pin-keypad">
+                <button class="pin-key" onclick="appendPin('1')">1</button>
+                <button class="pin-key" onclick="appendPin('2')">2</button>
+                <button class="pin-key" onclick="appendPin('3')">3</button>
+                <button class="pin-key" onclick="appendPin('4')">4</button>
+                <button class="pin-key" onclick="appendPin('5')">5</button>
+                <button class="pin-key" onclick="appendPin('6')">6</button>
+                <button class="pin-key" onclick="appendPin('7')">7</button>
+                <button class="pin-key" onclick="appendPin('8')">8</button>
+                <button class="pin-key" onclick="appendPin('9')">9</button>
+                <button class="pin-key clear-key" onclick="stopPinDel()">EFFACER</button>
+                <button class="pin-key" onclick="appendPin('0')">0</button>
+                <button class="pin-key clear-key" onclick="deletePinDigit()">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 002-2V6a2 2 0 00-2-2zM18 9l-6 6M12 9l6 6"/></svg>
+                </button>
+            </div>
+
+            <!-- BUTON CONECTARE MARE -->
+            <button class="btn-connect" onclick="submitPin()">CONNECTER</button>
+
+            <div class="auto-login-option">
+                <input type="checkbox" id="autoLoginCheck" checked onchange="toggleAutoLoginSetting(this.checked)">
+                <label for="autoLoginCheck">Démarrage automatique de session</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <main>
+        <!-- SELECTOR ROLURI -->
+        <div class="role-selector-bar">
+            <button class="role-tab active" id="tab-TEINTE" onclick="switchRole('TEINTE')">TEINTE</button>
+            <button class="role-tab" id="tab-MAGASINIER" onclick="switchRole('MAGASINIER')">MAGASINIER</button>
+            <button class="role-tab" id="tab-VENDEUR" onclick="switchRole('VENDEUR')">VENDEUR</button>
+        </div>
+
+        <!-- GRILĂ CARDURI SCHIMBĂTOARE -->
+        <div class="dashboard-grid">
+            
+            <!-- CARD COMPONENTĂ TEINTE -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                        Mélangeur & Teintes
+                    </span>
+                    <span style="font-size: 12px; color: var(--accent-green); font-weight: 700;">EN SERVICE</span>
+                </div>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                    Gestion des teintes sur mesure et préparation des formules de peinture.
+                </p>
+                <button class="btn-alarm-trigger" onclick="triggerAlarm('TEINTE', 'MAGASINIER', 'Demande de base peinture urgente !')">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+                    ALERTER MAGASINIER
+                </button>
+                <button class="btn-alarm-trigger" style="background-color: var(--accent-blue);" onclick="triggerAlarm('TEINTE', 'VENDEUR', 'Commande teinte prête pour le client !')">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    NOTIFIER VENDEUR
+                </button>
+            </div>
+
+            <!-- CARD COMPONENTĂ MAGASINIER -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+                        Stock & Réception
+                    </span>
+                    <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">320 Fûts</span>
+                </div>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                    Gestion du stock physique, bases neutres, et réassortiment d'atelier.
+                </p>
+                <button class="btn-alarm-trigger" onclick="triggerAlarm('MAGASINIER', 'TEINTE', 'Rupture de stock sur la Base A1 !')">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/></svg>
+                    ALERTER TEINTE (STOCK)
+                </button>
+            </div>
+
+            <!-- CARD COMPONENTĂ VENDEUR -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+                        Comptoir Vente
+                    </span>
+                    <span style="font-size: 12px; color: var(--accent-blue); font-weight: 700;">5 EN ATTENTE</span>
+                </div>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                    Prise de commandes clients, validation des prix et remise des pots.
+                </p>
+                <button class="btn-alarm-trigger" onclick="triggerAlarm('VENDEUR', 'TEINTE', 'Nouvelle commande prioritaire enregistrée !')">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    NOUVELLE TEINTE URGENTE
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+       LOGICĂ JAVASCRIPT
+       ========================================================================== -->
+    <script>
+        // STARE APLICAȚIE
+        let currentPin = "";
+        const CORRECT_PIN = "1234"; // PIN implicit de test
+        let activeRole = localStorage.getItem("app_active_role") || "TEINTE";
+        let autoLogin = localStorage.getItem("app_autologin") !== "false";
+
+        // INIT LA INTRARIE
+        window.addEventListener("DOMContentLoaded", () => {
+            initTheme();
+            updateRoleUI(activeRole);
+            checkAutoLogin();
+        });
+
+        /* --------------------------------------------------------------------------
+           1. LOGICĂ DE AUTENTIFICARE ȘI AUTO-START SESSION (PENTRU RDP/WINDOWS)
+           -------------------------------------------------------------------------- */
+        function checkAutoLogin() {
+            const savedSession = localStorage.getItem("app_session_active");
+            document.getElementById("welcomeUser").textContent = `BIENVENUE, ${activeRole}`;
+            document.getElementById("autoLoginCheck").checked = autoLogin;
+
+            if (autoLogin && savedSession === "true") {
+                // Autentificare automată la pornirea calculatorului
+                document.getElementById("loginOverlay").style.display = "none";
+            } else {
+                document.getElementById("loginOverlay").style.display = "flex";
+            }
+        }
+
+        function appendPin(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                updatePinDots();
+            }
+        }
+
+        function deletePinDigit() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDots();
+            }
+        }
+
+        window.stopPinDel = function() {
+            currentPin = "";
+            updatePinDots();
+        };
+
+        function updatePinDots() {
+            for (let i = 0; i < 4; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                if (i < currentPin.length) {
+                    dot.classList.add("filled");
+                } else {
+                    dot.classList.remove("filled");
+                }
+            }
+        }
+
+        function submitPin() {
+            // Dacă utilizatorul a introdus PIN-ul corect sau dacă folosește pornirea rapidă
+            if (currentPin === CORRECT_PIN || currentPin === "" || autoLogin) {
+                localStorage.setItem("app_session_active", "true");
+                document.getElementById("loginOverlay").style.display = "none";
+                currentPin = "";
+                updatePinDots();
+            } else {
+                alert("Code PIN incorrect !");
+                stopPinDel();
+            }
+        }
+
+        function logoutSession() {
+            localStorage.setItem("app_session_active", "false");
+            document.getElementById("loginOverlay").style.display = "flex";
+            stopPinDel();
+        }
+
+        function toggleAutoLoginSetting(enabled) {
+            autoLogin = enabled;
+            localStorage.setItem("app_autologin", enabled);
+        }
+
+        /* --------------------------------------------------------------------------
+           2. SCHIMBARE ROLURI (TEINTE / MAGASINIER / VENDEUR)
+           -------------------------------------------------------------------------- */
+        function switchRole(role) {
+            activeRole = role;
+            localStorage.setItem("app_active_role", role);
+            updateRoleUI(role);
+        }
+
+        function updateRoleUI(role) {
+            document.querySelectorAll(".role-tab").forEach(tab => tab.classList.remove("active"));
+            const activeTab = document.getElementById(`tab-${role}`);
+            if (activeTab) activeTab.classList.add("active");
+            document.getElementById("welcomeUser").textContent = `BIENVENUE, ${role}`;
+        }
+
+        /* --------------------------------------------------------------------------
+           3. TEMA DE CULORI ZI / NOAPTE (iOS LIGHT & DARK)
+           -------------------------------------------------------------------------- */
+        function initTheme() {
+            const savedTheme = localStorage.getItem("app_theme") || "light";
+            applyTheme(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute("data-theme");
+            const newTheme = currentTheme === "dark" ? "light" : "dark";
+            applyTheme(newTheme);
+        }
+
+        function applyTheme(theme) {
+            document.body.setAttribute("data-theme", theme);
+            localStorage.setItem("app_theme", theme);
+            
+            const themeLabel = document.getElementById("themeLabel");
+            const themeIcon = document.getElementById("themeIcon");
+
+            if (theme === "dark") {
+                themeLabel.textContent = "MODE JOUR";
+                themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>`;
+            } else {
+                themeLabel.textContent = "MODE NUIT";
+                themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`;
+            }
+        }
+
+        /* --------------------------------------------------------------------------
+           4. SISTEM DE ALARME & SEMNAL AUDIO ÎNTRE TEINTE, MAGASINIER, VENDEUR
+           -------------------------------------------------------------------------- */
+        function triggerAlarm(fromRole, toRole, message) {
+            // Emite alarmatha (simulat direct în interfață)
+            playAlarmSound();
+            showAlarmBanner(fromRole, message);
+        }
+
+        function showAlarmBanner(fromRole, message) {
+            const banner = document.getElementById("alarmBanner");
+            document.getElementById("alarmSource").textContent = `ALERTE DE : ${fromRole}`;
+            document.getElementById("alarmMessage").textContent = message;
+            banner.style.display = "flex";
+        }
+
+        function dismissAlarm() {
+            document.getElementById("alarmBanner").style.display = "none";
+        }
+
+        // Semnal acustics nativ (fără fișiere externe)
+        function playAlarmSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota A5
+                osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.4);
+
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } catch (e) {
+                console.log("Audio contextual blocat sau indisponibil.");
+            }
+        }
+    </script>
+</body>
+</html>
