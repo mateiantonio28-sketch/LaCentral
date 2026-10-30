@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA MANIFEST -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    
+    <!-- SYSTEME ANTI-CACHE FORCE -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("central_theme")||"gris");}catch(e){}</script>
+    <title>La Centrale ProShop</title>
+    
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2919/2919740.png">
+    <meta name="theme-color" content="#111827">
+
+    <!-- FIREBASE SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove, get, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtphQCRQRkBA6gcb4nqTKhmf8ti1XH2w",
+            authDomain: "lacentral-b79a9.firebaseapp.com",
+            databaseURL: "https://lacentral-b79a9-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "lacentral-b79a9",
+            storageBucket: "lacentral-b79a9.appspot.com",
+            messagingSenderId: "187334069854",
+            appId: "1:187334069854:web:1892c8a3fb826341c52ecf",
+            measurementId: "G-QL335MPN5L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.FB_db = db;
+        window.FB_ref = ref;
+        window.FB_set = set;
+        window.FB_onValue = onValue;
+        window.FB_push = push;
+        window.FB_remove = remove;
+        window.FB_get = get;
+        window.FB_onDisconnect = onDisconnect;
+
+        isSupported().then((supported) => {
+            if (supported) {
+                window.FB_messaging = getMessaging(app);
+                window.FB_getToken = getToken;
+                
+                onMessage(window.FB_messaging, (payload) => {
+                    if (payload && payload.notification) {
+                        if (typeof window.playPersistentAlarm === 'function') {
+                            window.playPersistentAlarm();
+                        }
+                    }
+                });
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./firebase-messaging-sw.js').catch((err) => {});
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #f8fafc;
+            --accent: var(--accent);
+            --ai-color: #8b5cf6;
+            --bg: var(--surface-2);
+            --panel-bg: var(--panel-bg);
+            --border: var(--surface-3);
+            --text: #f3f4f6;
+            --danger: var(--danger);
+            --success: #16a34a;
+            --warning: #f59e0b;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+            touch-action: manipulation; 
+        }
+        
+        body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
+        .container { max-width: 720px; margin: 0 auto; display: none; }
+
+        .lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 99999; display: flex;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .lock-card {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .lock-card h2 { margin: 0 0 4px 0; color: var(--primary); font-size: 20px; text-transform: uppercase; }
+        .lock-card p { margin: 0 0 16px 0; font-size: 11px; color: var(--muted); line-height: 1.4; }
+        .lock-card input, .lock-card select {
+            width: 100%; padding: 12px; margin-bottom: 10px;
+            border: 1px solid var(--border); border-radius: 8px;
+            background: var(--surface-2); color: #fff; font-size: 14px; text-align: center;
+        }
+
+        input.active-input, textarea.active-input {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .key-flash {
+            background-color: var(--accent) !important;
+            transform: scale(0.92);
+            transition: transform 0.02s ease-out, background-color 0.02s !important;
+        }
+
+        .pin-key {
+            background: #334155; color: #fff; border: 1px solid var(--surface-3);
+            border-radius: 6px; padding: 12px 0; font-size: 16px; font-weight: bold;
+            cursor: pointer; text-align: center; user-select: none;
+            transition: background 0.02s, transform 0.02s;
+            will-change: transform, background-color;
+        }
+        
+        .vk-key {
+            background: #334155; color: #fff; border: 1px solid var(--surface-3);
+            border-radius: 6px; padding: 12px 0; font-size: 15px; font-weight: bold;
+            cursor: pointer; flex: 1; text-align: center; user-select: none;
+            transition: background 0.02s, transform 0.02s;
+            will-change: transform, background-color;
+        }
+
+        .online-dot {
+            display: inline-block; width: 10px; height: 10px;
+            background-color: var(--ok); border-radius: 50%;
+            box-shadow: 0 0 6px var(--ok);
+            animation: pulse-green 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .login-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
+        .section-selector-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 99998; display: none;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .section-selector-card {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .section-btn {
+            background: var(--surface-3); color: white; border: 1px solid var(--border);
+            padding: 14px; border-radius: 8px; font-size: 14px; font-weight: bold;
+            cursor: pointer; width: 100%; margin-bottom: 10px; transition: background 0.2s; position: relative;
+        }
+        .section-btn:hover { background: var(--accent); }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 12px; padding: 3px 8px; font-size: 11px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .top-left-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        
+        .collab-btn { background-color: var(--panel-bg); border: 1px solid var(--border); color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; position: relative; }
+
+        .app-volume-select {
+            background-color: var(--panel-bg); color: #fff; border: 1px solid var(--border);
+            border-radius: 6px; padding: 6px 8px; font-size: 12px; font-weight: bold; cursor: pointer;
+            appearance: none; -webkit-appearance: none; text-align: center;
+        }
+
+        .btn-back-sections { background: var(--accent); color: #fff; border: 1px solid var(--accent-text); border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+
+        #mainContainer.split-active { max-width: 1500px; }
+        @media (min-width: 900px) {
+            #sectionsSplitWrapper.split-on { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+            #sectionsSplitWrapper.split-on > .split-col { max-height: calc(100vh - 40px); overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+        }
+
+        .admin-badge-inline {
+            background: var(--danger); color: #fff; font-size: 10px; padding: 2px 6px;
+            border-radius: 10px; font-weight: bold; margin-left: 4px; display: none;
+        }
+
+        .header { text-align: center; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
+        .header h1 { margin: 0; font-size: 22px; color: var(--primary); text-transform: uppercase; }
+        .header p { margin: 4px 0 0 0; font-size: 12px; color: var(--muted); }
+
+        .live-timer-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 8px;
+            padding: 8px 12px; margin-top: 10px; font-size: 11px; color: var(--muted);
+        }
+
+        .search-box {
+            width: 100%; padding: 14px; font-size: 16px; font-weight: 600;
+            border: 2px solid var(--border); border-radius: 10px; outline: none;
+            background: var(--panel-bg); color: #fff; transition: border-color 0.2s;
+        }
+        .search-box:focus { border-color: var(--accent); }
+
+        .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px 2px; }
+
+        .btn { flex: 1; min-width: 110px; padding: 10px; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; transition: background 0.2s ease; }
+        .btn-admin-discrete { background: transparent; border: 1px solid var(--border); color: #6b7280; padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; }
+        .btn-admin-discrete:hover { color: #fff; border-color: var(--accent); }
+        .refresh-btn-discrete { background: transparent; border: 1px solid var(--border); color: var(--danger); padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; }
+
+        .btn-guide { background-color: var(--accent-d); color: #fff; }
+        .btn-danger { background-color: var(--danger); color: #fff; }
+        .btn-logout { background-color: var(--danger-d); color: var(--danger-text); font-size: 11px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; }
+
+        .panel {
+            display: none; background: var(--panel-bg); padding: 20px; border-radius: 12px;
+            margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        }
+        .panel h3 { margin-top: 0; font-size: 15px; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; }
+        .panel label { font-size: 12px; color: var(--muted); font-weight: bold; display: block; margin-bottom: 4px; margin-top: 10px; }
+        .panel input, .panel select, .panel textarea {
+            width: 100%; padding: 12px; margin-bottom: 4px; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 14px; background: var(--surface-2); color: #fff;
+        }
+        .btn-save { background-color: #16a34a; color: white; width: 100%; padding: 14px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; font-size: 15px; text-align: center; display: block; margin-top: 16px; }
+
+        #authPanel {
+            position: fixed; top: 15vh; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; z-index: 99999999; background: var(--panel-bg);
+            border: 2px solid var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            border-radius: 12px;
+        }
+
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px);
+            z-index: 99999; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-content {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            width: 100%; max-width: 480px; padding: 22px; box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .modal-header h3 { margin: 0; font-size: 16px; color: var(--primary); text-transform: uppercase; }
+        .btn-close-modal { background: none; border: none; color: var(--muted); font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        .app-version-footer { text-align: center; font-size: 11px; color: #6b7280; margin-top: 24px; padding-top: 10px; border-top: 1px dashed var(--border); margin-bottom: 80px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .alert-box { display: none; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; font-weight: 600; text-align: center; }
+        .alert-warning { background-color: #78350f; color: #fef3c7; border: 1px solid #b45309; }
+        .alert-success { background-color: #14532d; color: #dcfce7; border: 1px solid #15803d; }
+
+        .stock-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+        .stock-tab-btn { flex: 1; padding: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--muted); font-weight: bold; font-size: 12px; border-radius: 6px; cursor: pointer; }
+        .stock-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .mini-calendar { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 14px; }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; font-size: 12px; }
+        .cal-day-name { color: var(--muted); font-weight: bold; padding-bottom: 4px; }
+        .cal-cell { padding: 8px 0; background: var(--panel-bg); border-radius: 6px; color: var(--text-2); cursor: pointer; transition: background 0.15s; }
+        .cal-cell.has-error { background: var(--danger-d); color: var(--danger-text); font-weight: bold; border: 1px solid var(--danger); box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
+        .cal-cell.selected { border: 2px solid var(--accent); }
+        .cal-nav-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--primary); border-radius: 6px; width: 34px; height: 30px; font-size: 14px; font-weight: bold; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+
+        .virtual-keyboard {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--panel-bg); padding: 10px 4px 20px 4px; z-index: 100000;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.9); border-top: 2px solid #334155;
+            user-select: none; transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); visibility: hidden; display: block; 
+        }
+        .virtual-keyboard.active { transform: translateY(0); visibility: visible; }
+        .vk-row { display: flex; justify-content: center; margin-bottom: 6px; gap: 4px; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .vk-key.vk-space { flex: 4; font-size: 12px; background: var(--surface-3); }
+        .vk-key.vk-wide { flex: 1.5; font-size: 11px; background: var(--danger-d); }
+    </style>
+
+<style id="themeStyles">
+:root,html[data-theme="nocturne"]{--bg:#141a22;--panel-bg:#1c242f;--surface-2:#161d27;--surface-3:#2a3441;--border:#2f3a48;--text:#e6eaf0;--text-2:#c3cad4;--muted:#8c97a6;--primary:#e6eaf0;--accent:#5b8def;--accent-d:#4a76d1;--accent-text:#8fb0f5;--danger:#d9645b;--danger-d:#a94a44;--danger-text:#e8a09a;--ok:#3fa57a;--success:#3fa57a;--warning:#d9a441;--shadow:0 2px 10px rgba(0,0,0,.28);}
+html[data-theme="gris"]{--bg:#2b2f36;--panel-bg:#363b44;--surface-2:#2f343b;--surface-3:#454b56;--border:#4a515c;--text:#e8eaed;--text-2:#cdd1d7;--muted:#a1a8b3;--primary:#e8eaed;--accent:#6f9bd8;--accent-d:#5a85c0;--accent-text:#9fbce6;--danger:#d1706a;--danger-d:#a85a55;--danger-text:#e6a7a2;--ok:#5aa986;--success:#5aa986;--warning:#d4a95a;--shadow:0 2px 10px rgba(0,0,0,.22);}
+html[data-theme="clair"]{--bg:#c9d0d9;--panel-bg:#dbe0e7;--surface-2:#cfd5de;--surface-3:#bac3ce;--border:#9aa6b4;--text:#141d27;--text-2:#2a3745;--muted:#46556a;--primary:#141d27;--accent:#3f72c8;--accent-d:#335fae;--accent-text:#254f95;--danger:#c7524a;--danger-d:#a8403a;--danger-text:#9b2f27;--ok:#2a7f58;--success:#2a7f58;--warning:#8f6410;--shadow:0 2px 10px rgba(20,29,39,.16);}
+body{background:var(--bg) !important;color:var(--text);transition:background .2s,color .2s;}
+.btn,.section-btn,.collab-btn,.btn-logout,.kds-btn,.stock-tab-btn,.collapsible-btn,.btn-guide,.btn-admin,.btn-save,.btn-danger,.btn-back-sections,.cal-nav-btn{border-radius:10px !important;transition:background .15s,transform .1s,box-shadow .15s,border-color .15s;box-shadow:var(--shadow);}
+.panel,.lock-card,.modal-content,.section-selector-card,.mini-calendar,.kds-card{border-radius:14px !important;box-shadow:var(--shadow);}
+input,select,textarea,.search-box{border-radius:10px !important; color:var(--text) !important;border-color:var(--border);}
+</style>
+
+<!-- Bibliothèques PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
+
+<style id="patchStyles">
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;}
+.role-btn{background:var(--surface-3);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:16px 8px;font-size:14px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;line-height:1.2;}
+.role-btn.role-admin{grid-column:1 / -1;flex-direction:row;justify-content:center;gap:10px;padding:12px;border-style:dashed;}
+.suggest-wrap{position:relative;scroll-margin-top:90px;}
+.suggest-box{display:none;position:absolute;left:0;right:0;top:100%;z-index:60;max-height:190px;overflow-y:auto;background:var(--panel-bg);border:2px solid var(--accent);border-radius:10px;}
+.cart-actions{display:flex;gap:12px;flex-shrink:0;margin-left:10px;}
+.cart-btn{border:none;border-radius:8px;padding:8px 12px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;min-width:42px;}
+button[style*="background-color:#ef4444"],button[style*="background-color: #ef4444"],
+button[style*="background-color:#10b981"],button[style*="background-color: #10b981"]{color:#fff !important;}
+</style>
+</head>
+<body>
+
+<div id="userLockScreen" class="lock-screen">
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000000;">
+        <button onclick="toggleComputerMode()" id="loginBtnComputerMode" style="background:#1f2937; border:1px solid var(--border); color:#fff; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:bold; cursor:pointer;">📱 Tactile</button>
+    </div>
+
+    <div style="position:absolute; top:20px; left:20px; z-index:1000000;"><select id="themeSelectLogin" class="app-volume-select theme-select" onchange="setTheme(this.value)"><option value="nocturne">🌙 Nocturne</option><option value="gris">☁️ Gris</option><option value="clair">☀️ Clair</option></select></div>
+
+    <div class="lock-card">
+        <h2>La Centrale ProShop</h2>
+        <div id="loginVersionDisplay" style="font-size:11px; color:var(--accent); font-weight:bold; margin-top:-4px; margin-bottom:12px;"></div>
+        <p id="lockSubtitle">Choisissez votre poste</p>
+
+        <div id="roleChoiceGrid" class="role-grid">
+            <button type="button" class="role-btn" onclick="selectLoginRole('Responsable')"><span class="role-ico">👔</span>Responsable</button>
+            <button type="button" class="role-btn" onclick="selectLoginRole('Teinteur')"><span class="role-ico">🎨</span>Teinteur</button>
+            <button type="button" class="role-btn" onclick="selectLoginRole('Magasinier')"><span class="role-ico">📦</span>Magasinier</button>
+            <button type="button" class="role-btn" onclick="selectLoginRole('Vendeur')"><span class="role-ico">🛒</span>Vendeur</button>
+            <button type="button" class="role-btn" onclick="selectLoginRole('Preparateur')"><span class="role-ico">🧾</span>Préparateur</button>
+            <button type="button" class="role-btn role-admin" onclick="selectLoginRole('Admin')"><span class="role-ico">🔒</span>Admin</button>
+        </div>
+
+        <div id="pinEntryBlock" style="display:none;">
+            <div id="selectedRoleLabel" class="login-role-chip"></div>
+            <input type="password" id="regPin" placeholder="Code PIN" style="letter-spacing: 2px; font-weight: bold;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" onkeydown="checkLoginEnter(event)" autocomplete="off">
+            <div id="loginError" class="login-error"></div>
+
+            <div class="login-pin-pad">
+                <div class="pin-key" onclick="loginPinKey('1', this)">1</div>
+                <div class="pin-key" onclick="loginPinKey('2', this)">2</div>
+                <div class="pin-key" onclick="loginPinKey('3', this)">3</div>
+                <div class="pin-key" onclick="loginPinKey('4', this)">4</div>
+                <div class="pin-key" onclick="loginPinKey('5', this)">5</div>
+                <div class="pin-key" onclick="loginPinKey('6', this)">6</div>
+                <div class="pin-key" onclick="loginPinKey('7', this)">7</div>
+                <div class="pin-key" onclick="loginPinKey('8', this)">8</div>
+                <div class="pin-key" onclick="loginPinKey('9', this)">9</div>
+                <div class="pin-key" onclick="loginPinKey('C', this)" style="background:#7f1d1d;">C</div>
+                <div class="pin-key" onclick="loginPinKey('0', this)">0</div>
+                <div class="pin-key" onmousedown="startPinDel(this, event)" onmouseup="stopPinDel(event)" onmouseleave="stopPinDel(event)" ontouchstart="startPinDel(this, event)" ontouchend="stopPinDel(event)" ontouchcancel="stopPinDel(event)" style="background:#475569;">⌫</div>
+            </div>
+
+            <button id="btnLogin" class="btn btn-save" onclick="loginAction()">Se connecter</button>
+            <button id="btnBackToRoles" class="btn" style="background:transparent; color:#9ca3af; border:1px solid var(--border); margin-top:10px; font-size:12px; width:100%;" onclick="backToRoleChoice()">⬅ Changer de poste</button>
+        </div>
+    </div>
+</div>
+
+<div id="sectionSelectorModal" class="section-selector-overlay">
+    <div style="position:absolute; top:20px; left:20px; z-index:99999; display:flex; flex-direction:column; gap:8px;">
+        <button class="btn-admin-discrete" style="background:#1f2937; color:#f3f4f6; border:1px solid #4b5563; padding:8px 12px; font-size:11px; border-radius:6px; cursor:pointer;" onclick="openAdminAuth()">
+            🔒 Admin Panel <span id="btnAdminBadge" class="admin-badge-inline">0</span>
+        </button>
+    </div>
+    <button class="btn-logout" style="position:absolute; top:20px; right:20px; margin:0; z-index:99999; padding:10px 16px; font-size:12px;" onclick="confirmLogout()">Déconnexion</button>
+    <div class="section-selector-card">
+        <h2 style="color:var(--primary); margin-top:0;">🧭 Mode de travail</h2>
+        <p style="font-size:13px; color:#9ca3af; margin-bottom:16px;">Sélectionnez votre espace d'activité</p>
+        
+        <button id="btnSecStock" class="section-btn" onclick="selectAppSection('Stock')" style="background-color:#1d4ed8;">📦 Passer commande interne</button>
+        <button id="btnSecRevendables" class="section-btn" onclick="selectAppSection('Revendables')" style="background-color:#059669;">🔄 Teintes Re-vendables</button>
+        <button id="btnSecErreurs" class="section-btn" onclick="selectAppSection('Erreurs')" style="background-color:#b91c1c;">⚠️ Erreurs de Teinte</button>
+        
+        <div id="btnSecAlarmsContainer" style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border);">
+            <button id="btnTeinteurAlarm" class="section-btn" style="background-color: transparent; color: var(--danger); border: 2px solid var(--danger);" onclick="triggerTeinteurAlarm()">❗ ALARME TEINTEUR (Vendeur)</button>
+            <button id="btnOpenTeinteurJobs" class="section-btn" style="background-color: #0f172a; border-color: var(--accent); display:none;" onclick="openTeinteurJobsModal()">
+                📋 FILE D'ATTENTE (VOIR COMMANDES)
+                <span id="teinteurJobsBadge" class="notif-badge">0</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
+    
+    <div class="top-bar">
+        <div class="top-left-actions">
+            <button id="btnComputerMode" class="collab-btn" onclick="toggleComputerMode()" style="background-color: #1e293b; border-color: #475569;">📱 Mode Tactile</button>
+            <select id="appVolumeSelect" class="app-volume-select" onchange="changeAppVolume()"><option value="1">🔊</option><option value="0.75">🔉</option><option value="0.5">🔈</option><option value="0">🔇</option></select>
+            <select id="themeSelect" class="app-volume-select theme-select" onchange="setTheme(this.value)"><option value="nocturne">🌙 Nocturne</option><option value="gris">☁️ Gris</option><option value="clair">☀️ Clair</option></select>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+            <button class="btn btn-guide" style="padding:6px 10px; font-size:11px;" onclick="openHistoryModal()">📜 Historique</button>
+            <button class="btn-logout" onclick="confirmLogout()">Déconnexion</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1 id="appHeaderTitle">La Centrale ProShop</h1>
+        <p id="appHeaderSubtitle">Gestion interne</p>
+        
+        <div class="live-timer-bar">
+            <div>📅 <span id="currentDateDisplay">--/--/---- --:--</span></div>
+            <div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:bold; color:#10b981;" title="Utilisateurs en ligne">
+                <span class="online-dot" onclick="openOnlineUsersModal()"></span> En ligne: <span id="onlineUsersCount" style="color:#fff; background:#064e3b; padding:2px 8px; border-radius:10px; cursor:pointer;" onclick="openOnlineUsersModal()">0</span>
+            </div>
+            <div>⏱️ Session: <span id="sessionCountdown" style="color:#f59e0b; font-weight:bold;">Permanente</span></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <div style="font-size:11px; color:#60a5fa;" id="welcomeUser"></div>
+            <div><button id="btnBackToSections" class="btn-back-sections" onclick="showSectionSelector()"><span class="back-arrow">⬅</span> Retour</button></div>
+        </div>
+    </div>
+
+    <div id="sectionsSplitWrapper">
+    <!-- SECTION STOCK -->
+    <div id="sectionStockContent" style="display: none;">
+        <div class="stock-tabs">
+            <button class="stock-tab-btn active" id="tabBtnSingle" onclick="switchStockMode('single')">⚡ Demande simple</button>
+            <button class="stock-tab-btn" id="tabBtnList" onclick="switchStockMode('list')">📋 Demande liste</button>
+        </div>
+
+        <div id="stockSinglePanel" class="panel" style="display: block; border-color: var(--success); margin-bottom: 16px;">
+            <h3 style="color:#4ade80;">⚡ Demande Rapide de Seau / Produit</h3>
+            <select id="singleBrand" onchange="updateStockDropdowns('single')" style="background:#1f2937; border-color:var(--border);">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+            <div class="suggest-wrap"><input type="text" id="singleProductName" placeholder="Nom du produit (ex: Rubbol...)" inputmode="none" autocomplete="off" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="checkLearnedLocation('single'); showProductSuggestions('single')"><div id="singleProductSuggest" class="suggest-box"></div></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <select id="singleBase" onchange="checkCustomBase('single')" style="width:100%;"><option value="">Base</option></select>
+                    <input type="text" id="singleBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <select id="singleBucketSize"><option value="">Capacité</option></select>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 8px; background:#111827; padding:8px; border-radius:6px; border:1px solid var(--border);">
+                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer; margin-top:0;">
+                    <input type="checkbox" id="singlePallet" style="width:18px; height:18px; margin:0;" onchange="toggleQuantityInput('single')"> Palette complète
+                </label>
+                <input type="number" id="singleQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" style="flex:1; margin:0;">
+            </div>
+
+            <input type="text" id="singleLocation" placeholder="Emplacement (ex: AA01A, CB05B)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <button class="btn btn-save" style="background-color:var(--success);" onclick="sendSingleStockRequest()">📨 Envoyer la Demande Urgente</button>
+        </div>
+
+        <div id="stockListPanel" class="panel" style="display: none; border-color: var(--accent); margin-bottom: 16px;">
+            <h3 style="color:#60a5fa;">📋 Créer une Liste de Stock (Rayons)</h3>
+            <select id="listBrand" onchange="updateStockDropdowns('list')" style="background:#1f2937; border-color:var(--border);">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+            </select>
+            <div class="suggest-wrap"><input type="text" id="listProductName" placeholder="Nom du produit" inputmode="none" autocomplete="off" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="checkLearnedLocation('list'); showProductSuggestions('list')"><div id="listProductSuggest" class="suggest-box"></div></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <select id="listBase" onchange="checkCustomBase('list')" style="width:100%;"><option value="">Base</option></select>
+                    <input type="text" id="listBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <select id="listBucketSize"><option value="">Capacité</option></select>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 8px; background:#111827; padding:8px; border-radius:6px; border:1px solid var(--border);">
+                <label style="font-size:13px; display:flex; align-items:center; gap:6px; flex:1; cursor:pointer; margin-top:0;">
+                    <input type="checkbox" id="listPallet" style="width:18px; height:18px; margin:0;" onchange="toggleQuantityInput('list')"> Palette complète
+                </label>
+                <input type="number" id="listQuantity" placeholder="Nombre" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" style="flex:1; margin:0;">
+            </div>
+
+            <input type="text" id="listLocation" placeholder="Emplacement (AA01A, CB05B)" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            <button class="btn btn-save" style="background-color:#374151; margin-top:4px;" onclick="addStockItemToList()">➕ Ajouter à la liste</button>
+            
+            <div style="margin-top: 12px; background: #111827; padding: 10px; border-radius: 6px; border:1px solid var(--border);">
+                <h4 style="margin:0 0 8px 0; color:#60a5fa; font-size:12px;">Articles dans la liste en cours :</h4>
+                <div id="stockCartItemsList" style="max-height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
+                    <div style="text-align:center; color:#6b7280; font-size:11px; padding:6px;">Aucun article ajouté.</div>
+                </div>
+                <button class="btn btn-save" id="sendStockCartBtn" style="background-color:var(--success); display:none; padding:8px; font-size:12px;" onclick="sendFinalStockList()">🚀 Envoyer la Liste Complète au Magasinier</button>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+            <div class="section-label" style="margin:0;">Demandes de stock en cours :</div>
+            <button id="btnPurgeStockHistory" class="btn btn-danger" style="display:none; width:auto; padding:4px 10px; font-size:10px; background-color:#7f1d1d;" onclick="clearStockHistory()">Vider l'historique</button>
+        </div>
+        <div id="stockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; margin-top:8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active.</div>
+        </div>
+
+        <div class="section-label" style="color:var(--danger); margin-top:24px;">❌ Produits Out of Stock (En attente de réapprovisionnement) :</div>
+        <div id="outOfStockRequestsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:15px; color:#6b7280; font-size:12px;">Aucun produit en rupture de stock.</div>
+        </div>
+    </div>
+
+    <!-- SECTION TEINTES REVENDABLES -->
+    <div id="sectionRevendablesContent" style="display: none;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin:0; color:#10b981; font-size:16px;">🔄 Teintes Re-vendables (Stock Disponible)</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Gérez et consultez les seaux préparés en plus disponibles à la vente.</p>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <button id="btnResalePdf" class="btn btn-save" style="width:auto; margin-top:0; padding:10px 14px; background-color:#3b82f6;" onclick="exportResalePDF()">📄 Bilan Stock (PDF)</button>
+                <button id="btnResaleAdd" class="btn btn-save" style="width:auto; margin-top:0; padding:10px 16px; background-color:#10b981;" onclick="toggleResaleForm()">➕ Ajouter une Teinte</button>
+            </div>
+        </div>
+
+        <!-- FORMULAIRE INTÉGRÉ RE-VENDABLE -->
+        <div id="resaleFormPanel" class="panel" style="border-color: #10b981; display: none;">
+            <h3 style="color:#10b981; margin-bottom:14px;">➕ Ajouter une Teinte Re-vendable</h3>
+            
+            <label>Marque :</label>
+            <select id="resBrand" onchange="updateResaleDropdowns()" style="background:#111827; border-color:var(--border);">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+                <option value="AUTRE">AUTRE / HORS GAMME...</option>
+            </select>
+            <input type="text" id="resBrandCustom" placeholder="Nom de la marque hors-gamme..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <label>Nom du produit (Optionnel) :</label>
+            <input type="text" id="resProductName" placeholder="ex: Rubbol Azur..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <label>Code Couleur :</label>
+            <input type="text" id="resColorCode" placeholder="ex: RAL 9010 ou NCS S 0502-Y" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Base :</label>
+                    <select id="resBase" onchange="checkCustomBase('res')"><option value="">Base</option></select>
+                    <input type="text" id="resBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <div>
+                    <label>Capacité :</label>
+                    <select id="resBucketSize"><option value="">Capacité (L / KG)</option></select>
+                </div>
+            </div>
+
+            <label>Quantité en stock :</label>
+            <input type="number" id="resQuantity" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-save" style="background-color:#10b981; margin-top:0;" onclick="saveResaleRecord()">Enregistrer la Teinte</button>
+                <button class="btn btn-danger" style="width:120px; background-color:#374151; margin-top:0;" onclick="toggleResaleForm()">Annuler</button>
+            </div>
+        </div>
+
+        <input type="text" id="resaleSearchInput" class="search-box" placeholder="Rechercher par nom, code couleur ou base..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterResaleRecords()" style="margin-bottom:12px;">
+
+        <div id="resaleRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune teinte re-vendable en stock.</div>
+        </div>
+    </div>
+
+    <!-- SECTION ERREURS DE TEINTE -->
+    <div id="sectionErreursContent" style="display: none;">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin:0; color:#ef4444; font-size:16px;">⚠️ Registre des Erreurs de Teinte</h3>
+                <p style="margin:4px 0 0 0; font-size:11px; color:#9ca3af;">Suivi transparent et calendrier des rebuts de fabrication.</p>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button id="btnErrorAdd" class="btn btn-save" style="width:auto; margin-top:0; padding:10px 14px; background-color:#ef4444;" onclick="toggleErrorForm()">Déclarer</button>
+                <button id="btnExportErrors" class="btn btn-save" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:#3b82f6;" onclick="openErrorReportModal()">Bilan (PDF)</button>
+                <button id="btnPurgeErrors" class="btn btn-danger" style="display:none; width:auto; margin-top:0; padding:10px 14px; background-color:#7f1d1d;" onclick="purgeAllErrors()">Vider tout</button>
+            </div>
+        </div>
+
+        <!-- FORMULAIRE INTÉGRÉ ERREUR DE TEINTE -->
+        <div id="errorFormPanel" class="panel" style="border-color: #ef4444; display: none;">
+            <h3 style="color:#ef4444; margin-bottom:14px;">⚠️ Déclarer une Erreur de Teinte</h3>
+            
+            <label>Marque :</label>
+            <select id="errBrand" onchange="updateErrorDropdowns()" style="background:#111827; border-color:var(--border);">
+                <option value="">Sélectionnez la marque</option>
+                <option value="Trimetal">Trimetal</option>
+                <option value="Herbol">Herbol</option>
+                <option value="Sikkens">Sikkens</option>
+                <option value="Levis">Levis</option>
+                <option value="Unikalo">Unikalo</option>
+                <option value="Unikatex">Unikatex</option>
+                <option value="Eurotex">Eurotex</option>
+                <option value="Mathys">Mathys</option>
+                <option value="Rust-oleum">Rust-oleum</option>
+                <option value="Libert">Libert</option>
+                <option value="AUTRE">AUTRE / HORS GAMME...</option>
+            </select>
+            <input type="text" id="errBrandCustom" placeholder="Nom de la marque hors-gamme..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <label>Nom du produit (si connu) :</label>
+            <input type="text" id="errProductName" placeholder="ex: Alphatex SF..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Base :</label>
+                    <select id="errBase" onchange="checkCustomBase('err')"><option value="">Base</option></select>
+                    <input type="text" id="errBaseCustom" placeholder="Saisir la base..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+                </div>
+                <div>
+                    <label>Capacité :</label>
+                    <select id="errBucketSize"><option value="">Capacité (L / KG)</option></select>
+                </div>
+            </div>
+
+            <label>Quantité (Nombre de seaux) :</label>
+            <input type="number" id="errQuantity" min="1" value="1" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+
+            <label>Date de l'erreur :</label>
+            <input type="date" id="errDate" style="background:#111827; color:#fff; border:1px solid var(--border); padding:12px; border-radius:8px; width:100%; margin-bottom:8px;">
+
+            <label>Motif de l'erreur :</label>
+            <textarea id="errReason" rows="3" placeholder="ex: mauvaise base, erreur de code..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);"></textarea>
+
+            <label>Signature (Responsable) :</label>
+            <input type="text" id="errSignature" placeholder="Nom de la personne" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+            
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-save" style="background-color:#ef4444; margin-top:0;" onclick="saveErrorRecord()">Enregistrer l'Erreur</button>
+                <button class="btn btn-danger" style="width:120px; background-color:#374151; margin-top:0;" onclick="toggleErrorForm()">Annuler</button>
+            </div>
+        </div>
+
+        <div class="mini-calendar" id="errorMiniCalendar"></div>
+
+        <input type="text" id="errorSearchInput" class="search-box" placeholder="Filtrer par nom, date ou produit..." inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);" oninput="filterErrorRecords()" style="margin-bottom:12px;">
+        
+        <div id="errorStatsBox" style="background:var(--panel-bg); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#9ca3af; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <span>Total erreurs : <b id="totalErrorsCount" style="color:#fff;">0</b> | Volume raté : <b id="totalErrorLitres" style="color:#ef4444;">0 L / KG</b></span>
+            <button id="clearDateFilterBtn" style="display:none; background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer; font-weight:bold;" onclick="resetDateFilter()">🔄 Afficher tout</button>
+        </div>
+
+        <div id="errorRecordsList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune erreur enregistrée.</div>
+        </div>
+    </div>
+
+    </div>
+
+    <div id="alertBanner" class="alert-box"></div>
+
+    <div id="authPanel" class="panel" style="display:none; border-color: var(--accent);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0;">Connexion Master Admin</h3>
+            <button class="btn-close-modal" onclick="togglePanel('authPanel')">✕</button>
+        </div>
+        <input type="text" id="authUser" placeholder="Nom d'utilisateur Master" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <input type="password" id="authPass" placeholder="Mot de passe Master" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
+        <button class="btn btn-save" onclick="validateAuth()">Se connecter</button>
+    </div>
+
+    <div id="adminPanel" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; z-index: 99999999; background: var(--bg); padding: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; position:sticky; top:0; background:var(--bg); z-index:10; padding-bottom:10px; border-bottom:1px solid var(--border);">
+            <h3 style="margin:0; color:var(--danger);">Panneau d'Administration</h3>
+            <button class="btn-close-modal" style="font-size: 20px; padding: 5px 10px;" onclick="closeAdminPanel()">✕</button>
+        </div>
+
+        <button class="collapsible-btn" onclick="toggleCollapse('manageUsersForm')" style="background-color:#1e3a8a; border-color:#3b82f6;">
+            👥 Gestion des Accès Utilisateurs <span id="adminPendingBadgePanel" class="admin-badge-inline">0</span> <span>▼</span>
+        </button>
+        <div id="manageUsersForm" class="collapsible-content" style="border:1px dashed #3b82f6;">
+            <p style="font-size:11px; margin-top:0; color:#9ca3af;">Approbation, blocage et suppression des appareils/utilisateurs.</p>
+            <div id="adminUsersList" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="text-align:center; color:#9ca3af; font-size:12px;">Chargement de la liste...</div>
+            </div>
+        </div>
+
+        <button class="btn btn-danger" style="width:100%; margin-top:14px; background-color:#b91c1c;" onclick="lockAdminPanel()">🔒 Verrouiller le Panneau Admin</button>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+        <button class="refresh-btn-discrete" onclick="clearSystemCache()">🔄 Vider Cache</button>
+    </div>
+
+    <div class="app-version-footer">
+        <div style="color:#9ca3af; font-size:10px; text-transform:uppercase;">Droits d'auteur de l'application accordés à Matei Antonio</div>
+        <div>La Centrale ProShop — Version <span id="footerVersionText">v1.20</span></div>
+    </div>
+</div>
+
+<div id="historyModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📜 Historique du Jour</h3>
+            <button class="btn-close-modal" onclick="closeHistoryModal()">✕</button>
+        </div>
+        <div id="historyLogsList" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune activité enregistrée.</div>
+        </div>
+    </div>
+</div>
+
+<!-- KDS: FAST FOOD STYLE DISPLAY -->
+<div id="teinteurJobsModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; z-index: 99999999; background: #0f172a; padding: 16px;">
+    <div style="position:sticky; top:0; background:#0f172a; z-index:10; padding-bottom:12px; border-bottom:2px solid var(--border); margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+                <h2 style="margin:0; color:#fff; font-size:18px; text-transform:uppercase;">📋 FILE D'ATTENTE - TEINTEUR</h2>
+            </div>
+            <button class="btn-close-modal" style="font-size: 12px; font-weight:bold; padding: 8px 14px; background:#1e293b; border-radius:8px; color:#fff;" onclick="closeTeinteurJobsModal()">✕ Fermer</button>
+        </div>
+        <button id="kdsInnerAlarmBtn" style="width: 100%; font-size: 14px; font-weight:900; padding: 10px; background:var(--danger); border-radius:8px; border:none; color:#fff;" onclick="triggerTeinteurAlarm()">❗ NOUVELLE ALARME</button>
+    </div>
+    
+    <div id="teinteurJobsList">
+        <div style="text-align:center; padding:20px; color:#9ca3af; font-size:14px; grid-column: 1 / -1;">Aucune commande en cours.</div>
+    </div>
+</div>
+
+<div class="virtual-keyboard" id="virtualKeyboard">
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('1', this)">1</div><div class="vk-key" onclick="vKey('2', this)">2</div><div class="vk-key" onclick="vKey('3', this)">3</div><div class="vk-key" onclick="vKey('4', this)">4</div><div class="vk-key" onclick="vKey('5', this)">5</div><div class="vk-key" onclick="vKey('6', this)">6</div><div class="vk-key" onclick="vKey('7', this)">7</div><div class="vk-key" onclick="vKey('8', this)">8</div><div class="vk-key" onclick="vKey('9', this)">9</div><div class="vk-key" onclick="vKey('0', this)">0</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('A', this)">A</div><div class="vk-key" onclick="vKey('Z', this)">Z</div><div class="vk-key" onclick="vKey('E', this)">E</div><div class="vk-key" onclick="vKey('R', this)">R</div><div class="vk-key" onclick="vKey('T', this)">T</div><div class="vk-key" onclick="vKey('Y', this)">Y</div><div class="vk-key" onclick="vKey('U', this)">U</div><div class="vk-key" onclick="vKey('I', this)">I</div><div class="vk-key" onclick="vKey('O', this)">O</div><div class="vk-key" onclick="vKey('P', this)">P</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" onclick="vKey('Q', this)">Q</div><div class="vk-key" onclick="vKey('S', this)">S</div><div class="vk-key" onclick="vKey('D', this)">D</div><div class="vk-key" onclick="vKey('F', this)">F</div><div class="vk-key" onclick="vKey('G', this)">G</div><div class="vk-key" onclick="vKey('H', this)">H</div><div class="vk-key" onclick="vKey('J', this)">J</div><div class="vk-key" onclick="vKey('K', this)">K</div><div class="vk-key" onclick="vKey('L', this)">L</div><div class="vk-key" onclick="vKey('M', this)">M</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" style="visibility:hidden; flex:1;"></div>
+        <div class="vk-key" onclick="vKey('W', this)">W</div><div class="vk-key" onclick="vKey('X', this)">X</div><div class="vk-key" onclick="vKey('C', this)">C</div><div class="vk-key" onclick="vKey('V', this)">V</div><div class="vk-key" onclick="vKey('B', this)">B</div><div class="vk-key" onclick="vKey('N', this)">N</div><div class="vk-key" onclick="vKey('\'', this)">'</div>
+        <div class="vk-key vk-wide" onmousedown="startVDel(this, event)" onmouseup="stopVDel(event)" onmouseleave="stopVDel(event)" ontouchstart="startVDel(this, event)" ontouchend="stopVDel(event)" ontouchcancel="stopVDel(event)">⌫</div>
+    </div>
+    <div class="vk-row">
+        <div class="vk-key" style="visibility:hidden; flex:1.5;"></div>
+        <div class="vk-key" onclick="vKey(',', this)">,</div>
+        <div class="vk-key vk-space" onclick="vKey(' ', this)">ESPACE</div>
+        <div class="vk-key" onclick="vKey('.', this)">.</div>
+        <div class="vk-key vk-close" onclick="vClose()" style="flex:1.5; background:#10b981;">↵</div>
+    </div>
+</div>
+
+<script>
+    const CURRENT_APP_VERSION = "v1.20"; 
+
+    const BRANDS_DATA = {
+        "Trimetal": { bases: ["AW", "AC"], sizes: ["0.5L", "1L", "2.5L", "5L", "10L", "12.5L"] },
+        "Herbol": { bases: ["DU1", "DU3", "LA1", "LA3", "LA4", "LU1", "LU3", "LU4"], sizes: ["1L", "2.5L", "5L", "12.5L"] },
+        "Sikkens": { bases: ["W05", "N00"], sizes: ["1L", "2.5L", "5L", "10L"] },
+        "Unikalo": { bases: ["BLANC", "B+", "C", "D"], sizes: ["0.75L", "3L", "12L", "16kg", "20kg", "22kg"] },
+        "Levis": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L", "10L"] },
+        "Unikatex": { bases: [], sizes: ["22kg"] },
+        "Eurotex": { bases: [], sizes: ["22kg"] },
+        "Mathys": { bases: [], sizes: ["1L", "5L", "10L", "20L"] },
+        "Rust-oleum": { bases: [], sizes: ["0.5L", "1L", "2.5L", "5L"] },
+        "Libert": { bases: [], sizes: ["0.5L", "1L", "2.5L"] }
+    };
+
+    document.getElementById('footerVersionText').textContent = CURRENT_APP_VERSION;
+    let isAuthenticated = false;
+    let localUser = JSON.parse(localStorage.getItem('central_app_user_account')) || null;
+    let currentAppSection = localStorage.getItem('central_app_section') || null;
+
+    let activeVirtualInput = null;
+    let resaleRecordsList = [];
+    let errorRecordsList = [];
+    let stockRequestsList = [];
+    let appVolume = 1.0;
+
+    window.updateErrorDropdowns = function() {
+        const brand = document.getElementById('errBrand').value;
+        const brandCustom = document.getElementById('errBrandCustom');
+        if (brand === 'AUTRE') {
+            brandCustom.style.display = 'block';
+        } else {
+            brandCustom.style.display = 'none';
+            brandCustom.value = '';
+        }
+        const sizeSelect = document.getElementById('errBucketSize');
+        populateBaseSelect('err', '');
+        sizeSelect.innerHTML = '<option value="">Capacité (L / KG)</option>';
+        if (BRANDS_DATA[brand]) {
+            BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
+        } else {
+            ["0.5L", "1L", "2.5L", "5L", "10L", "12.5L", "15L", "20L"].forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
+        }
+    }
+
+    window.updateResaleDropdowns = function() {
+        const brand = document.getElementById('resBrand').value;
+        const brandCustom = document.getElementById('resBrandCustom');
+        if (brand === 'AUTRE') {
+            brandCustom.style.display = 'block';
+        } else {
+            brandCustom.style.display = 'none';
+            brandCustom.value = '';
+        }
+        const sizeSelect = document.getElementById('resBucketSize');
+        populateBaseSelect('res', '');
+        sizeSelect.innerHTML = '<option value="">Capacité (L / KG)</option>';
+        if (BRANDS_DATA[brand]) {
+            BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
+        } else {
+            ["0.5L", "1L", "2.5L", "5L", "10L", "12.5L", "15L", "20L"].forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
+        }
+    }
+
+    window.exportResalePDF = function() {
+        if (!resaleRecordsList || resaleRecordsList.length === 0) {
+            alert("Aucune teinte re-vendable en stock à exporter.");
+            return;
+        }
+        if (window.jspdf && window.jspdf.jsPDF) {
+            const doc = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text('Liste des Teintes Re-vendables en Stock', 14, 18);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Edité le : ${new Date().toLocaleDateString('fr-FR')} - La Centrale ProShop`, 14, 25);
+
+            const tableRows = resaleRecordsList.map(item => [
+                item.brand === 'AUTRE' ? (item.brandCustom || 'Hors Gamme') : item.brand,
+                item.productName || '—',
+                item.colorCode || '—',
+                item.base || '—',
+                item.bucketSize || '—',
+                String(item.quantity || 1),
+                item.addedBy || '—'
+            ]);
+
+            doc.autoTable({
+                startY: 30,
+                head: [['Marque', 'Produit', 'Code Couleur', 'Base', 'Capacité', 'Qté', 'Ajouté Par']],
+                body: tableRows,
+                theme: 'grid',
+                headStyles: { fillColor: [16, 185, 129], textColor: 255 },
+                styles: { fontSize: 9 }
+            });
+
+            doc.save(`Stock_Teintes_Revendables_${new Date().toISOString().split('T')[0]}.pdf`);
+            showAlert("📄 PDF généré avec succès !", true);
+        }
+    }
+
+    window.clearStockHistory = function() {
+        if (!localUser || (localUser.role !== 'Master Admin' && localUser.role !== 'Responsable')) {
+            alert("Action réservée à l'Administrateur ou au Responsable.");
+            return;
+        }
+        if (confirm("Voulez-vous vraiment effacer tout l'historique des commandes internes ?")) {
+            if (window.FB_db) {
+                window.FB_remove(window.FB_ref(window.FB_db, 'stock_requests')).then(() => {
+                    showAlert("🗑️ Historique des commandes nettoyé avec succès !", true);
+                });
+            }
+        }
+    }
+
+    window.editStockRequest = function(reqId) {
+        if (!localUser || (localUser.role !== 'Master Admin' && localUser.role !== 'Responsable')) {
+            alert("Action réservée à l'Administrateur ou au Responsable.");
+            return;
+        }
+        const req = stockRequestsList.find(r => r.id === reqId);
+        if (!req || !req.items || !req.items[0]) return;
+        const newProduct = prompt("Modifier le nom du produit :", req.items[0].product);
+        if (newProduct !== null && newProduct.trim() !== "") {
+            const newQty = prompt("Modifier la quantité :", req.items[0].quantity);
+            if (newQty !== null && newQty.trim() !== "") {
+                window.FB_set(window.FB_ref(window.FB_db, `stock_requests/${reqId}/items/0/product`), newProduct.trim());
+                window.FB_set(window.FB_ref(window.FB_db, `stock_requests/${reqId}/items/0/quantity`), newQty.trim()).then(() => {
+                    showAlert("✏️ Commande modifiée avec succès !", true);
+                });
+            }
+        }
+    }
+
+    window.playPersistentAlarm = function() {
+        if (appVolume === 0) return; 
+        if ("vibrate" in navigator) { try { navigator.vibrate([400, 200, 400, 200, 600]); } catch(e) {} }
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            for (let i = 0; i < 4; i++) {
+                let startTime = audioCtx.currentTime + (i * 0.25);
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(750 + (i * 120), startTime);
+                gain.gain.setValueAtTime(0.4 * appVolume, startTime); 
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(startTime); osc.stop(startTime + 0.2);
+            }
+        } catch(e) {}
+    }
+
+    function renderStockRequests() {
+        const container = document.getElementById('stockRequestsList');
+        const purgeBtn = document.getElementById('btnPurgeStockHistory');
+        if (purgeBtn) {
+            purgeBtn.style.display = (localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable') && stockRequestsList.length > 0) ? 'block' : 'none';
+        }
+        if (!container) return;
+        container.innerHTML = '';
+        if (stockRequestsList.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#9ca3af; font-size:13px;">Aucune demande active.</div>';
+            return;
+        }
+        stockRequestsList.forEach(req => {
+            const div = document.createElement('div');
+            div.style.cssText = "background:#1f2937; border:1px solid var(--border); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px;";
+            let isMagasinier = localUser && localUser.role === 'Magasinier';
+            let isAdminOrResp = localUser && (localUser.role === 'Master Admin' || localUser.role === 'Responsable');
+            let itemsHtml = '';
+            if (req.items && Array.isArray(req.items)) {
+                req.items.forEach(it => {
+                    let dispBase = it.base ? `Base: ${it.base}, ` : '';
+                    itemsHtml += `<div style="font-size:12px; color:#d1d5db; border-left:2px solid var(--accent); padding-left:6px; margin:4px 0;">• <b>${it.product}</b> (${dispBase}${it.bucketSize}) - <b>Qté: ${it.quantity}</b><br><span style="font-size:11px; color:#9ca3af;">📍 ${it.location}</span></div>`;
+                });
+            }
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; color:#60a5fa; font-weight:bold;">📦 Commande de ${req.author}</span>
+                    <div style="display:flex; gap:4px;">
+                        ${isAdminOrResp ? `<button class="btn btn-save" style="background-color:#3b82f6; padding:4px 8px; font-size:10px; min-width:auto; margin:0;" onclick="editStockRequest('${req.id}')">✏️ Edit</button>` : ''}
+                        ${(localUser && (localUser.name === req.author || isAdminOrResp || localUser.role === 'Teinteur')) ? `<button class="btn btn-danger" style="background-color:#7f1d1d; padding:4px 8px; font-size:10px; min-width:auto; margin:0;" onclick="cancelStockRequest('${req.id}')">✕ Annuler</button>` : ''}
+                    </div>
+                </div>
+                <div style="margin:4px 0;">${itemsHtml}</div>
+                ${isMagasinier ? `
+                    <div style="display:flex; gap:6px; margin-top:6px;">
+                        <button class="btn btn-save" style="background-color:var(--success); padding:6px; font-size:11px; flex:1;" onclick="validateStockRequest('${req.id}')">✅ Valider</button>
+                        <button class="btn btn-danger" style="padding:6px; font-size:11px; flex:1;" onclick="markOutOfStock('${req.id}')">❌ Out of Stock</button>
+                    </div>
+                ` : `<div style="font-size:11px; color:#f59e0b; font-style:italic;">En attente de validation...</div>`}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function showAlert(msg, isSuccess = false) {
+        const b = document.getElementById('alertBanner');
+        if(!b) return;
+        b.className = `alert-box ${isSuccess ? 'alert-success' : 'alert-warning'}`;
+        b.textContent = msg; b.style.display = 'block';
+        setTimeout(() => { b.style.display = 'none'; }, 6000);
+    }
+</script>
+</body>
+</html>
