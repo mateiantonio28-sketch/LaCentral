@@ -801,7 +801,8 @@ button[style*="background-color:#10b981"],button[style*="background-color: #10b9
                 </div>
                 <div>
                     <label>Capacité :</label>
-                    <select id="resBucketSize"><option value="">Capacité (L / KG)</option></select>
+                    <select id="resBucketSize" onchange="updateCustomResaleCapacity()"><option value="">Capacité (L / KG)</option></select>
+                    <input type="text" id="resBucketSizeCustom" placeholder="Saisir la capacité (ex. 2,5 L ou 5 KG)..." style="display:none; margin-top:4px;" inputmode="none" onfocus="this.blur(); openVirtualKeyboard(this);">
                 </div>
             </div>
 
@@ -1691,7 +1692,18 @@ button[style*="background-color:#10b981"],button[style*="background-color: #10b9
         if (BRANDS_DATA[brand]) {
             BRANDS_DATA[brand].sizes.forEach(s => sizeSelect.innerHTML += `<option value="${s}">${s}</option>`);
         }
+        sizeSelect.innerHTML += '<option value="AUTRE">➕ Autre (saisie manuelle)...</option>';
         checkCustomBase('res');
+        updateCustomResaleCapacity();
+    }
+
+    window.updateCustomResaleCapacity = function() {
+        const sel = document.getElementById('resBucketSize');
+        const custom = document.getElementById('resBucketSizeCustom');
+        if (!sel || !custom) return;
+        const show = sel.value === 'AUTRE';
+        custom.style.display = show ? 'block' : 'none';
+        if (!show) custom.value = '';
     }
 
     window.toggleQuantityInput = function(prefix) {
@@ -3194,7 +3206,10 @@ button[style*="background-color:#10b981"],button[style*="background-color: #10b9
             document.getElementById('resColorCode').value = "";
             document.getElementById('resBase').innerHTML = '<option value="">Base</option>';
             document.getElementById('resBucketSize').innerHTML = '<option value="">Capacité (L / KG)</option>';
+            document.getElementById('resBucketSizeCustom').value = '';
+            document.getElementById('resBucketSizeCustom').style.display = 'none';
             document.getElementById('resQuantity').value = "1";
+            document.getElementById('resBaseCustom').value = '';
             document.getElementById('resBaseCustom').style.display = 'none';
             panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -3625,10 +3640,15 @@ button[style*="background-color:#10b981"],button[style*="background-color: #10b9
         const prodName = document.getElementById('resProductName').value.trim();
         const colorCode = document.getElementById('resColorCode').value.trim().toUpperCase();
         const base = getBaseValue('res');
-        const bucket = document.getElementById('resBucketSize').value;
-        const qty = parseInt(document.getElementById('resQuantity').value) || 1;
+        const bucketSelect = document.getElementById('resBucketSize').value;
+        const bucket = bucketSelect === 'AUTRE' ? document.getElementById('resBucketSizeCustom').value.trim().toUpperCase() : bucketSelect;
+        const qtyRaw = document.getElementById('resQuantity').value;
+        const qty = parseInt(qtyRaw, 10);
 
-        if (!brand || !colorCode || !bucket) { alert("❌ Renseignez la marque, le code et la capacité !"); return; }
+        if (!brand || !colorCode || !base || !bucket || !Number.isFinite(qty) || qty < 1) {
+            alert("❌ Renseignez la marque, le code couleur, la base (choisie ou saisie manuellement), la capacité et une quantité supérieure à 0.");
+            return;
+        }
         if (!window.FB_db) return;
         if (isCustomBaseSelected('res') && base) registerCustomBase(brand, base);
         if (prodName) registerProduct(brand, prodName);
